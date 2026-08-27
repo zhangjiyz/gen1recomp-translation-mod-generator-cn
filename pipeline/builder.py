@@ -227,6 +227,10 @@ def _font_source(workspace: Path, config: dict, font_profile: str = "fusion", la
             korean_font = source / "fusion-pixel-10px-proportional-ko.ttf"
             if not korean_font.is_file():
                 raise BuildError("Pinned Fusion Pixel dependency has no Korean font variant.")
+        elif canonical_language(language) == "zh-Hans":
+            chinese_font = source / "fusion-pixel-10px-proportional-zh_hans.ttf"
+            if not chinese_font.is_file():
+                raise BuildError("Pinned Fusion Pixel dependency has no Simplified Chinese font variant.")
         return source
     except (DependencyError, KeyError, TypeError, ValueError, OSError) as error:
         raise BuildError(f"Unable to download pinned font dependency: {error}") from error
@@ -250,6 +254,22 @@ def prepare_dependencies(
     collections = (corpus_collection,) if isinstance(corpus_collection, str) else corpus_collection
     prefixes = [f"corpus/{collection}" for collection in collections]
     _ensure_dependency(config["corpus"], corpus, selective_prefix=prefixes)
+    if canonical_language(language) == "zh-Hans":
+        try:
+            from .zh_hans import ChineseSourceError
+            if tuple(collections) == ("GoldSilver",):
+                from .zh_hans import prepare_zh_hans_corpus
+                prepare_zh_hans_corpus(workspace, config, corpus)
+            elif tuple(collections) == ("RedBlue", "Yellow"):
+                from .zh_hans_rby import prepare_zh_hans_rby_corpus
+                prepare_zh_hans_rby_corpus(workspace, config, corpus)
+            else:
+                raise ChineseSourceError(
+                    "unsupported Simplified Chinese corpus collections: "
+                    f"{tuple(collections)!r}"
+                )
+        except (ChineseSourceError, DependencyError, KeyError, OSError, TypeError, ValueError) as error:
+            raise BuildError(f"Unable to prepare pinned Simplified Chinese sources: {error}") from error
     font_source = _font_source(workspace, config, font_profile, language)
     return gen1recomp, corpus, font_source
 
@@ -368,6 +388,9 @@ def _prompt_font_profile(language: str, input_fn: Callable[[str], str]) -> str:
         return "fusion"
     if language == "ko":
         print("\nKorean uses Fusion Pixel's Hangul variant; Pokemon Font is unavailable.")
+        return "fusion"
+    if language == "zh-Hans":
+        print("\nSimplified Chinese uses Fusion Pixel's zh_hans variant; Pokemon Font is unavailable.")
         return "fusion"
     print("\nPlease select a font profile:")
     print("  1 - Fusion Pixel by TakWolf, proportional 10px (recommended)")
@@ -771,7 +794,7 @@ def inspect_archive(path: Path) -> None:
         if any(part in normalized for part in FORBIDDEN_ARCHIVE_PARTS):
             raise BuildError(f"Private build data found in archive: {name}")
         allowed = (
-            normalized in {"manifest.json", "main.lua"}
+            normalized in {"manifest.json", "main.lua", "translation_source.md"}
             or normalized.startswith("lang/")
             or normalized.startswith("fonts/")
             or normalized.startswith("assets/font/")
@@ -960,6 +983,8 @@ def build(
         red_text = parse_text_catalog(gen1recomp / "data" / "generated" / "text.lua")
         yellow_text = parse_text_catalog(gen1recomp / "yellow" / "data" / "generated" / "text.lua")
         yellow_rows = align(parse_yellow(corpus, language), target_lang=language)
+        if corpus_overrides:
+            yellow_rows = apply_corpus_overrides(yellow_rows, corpus_overrides)
         red_worksheets = read_worksheets(worksheet)
         red_joined, red_join_report = join_catalogs(rows, red_worksheets, language)
         yellow_worksheets = read_worksheets(yellow_worksheet)

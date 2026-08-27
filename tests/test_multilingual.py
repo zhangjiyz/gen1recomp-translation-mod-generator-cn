@@ -221,6 +221,11 @@ class MultilingualTests(unittest.TestCase):
         self.assertEqual(canonical_language("ja"), "ja-Hrkt")
         self.assertEqual(canonical_language("jpn"), "ja-Hrkt")
         self.assertEqual(canonical_language("deu"), "de")
+        self.assertEqual(canonical_language("zh-cn"), "zh-Hans")
+        self.assertEqual(canonical_language("简体中文"), "zh-Hans")
+
+    def test_gold_chinese_player_alias_uses_the_runtime_player_token(self):
+        self.assertEqual(corpus_to_engine("你好，<PLAY_G>！", bare_dynamic_tokens=True), "你好，{PLAYER}！")
 
     def test_anchor_strips_fullwidth_delimiter_only_at_edges(self):
         spec = {"kind": "segment", "index": 0}
@@ -1314,6 +1319,7 @@ class MultilingualTests(unittest.TestCase):
             manifest = json.loads((mod / "manifest.json").read_text(encoding="utf-8"))
             self.assertEqual(manifest["id"], mod_id)
             self.assertEqual(manifest["name"], target_name)
+            self.assertEqual(manifest["game_version"], ">=0.0.0-dev <2.0.0")
             self.assertEqual(manifest["description"], f"{target_name}, based mostly on PokeCorpus.")
             default_mod = generate_mod([row], Path(tmp) / "default")
             default_manifest = json.loads((default_mod / "manifest.json").read_text(encoding="utf-8"))

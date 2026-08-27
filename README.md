@@ -102,6 +102,13 @@ ROM English text. The generated coverage report and
 breakdown. Yellow-specific manual translations live in
 `overrides/<language>/rby/yellow_engine.json`.
 
+The `zh-Hans` Red/Blue/Yellow target is built from hash-pinned human fan
+translations in TomJinW's `pokeredCHS` and `pokeyellowCHS` projects. Exact
+English blocks and retained source labels are preferred; reviewed event-label
+aliases bridge symbols renamed or split by the current source. Engine-only
+contextual additions are recorded separately with provenance, and no machine
+translation is used.
+
 ## Pokémon Gold and Silver support
 
 Gold and Silver is published separately as `translation-<lang>-gen2`. It is built
@@ -110,6 +117,19 @@ supplied) and covers dialogue, Pokédex entries, named ROM catalogs and engine
 strings matched from production Gen 2 callsites. Missing or ambiguous matches
 remain in English. The manifest declares both `"gold"` and `"silver"` as
 supported games, so the same mod loads on either edition's save.
+
+The `zh-Hans` target is built from hash-pinned human fan-translation sources:
+TomJinW's current Gold/Silver dialogue, names, interface and Pokédex workbooks,
+plus the same group's earlier move/item description tables. Exact labels and
+indices are preferred; a normalized-English fallback is accepted only when it
+has one unique Chinese result. Unmapped or ambiguous rows stay in English, and
+no machine translation is used.
+
+The Chinese package requests Gen1Recomp's `engine_internals` permission only
+to localize the raw `lower / UPPER / DEL / END` row in Gold/Silver's mail
+composer. The ordinary naming screen already uses the public Strings registry;
+the mail screen does not, so the mod scopes a temporary print substitution to
+that screen and restores the renderer immediately afterward.
 
 Before packaging, headless generation-2 gates verify that the translated
 values reach the Gold and Silver registries. These checks do not replace an
@@ -142,6 +162,7 @@ font profiles are:
 | `fr`, `de`, `es`, `it` | RBY, Gold and Silver | Fusion Pixel Latin, 10px | Pokemon Font, 8px |
 | `ja-Hrkt` | RBY, Gold and Silver | Fusion Pixel Japanese, 8px | — |
 | `ko` | Gold and Silver only | Fusion Pixel Hangul, 10px | — |
+| `zh-Hans` | RBY, Gold and Silver | Fusion Pixel Simplified Chinese, 10px | — |
 
 The optional Pokemon Font is more compact, but translated text can still
 overflow fixed-width interfaces.
@@ -158,8 +179,10 @@ and Yellow:
 - `Red Blue ROM aggregate` is the release metric. It combines the six effective ROM
   catalogs (dialogue, species/move/item/trainer names, status labels) with a
   handful of shared runtime entries (types, species kinds, literal handlers,
-  demo names and ROM-derived engine templates): `3286` for Red/Blue and
-  `3400` for Yellow.
+  demo names and ROM-derived engine templates). The exact total can differ by
+  one when a target has no applicable language-specific literal handler:
+  `3286`/`3400` for the existing PokeCorpus targets and `3285`/`3399` for
+  `zh-Hans`.
 - `RBY-related engine strings` covers engine keys used by original RBY
   gameplay and interfaces.
 
@@ -173,6 +196,7 @@ engine's English fallback.
 | `es` | 3286/3286 (100%) | 3400/3400 (100%) | 242/242 (100%) |
 | `it` | 3286/3286 (100%) | 3400/3400 (100%) | 242/242 (100%) |
 | `ja-Hrkt` | 3286/3286 (100%) | 3400/3400 (100%) | 242/242 (100%) |
+| `zh-Hans` | 3285/3285 (100%) | 3399/3399 (100%) | 242/242 (100%) |
 
 The ROM aggregates exclude extracted labels that do not render visible text.
 Reviewed exceptions are recorded in
@@ -207,6 +231,7 @@ provenance. Future unresolved entries will keep their original English text.
 | `it` | 4452/4452 (100%) | 302/302 (100%) |
 | `ja-Hrkt` | 4452/4452 (100%) | 302/302 (100%) |
 | `ko` | 4452/4452 (100%) | 302/302 (100%) |
+| `zh-Hans` | 4452/4452 (100%) | 302/302 (100%) |
 
 ### Other engine strings
 
@@ -243,6 +268,9 @@ Every translated engine string remains traceable:
 | Deterministic anchor | Reliable PokeCorpus qid, composition, or extraction rule. | `config/{rby,gs}/semantic_anchors.json` |
 | Human-reviewed RBY anchor | Contextual or language-specific extraction reviewed by a maintainer; text still comes from PokeCorpus. | `config/rby/semantic_anchor_decisions.json` |
 | Human-reviewed Gold pointer | Ambiguous ROM pointer resolved to a reviewed PokeCorpus qid. | `config/gs/pointer_decisions.json` |
+| Human Gold/Silver Chinese source | Exact label/index or unique-English import from TomJinW's pinned workbooks and description tables; missing rows remain empty. | `pipeline/zh_hans.py`, `config/pipeline.toml` |
+| Human-reviewed Gold/Silver Chinese alignment | A US-ROM line and a human Chinese workbook row describe the same labeled event but their English reference wording differs; the reviewed qid-to-label decision reuses the workbook translation. | `config/gs/zh_hans_dialogue_decisions.json` |
+| Contextual Gold/Silver dialogue translation | A ROM pointer has no compatible human-source row and is translated from its concrete callsite and neighboring UI. | `overrides/<language>/gs/dialogue.json` |
 | Reviewed placeholder exception | Official localized wording legitimately adds or omits a runtime value such as the player name or an item quantity. This records no translated text and does not disable the audit; each exception is scoped to a language, ROM pointer, corpus QID, and exact audit message. | `config/gs/placeholder_decisions.json` |
 | Manual corpus correction | A maintainer corrects one selected-language corpus translation without changing the upstream corpus. Entries are indexed by qid. | `overrides/<language>/rby/corpus.json` |
 | Manual translation — engine contract gap | PokeCorpus has the text, but Gen1Recomp merges contexts or hides required parameters. | `overrides/<language>/{rby,gs}/engine.json`, `reason: "engine-contract-gap"` |
@@ -322,6 +350,7 @@ fully translated.
 | Corpus model | `corpus.py`, `model.py`, `align.py`, `worksheet.py`, `tokens.py` | Parse parallel corpora, align qids and preserve control-token contracts. |
 | RBY generation | `join.py`, `generate.py`, `literals.py`, `yellow.py`, `yellow_audit.py`, `mod.py` | Join Red/Blue catalogs, build the Yellow layer and emit the universal mod. |
 | Gold and Silver generation | `gs_text.py`, `gs_join.py`, `gs_index_join.py`, `gs_engine.py`, `gs_mod.py` | Join GoldSilver to pointer/index catalogs, engine strings and the Gen 2 artifact. |
+| Simplified Chinese source | `zh_hans.py` | Materialize a private PokeCorpus-compatible target from pinned human translation sources. |
 | Engine strings | `engine.py`, `engine_scope.py` | Match the versioned engine catalog and classify production callsites. |
 | Validation and audits | `validate.py`, `disassembly_audit.py`, `engine_backlog.py` | Enforce release gates and produce private diagnostic reports. |
 
@@ -399,7 +428,18 @@ archive before upload.
 - [Gen1Recomp](https://github.com/bryanthaboi/gen1recomp) by [bryanthaboi](https://github.com/bryanthaboi), the native Lua / LÖVE2D recreation.
 - [PokéCorpus](https://github.com/abcboy101/poke-corpus) by [abcboy101](https://github.com/abcboy101), the multilingual translation corpus.
 - [pokemon-font](https://github.com/cooljeanius/pokemon-font) v1.8.2, the Pokemon Font clone by Superpencil, sourced from the fork maintained by [cooljeanius](https://github.com/cooljeanius), available as the optional Latin profile.
-- [Fusion Pixel Font](https://github.com/TakWolf/fusion-pixel-font) by [TakWolf](https://github.com/TakWolf), used by the recommended Latin profile, the Japanese profile, and the Korean profile (Gold and Silver only).
+- [Fusion Pixel Font](https://github.com/TakWolf/fusion-pixel-font) by [TakWolf](https://github.com/TakWolf), used by the recommended Latin profile, the Japanese profile, and the Korean and Simplified Chinese profiles (Gold and Silver only).
+- [pokegoldCHS](https://github.com/TomJinW/pokegoldCHS), [PokeGSC_SharedXLSXCN](https://github.com/TomJinW/PokeGSC_SharedXLSXCN), and the archived [PKMN_GSCHS](https://github.com/TomJinW/PKMN_GSCHS) by TomJinW and contributors, used as the human Simplified Chinese Gold/Silver text sources.
+
+The three Chinese source repositories do not currently include an explicit
+license file. Their full prose is therefore downloaded only into the ignored
+private cache and is not copied into this repository. Before redistributing a
+generated Chinese mod, obtain or verify the permissions required for those
+translations; attribution alone is not a substitute for permission.
+
+The remaining Simplified Chinese engine-only strings are tracked in
+[`docs/zh-Hans-engine-backlog.md`](docs/zh-Hans-engine-backlog.md); this list
+must not be completed with machine translation.
 
 ## Contributors ✨
 

@@ -36,12 +36,43 @@ _KNOWN_LITERAL_TOKENS = known_literal_tokens()
 GS_POINTER_DECISIONS_SCHEMA = "gen1recomp-translation-mods/gs-pointer-decisions"
 GS_PLACEHOLDER_DECISIONS_SCHEMA = "gen1recomp-translation-mods/gs-placeholder-decisions"
 GOLD_SILVER_POINTER_ALIASES_SCHEMA = "gen1recomp-translation-mods/gold-silver-pointer-aliases"
+GS_DIALOGUE_OVERRIDES_SCHEMA = "gen1recomp-translation-mods/gs-dialogue-overrides"
 
 
 @dataclass(frozen=True)
 class GsPlaceholderDecision:
     qid: str
     errors: frozenset[str]
+
+
+def load_gs_dialogue_overrides(
+    language: str,
+    path: str | Path | None = None,
+) -> dict[str, str]:
+    """Load language-scoped pointer prose absent from the human corpus."""
+    if path is None:
+        path = Path(__file__).resolve().parents[1] / "overrides" / language / "gs" / "dialogue.json"
+    path = Path(path)
+    if not path.is_file():
+        return {}
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ValueError(f"invalid Gold dialogue overrides JSON: {path}") from exc
+    if not isinstance(data, dict) or data.get("schema") != GS_DIALOGUE_OVERRIDES_SCHEMA:
+        raise ValueError("unsupported Gold dialogue overrides schema")
+    if data.get("version") != 1 or not isinstance(data.get("entries"), dict):
+        raise ValueError("Gold dialogue overrides require version 1 entries")
+    result: dict[str, str] = {}
+    for pointer, row in data["entries"].items():
+        if (not re.fullmatch(r"[0-7][0-9a-f]:[0-7][0-9a-f]{3}", pointer) or
+                not isinstance(row, dict) or set(row) != {"override", "reason", "provenance"} or
+                not isinstance(row.get("override"), str) or not row["override"].strip() or
+                row.get("reason") != "manual-context-translation" or
+                not isinstance(row.get("provenance"), str) or not row["provenance"].strip()):
+            raise ValueError(f"invalid Gold dialogue override for {language}:{pointer}")
+        result[pointer] = row["override"]
+    return result
 
 
 def load_gs_pointer_decisions(path: str | Path | None = None) -> dict[str, str]:
@@ -253,16 +284,20 @@ def join_gs_pointers(
             if row is None:
                 raise ValueError(f"unknown Gold pointer decision qid {qid!r} for {pointer!r}")
             source, target = row
-            if normalise(source) != norm:
-                raise ValueError(
-                    f"Gold pointer decision source mismatch for {pointer!r}: {qid!r}"
-                )
             translation = corpus_to_engine(target, bare_dynamic_tokens=True)
-            if not target.strip() or not translation:
-                raise ValueError(f"empty Gold pointer decision target for {pointer!r}: {qid!r}")
-            entries.append(GsJoinEntry(pointer, label, english, translation, REVIEWED_QID, qid))
-            stats["reviewed_qid"] += 1
-            continue
+            # A partial target corpus may legitimately leave a reviewed qid
+            # untranslated. In that case the decision has nothing to apply:
+            # continue through the ordinary conservative join and eventually
+            # retain English, rather than turning one missing language row
+            # into a build-wide failure.
+            if target.strip() and translation:
+                if normalise(source) != norm:
+                    raise ValueError(
+                        f"Gold pointer decision source mismatch for {pointer!r}: {qid!r}"
+                    )
+                entries.append(GsJoinEntry(pointer, label, english, translation, REVIEWED_QID, qid))
+                stats["reviewed_qid"] += 1
+                continue
 
         if not norm:
             entries.append(GsJoinEntry(pointer, label, english, None, MARKUP_ONLY))

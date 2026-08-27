@@ -118,9 +118,10 @@ class BuilderTests(unittest.TestCase):
     def test_gui_language_and_coverage_helpers(self):
         self.assertEqual(language_code("French (fr)"), "fr")
         self.assertEqual(language_code("ja-Hrkt"), "ja-Hrkt")
-        self.assertEqual(builder.languages_for_generation(1)[-1][0], "ja-Hrkt")
-        self.assertEqual(builder.languages_for_generation(2)[-1][0], "ko")
+        self.assertEqual(builder.languages_for_generation(1)[-1][0], "zh-Hans")
+        self.assertEqual(builder.languages_for_generation(2)[-1][0], "zh-Hans")
         self.assertEqual(language_code("Korean (ko)", 2), "ko")
+        self.assertEqual(language_code("Simplified Chinese (zh-Hans)", 2), "zh-Hans")
         with tempfile.TemporaryDirectory() as directory:
             report = Path(directory) / "coverage.json"
             report.write_text(json.dumps({"rom": {"translated": 2, "total": 4, "percent": 50}, "engine": {"translated": 1, "total": 2, "percent": 50}, "engine_rby": {"translated": 3, "total": 4, "percent": 75}}), encoding="utf-8")
@@ -201,7 +202,15 @@ class BuilderTests(unittest.TestCase):
         self.assertEqual(builder._prompt_font_profile("ko", lambda _: self.fail("Pokemon must not be offered")), "fusion")
         self.assertEqual(available_font_profiles("ko"), ("fusion",))
         self.assertEqual(available_font_profiles("ja-Hrkt"), ("fusion",))
+        self.assertEqual(available_font_profiles("zh-Hans"), ("fusion",))
         self.assertEqual(available_font_profiles("fr"), ("fusion", "pokemon"))
+
+    def test_cli_and_gui_lock_simplified_chinese_to_fusion_font(self):
+        self.assertEqual(
+            builder._prompt_font_profile("zh-Hans", lambda _: self.fail("Pokemon must not be offered")),
+            "fusion",
+        )
+        self.assertIn("10px", font_profile_label("fusion", "zh-Hans"))
 
     def test_release_collections_are_derived_from_game_specs(self):
         self.assertEqual(release_profile("rby").corpus_collections, ("RedBlue", "Yellow"))
@@ -236,6 +245,39 @@ class BuilderTests(unittest.TestCase):
                 self.assertEqual(inputs.language, "ko")
                 with self.assertRaisesRegex(ValueError, "Pokemon Font"):
                     validate_inputs(2, {"gs": gold}, "ko", root / "out", "pokemon")
+
+    def test_simplified_chinese_uses_fusion_and_rejects_pokemon_font(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            gold = root / "gold.gbc"
+            gold.write_bytes(b"gold")
+            with patch.object(builder, "verify_gs_rom"):
+                inputs = validate_inputs(2, {"gs": gold}, "zh-Hans", root / "out", "fusion")
+                self.assertEqual(inputs.language, "zh-Hans")
+                with self.assertRaisesRegex(ValueError, "Pokemon Font"):
+                    validate_inputs(2, {"gs": gold}, "zh-Hans", root / "out", "pokemon")
+
+    def test_simplified_chinese_dependency_flow_prepares_pinned_human_corpus(self):
+        with tempfile.TemporaryDirectory() as directory, patch(
+            "pipeline.builder._ensure_dependency"
+        ), patch(
+            "pipeline.builder._font_source", return_value=Path(directory) / "font"
+        ), patch(
+            "pipeline.zh_hans.prepare_zh_hans_corpus"
+        ) as prepare_chinese:
+            workspace = Path(directory)
+            config = {"gen1recomp": {}, "corpus": {}}
+            builder.prepare_dependencies(
+                workspace,
+                config,
+                corpus_collection="GoldSilver",
+                font_profile="fusion",
+                language="zh-Hans",
+            )
+        prepare_chinese.assert_called_once_with(
+            workspace, config, workspace / "dependencies" / "poke-corpus",
+        )
+
     def test_absent_rom_path_config_is_empty(self):
         with tempfile.TemporaryDirectory() as directory:
             paths = load_rom_paths(Path(directory) / "rom_paths.toml")
@@ -645,6 +687,14 @@ class BuilderTests(unittest.TestCase):
                 output.writestr("translation-worksheet/dialogue.txt", "private")
             with self.assertRaises(builder.BuildError):
                 builder.inspect_archive(archive)
+
+    def test_archive_scan_accepts_public_translation_source_notice(self):
+        with tempfile.TemporaryDirectory() as directory:
+            archive = Path(directory) / "documented.zip"
+            with zipfile.ZipFile(archive, "w") as output:
+                output.writestr("manifest.json", "{}")
+                output.writestr("TRANSLATION_SOURCE.md", "Pinned human translation sources.")
+            builder.inspect_archive(archive)
 
     def test_archive_scan_rejects_path_traversal(self):
         with tempfile.TemporaryDirectory() as directory:

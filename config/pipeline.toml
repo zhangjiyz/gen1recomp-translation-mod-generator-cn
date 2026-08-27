@@ -32,6 +32,72 @@ target_lang = "fr"
 "corpus/GoldSilver/ja-Hrkt_msg.txt" = "7fd5a33ff3b83d63c354271c67b6557a476aed8b3875bf2aaf012cacf55b9612"
 "corpus/GoldSilver/ko_msg.txt" = "05c2d2d1cbabfd3de04106c82580fe3fa090e83d0f09a39df5dd359f195d0f1d"
 
+# Human Simplified Chinese sources. Their repositories do not currently
+# all use human translation tables. The Gen 1 projects declare CC BY-NC-SA
+# terms for sourced wiki prose; the Gen 2 repositories do not publish an
+# explicit repository-wide license. Source prose is therefore fetched into
+# the private cache at build time and is not copied into this repository. The
+# importers use exact labels/indices/source strings and leave unmapped rows
+# empty.
+[chinese_sources.current_red_blue]
+source = "https://github.com/TomJinW/pokeredCHS"
+revision = "349ac93ba359306fc4f813b789d070f87dbcfc9b"
+archive_base_url = "https://raw.githubusercontent.com/TomJinW/pokeredCHS/349ac93ba359306fc4f813b789d070f87dbcfc9b"
+
+[chinese_sources.current_red_blue.archive_files]
+"src/xlsx/buildingsA.xlsx" = "db898d5f60b693bfa93d3ab37e162fb4e7e297805802a6cb85ccd2e26fcc74d0"
+"src/xlsx/buildingsB.xlsx" = "e93c580019491517496dd2de331f7b4e7dda26e5f1f286611f8e51f69266ebfa"
+"src/xlsx/core.xlsx" = "2286f06d9e71689f71f4bbb33d5b905a0d38c871204dd8175dc676392be2fb83"
+"src/xlsx/data.xlsx" = "ebf2ba6ae3479c04e7eed85c896dc9baff7097c9025397d1fca975bd54d3b41e"
+"src/xlsx/dex.xlsx" = "7e416a3b955a6a159c42bd6d2804cf45af12ae2e60db0c419e580afb52a28bd4"
+"src/xlsx/dexEntry.xlsx" = "19a242dea5ad816815838602456868a3320650d21db66d2db0c30b6e21b7dc70"
+"src/xlsx/indoor.xlsx" = "1aaa5488d3e9e00c4a14a4201b600cae897d720e294e47a8bc76fa4225e7c306"
+"src/xlsx/outdoor.xlsx" = "d4c96a8f4147ddb6e385dd3477688b78c4dbf17e76c452485bbfce853940424f"
+"src/xlsx/routes.xlsx" = "620b9c1709ef98becbd894cc152426b740d489bbac766c420e29c78152d5e472"
+
+[chinese_sources.current_yellow]
+source = "https://github.com/TomJinW/pokeyellowCHS"
+revision = "d3a076d3b8549700dddc580b91ff9df5e9536747"
+archive_base_url = "https://raw.githubusercontent.com/TomJinW/pokeyellowCHS/d3a076d3b8549700dddc580b91ff9df5e9536747"
+
+[chinese_sources.current_yellow.archive_files]
+"src/xlsx/buildingsA.xlsx" = "7a0bec58fab8033d66363d4515ed7d57dfef49aaaf157a8b6833afb54fe55500"
+"src/xlsx/buildingsB.xlsx" = "2900a3868ccb8f60a125336ae1bbecb0ef8bc22e7729d1ac22e8233b377dd302"
+"src/xlsx/core.xlsx" = "ef07e323907165094457beeec48277032b3e8ea36fcfa4584dad441f6d238b5c"
+"src/xlsx/data.xlsx" = "7a5305551baf7b3b4c7a942dff20afcc8d61843b10ce1c8c3449f8a2442e6cbc"
+"src/xlsx/dex.xlsx" = "b9756a6b6ed348348c702483857028fe91dd5e4a91beafc7637797a439a533ad"
+"src/xlsx/dexEntry.xlsx" = "ab99a68c6ad135676b38d55b02307ca1424fc9552de19c70e672328ac29fc4e7"
+"src/xlsx/indoor.xlsx" = "06378f912e85627883bf7c93675fb47d67c33499e70fec1a645f46a12d24ba1c"
+"src/xlsx/outdoor.xlsx" = "2737d7f3634f932d7902f361402cece85eb91857913438f681480122057f9834"
+"src/xlsx/ratings.xlsx" = "8f7fe789de38e1a48edf8b2a7e4239fd6cc2647eb4303dedaddac8c11edf9fbf"
+"src/xlsx/routes.xlsx" = "b77f0bad1bbe23de5a6bb4645383fa4d10726ed6f07e7f436710d5d7d42bface"
+
+[chinese_sources.shared_text]
+source = "https://github.com/TomJinW/PokeGSC_SharedXLSXCN"
+revision = "df11834308d89ce6473d4b76c73c3ad11fa2bcd8"
+archive_base_url = "https://raw.githubusercontent.com/TomJinW/PokeGSC_SharedXLSXCN/df11834308d89ce6473d4b76c73c3ad11fa2bcd8"
+
+[chinese_sources.shared_text.archive_files]
+"text.xlsx" = "c565f99c8323aae1ae23b4165bfabcedd68dde929c5975db6dbe1855fc259a55"
+
+[chinese_sources.current_gold_silver]
+source = "https://github.com/TomJinW/pokegoldCHS"
+revision = "c6f310d7c08feb9582798138893173c290b91f1d"
+archive_base_url = "https://raw.githubusercontent.com/TomJinW/pokegoldCHS/c6f310d7c08feb9582798138893173c290b91f1d"
+
+[chinese_sources.current_gold_silver.archive_files]
+"src/xlsx/data.xlsx" = "c4f0b473bc710fde642061709f2bf565dbbb48af085bb19638c3e17e2fea9f86"
+"src/xlsx/dex.xlsx" = "db51333aa403f6344f417f67dc3fd60529953ec1ca057f23fbed51772099e5d3"
+
+[chinese_sources.legacy_descriptions]
+source = "https://github.com/TomJinW/PKMN_GSCHS"
+revision = "c3947b83c6c66a015103e1bc08bbca7f2a862d3b"
+archive_base_url = "https://raw.githubusercontent.com/TomJinW/PKMN_GSCHS/c3947b83c6c66a015103e1bc08bbca7f2a862d3b"
+
+[chinese_sources.legacy_descriptions.archive_files]
+"02_Text/ItemDescription.TXT" = "11c52b7fd712e98e2d368966a23ab8e4ff41bc271d9120ccf0b69cf55af37fcc"
+"02_Text/MoveDescription.50.TXT" = "678c183dafb447611dee5160772e76d632c1b6e8f44ccfdd9b716a123bc3faf5"
+
 [gen1recomp]
 # Immutable engine source used by the interactive builder and Modkit.
 # Pinned at v0.2.24, the upstream release used to validate and package the

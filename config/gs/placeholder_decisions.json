@@ -66,6 +66,57 @@
         "reason": "The official Japanese defeat text does not address the player by name."
       }
     },
+    "zh-Hans": {
+      "41:4ce2": {
+        "qid": "gs.mom.MomYouveSavedText",
+        "errors": [
+          "unexpected placeholder {PLAYER} x1"
+        ],
+        "reason": "The reviewed human Chinese text follows the Japanese wording and addresses the player by name."
+      },
+      "59:5c37": {
+        "qid": "gs.OaksLab.OakYesKantoBadgesText",
+        "errors": [
+          "unexpected placeholder {PLAYER} x1"
+        ],
+        "reason": "The reviewed human Chinese text follows the Japanese wording and addresses the player twice."
+      },
+      "59:5d54": {
+        "qid": "gs.OaksLab.OaksAssistant2Text",
+        "errors": [
+          "unexpected placeholder {PLAYER} x1"
+        ],
+        "reason": "The reviewed human Chinese text follows the Japanese wording and addresses the player by name."
+      },
+      "5a:4ddd": {
+        "qid": "gs.WillsRoom.WillScript_WillBeforeText",
+        "errors": [
+          "missing placeholder {PLAYER} x1"
+        ],
+        "reason": "The reviewed human Chinese introduction addresses the player without inserting the player name."
+      },
+      "5a:4ef0": {
+        "qid": "gs.WillsRoom.WillScript_WillDefeatText",
+        "errors": [
+          "missing placeholder {PLAYER} x1"
+        ],
+        "reason": "The reviewed human Chinese defeat text addresses the player without inserting the player name."
+      },
+      "5b:4274": {
+        "qid": "gs.OlivinePort.OlivinePortFlashTicketText",
+        "errors": [
+          "missing placeholder {PLAYER} x1"
+        ],
+        "reason": "The reviewed human Chinese ticket text uses an implicit subject instead of the player name."
+      },
+      "5b:472f": {
+        "qid": "gs.VermilionPort.VermilionPortSSTicketText",
+        "errors": [
+          "missing placeholder {PLAYER} x1"
+        ],
+        "reason": "The reviewed human Chinese ticket text uses an implicit subject instead of the player name."
+      }
+    },
     "ko": {
       "41:4ce2": {
         "qid": "gs.mom.MomYouveSavedText",

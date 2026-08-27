@@ -17,6 +17,7 @@ class PixelFontTests(unittest.TestCase):
             "fonts/pokemon-font.ttf",
             "LICENSE.md",
             "fusion-pixel-8px-proportional-ja.ttf",
+            "fusion-pixel-10px-proportional-zh_hans.ttf",
             "OFL.txt",
             "LICENSES/boutique-bitmap-9x9/OFL.txt",
             "LICENSES/ark-pixel/OFL.txt",
@@ -74,6 +75,20 @@ class PixelFontTests(unittest.TestCase):
             self.assertFalse((mod / "assets" / "font").exists())
             self.assertFalse((mod / "lang" / "font.lua").exists())
             self.assertFalse((mod / "lang" / "charmap.lua").exists())
+
+    def test_simplified_chinese_uses_bundled_fusion_pixel_font(self):
+        with tempfile.TemporaryDirectory() as directory:
+            mod = generate_mod(
+                [], Path(directory) / "mod", language="zh-Hans",
+                font_source=self._font_source(Path(directory)),
+            )
+            main = (mod / "main.lua").read_text(encoding="utf-8")
+            self.assertIn(
+                'mod.assets:path("fonts/fusion-pixel-10px-proportional-zh_hans.ttf"), size = 10',
+                main,
+            )
+            self.assertTrue((mod / "fonts/fusion-pixel-10px-proportional-zh_hans.ttf").is_file())
+            self.assertFalse((mod / "fonts/fusion-pixel-10px-proportional-latin.ttf").exists())
 
     def test_incremental_build_removes_stale_font_variant_and_licenses(self):
         with tempfile.TemporaryDirectory() as directory:

@@ -93,7 +93,7 @@
     "MOVE": {"qid": "gs.stats_screen.LoadGreenPage.Move", "extraction": {"kind": "full"}},
     "OK, I'll take care\nof your money.\u000c…": {"qid": "gs.common_1.MomLeavingText2", "extraction": {"kind": "full"}, "source_aliases": ["OK, I'll take care\nof your money.\u000c………………"]},
     "Oh, make it forget\n{STRBUF}?": {"qid": "gs.common_3.AskDeleteMoveText", "extraction": {"kind": "full"}},
-    "Please remove the\nMAIL.": {"qid": "gs.common_2.PCMonHoldingMailText", "extraction": {"kind": "parts", "parts": [2, 3], "separators": ["\n"], "targets": {"de": {"kind": "parts", "parts": [3, 4], "separators": ["\n"]}, "ja-Hrkt": {"kind": "segment", "index": 2}, "ko": {"kind": "segment", "index": 2}}}},
+    "Please remove the\nMAIL.": {"qid": "gs.common_2.PCMonHoldingMailText", "extraction": {"kind": "parts", "parts": [2, 3], "separators": ["\n"], "targets": {"de": {"kind": "parts", "parts": [3, 4], "separators": ["\n"]}, "ja-Hrkt": {"kind": "segment", "index": 2}, "ko": {"kind": "segment", "index": 2}, "zh-Hans": {"kind": "segment", "index": 2}}}},
     "Take good care of\n{STRBUF}.": {"qid": "gs.common_1.TakeGoodCareOfMonText", "extraction": {"kind": "full"}},
     "The score was\n%d points!": {"qid": "gs.common_2.ContestJudging_SecondPlaceScoreText", "extraction": {"kind": "full"}},
     "There is a POKéMON\nholding MAIL.": {"qid": "gs.common_2.PCMonHoldingMailText", "extraction": {"kind": "parts", "parts": [0, 1], "separators": ["\n"], "targets": {"de": {"kind": "parts", "parts": [0, 1, 2], "separators": ["\n", "\n"]}}}},
@@ -123,7 +123,7 @@
     },
     "Zzz... Hm? Wha...?\nYou woke me up!\u000cWill you check the\nclock for me?": {
       "qid": "gs.common_1.OakTimeWokeUpText",
-      "extraction": {"kind": "parts", "parts": [2, 3, 4, 5], "separators": ["\n", "\u000c", "\n"], "targets": {"ja-Hrkt": {"kind": "parts", "parts": [2, 3, 4], "separators": ["\n", "\u000b"]}, "ko": {"kind": "parts", "parts": [2, 3, 4], "separators": ["\n", "\u000b"]}}},
+      "extraction": {"kind": "parts", "parts": [2, 3, 4, 5], "separators": ["\n", "\u000c", "\n"], "targets": {"ja-Hrkt": {"kind": "parts", "parts": [2, 3, 4], "separators": ["\n", "\u000b"]}, "ko": {"kind": "parts", "parts": [2, 3, 4], "separators": ["\n", "\u000b"]}, "zh-Hans": {"kind": "parts", "parts": [2, 3, 4], "separators": ["\n", "\u000b"]}}},
       "source_aliases": ["Zzz… Hm? Wha…?\nYou woke me up!\u000cWill you check the\nclock for me?"]
     },
     "completed the": {"qid": "gs.diploma.PlaceDiplomaOnScreen.Certification", "extraction": {"kind": "segment", "index": 2, "targets": {"de": {"kind": "span", "index": 0, "count": 1}}}},

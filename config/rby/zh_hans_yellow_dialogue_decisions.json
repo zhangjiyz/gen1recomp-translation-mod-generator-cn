@@ -1,0 +1,62 @@
+{
+  "schema": "gen1recomp-translation-mods/zh-hans-rby-dialogue-decisions",
+  "version": 1,
+  "entries": {
+    "rb.GameCorner.GameCornerClerk2Received20CoinsText": {
+      "source_label": "Received20CoinsText",
+      "reason": "The current clerk gift symbol is the same 20-coin event translated under the older source label."
+    },
+    "rb.GameCorner.GameCornerGentlemanReceived20CoinsText": {
+      "source_label": "CeladonGameCornerText_48e8d",
+      "reason": "The current gentleman gift symbol is the same 20-coin event translated under the older source label."
+    },
+    "rb.Route24_2.Route24CooltrainerF2AfterBattleText": {
+      "source_label": "Route24AfterBattleText2",
+      "reason": "The source repeats this exact post-battle sentence for the Nugget Bridge trainers; the reviewed human wording is equivalent for this trainer."
+    },
+    "rb.Route24_2.Route24CooltrainerM3AfterBattleText": {
+      "source_label": "Route24AfterBattleText2",
+      "reason": "The source repeats this exact post-battle sentence for the Nugget Bridge trainers; the reviewed human wording is equivalent for this trainer."
+    },
+    "rb.Route24_2.Route24Youngster1AfterBattleText": {
+      "source_label": "Route24AfterBattleText2",
+      "reason": "The source repeats this exact post-battle sentence for the Nugget Bridge trainers; the reviewed human wording is equivalent for this trainer."
+    },
+    "rb.Route24_2.Route24Youngster2AfterBattleText": {
+      "source_label": "Route24AfterBattleText2",
+      "reason": "The source repeats this exact post-battle sentence for the Nugget Bridge trainers; the reviewed human wording is equivalent for this trainer."
+    },
+    "y.Route24.Route24CooltrainerF2AfterBattleText": {
+      "source_label": "Route24AfterBattleText2",
+      "reason": "The source repeats this exact post-battle sentence for the Nugget Bridge trainers; the reviewed human wording is equivalent for this trainer."
+    },
+    "y.Route24.Route24CooltrainerM3AfterBattleText": {
+      "source_label": "Route24AfterBattleText2",
+      "reason": "The source repeats this exact post-battle sentence for the Nugget Bridge trainers; the reviewed human wording is equivalent for this trainer."
+    },
+    "y.Route24.Route24Youngster1AfterBattleText": {
+      "source_label": "Route24AfterBattleText2",
+      "reason": "The source repeats this exact post-battle sentence for the Nugget Bridge trainers; the reviewed human wording is equivalent for this trainer."
+    },
+    "y.Route24.Route24Youngster2AfterBattleText": {
+      "source_label": "Route24AfterBattleText2",
+      "reason": "The source repeats this exact post-battle sentence for the Nugget Bridge trainers; the reviewed human wording is equivalent for this trainer."
+    },
+    "y.GameCorner.GameCornerFishingGuru2Received20CoinsText": {
+      "source_label": "CeladonGameCornerText_48e8d",
+      "reason": "The Yellow symbol is the same fishing-guru 20-coin gift event retained under the older fan-source label."
+    },
+    "y.GameCorner.GameCornerMiddleAgedMan2Received20CoinsText": {
+      "source_label": "Received20CoinsText",
+      "reason": "The Yellow symbol is the same middle-aged-man 20-coin gift event retained under the older fan-source label."
+    },
+    "y.RocketHideoutB4F.RocketHideoutB4FRocketEndBattleText": {
+      "source_label": "RocketHideout4EndBattleText4",
+      "reason": "The current Yellow trainer end-battle symbol corresponds to the fourth Rocket Hideout B4F defeat row in the human source."
+    },
+    "y.SafariZoneGate.SafariZoneGateSafariZoneWorker1ThatllBe500PleaseText": {
+      "source_label": "SafariZoneEntranceText_9e747",
+      "reason": "The current Yellow Safari gate price-buffer symbol corresponds to the older human-source entrance row; current dynamic token arguments are retained."
+    }
+  }
+}

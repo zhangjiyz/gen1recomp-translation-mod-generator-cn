@@ -72,11 +72,14 @@ RELEASE_PROFILES: Mapping[str, ReleaseProfile] = {
 # this mapping here avoids a second, subtly different list in the GUI and CLI.
 COLLECTION_LANGUAGES: Mapping[str, tuple[tuple[str, str], ...]] = {
     "RedBlue": (("fr", "French"), ("de", "German"), ("es", "Spanish"),
-                ("it", "Italian"), ("ja-Hrkt", "Japanese")),
+                ("it", "Italian"), ("ja-Hrkt", "Japanese"),
+                ("zh-Hans", "Simplified Chinese")),
     "Yellow": (("fr", "French"), ("de", "German"), ("es", "Spanish"),
-               ("it", "Italian"), ("ja-Hrkt", "Japanese")),
+               ("it", "Italian"), ("ja-Hrkt", "Japanese"),
+               ("zh-Hans", "Simplified Chinese")),
     "GoldSilver": (("fr", "French"), ("de", "German"), ("es", "Spanish"),
-                   ("it", "Italian"), ("ja-Hrkt", "Japanese"), ("ko", "Korean")),
+                   ("it", "Italian"), ("ja-Hrkt", "Japanese"), ("ko", "Korean"),
+                   ("zh-Hans", "Simplified Chinese")),
 }
 
 

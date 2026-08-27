@@ -6,7 +6,7 @@ from pipeline.gs_text import GsTextRecord
 from pipeline.gs_join import (
     GsPlaceholderDecision, HARMLESS_AMBIGUOUS, MARKUP_ONLY, NO_MATCH, OVERRIDE, REVIEWED_QID,
     UNIQUE, UNRESOLVED, audit_join, gs_coverage_report, join_gs_pointers,
-    load_gs_placeholder_decisions, load_gs_pointer_decisions,
+    load_gs_dialogue_overrides, load_gs_placeholder_decisions, load_gs_pointer_decisions,
     load_gold_silver_pointer_aliases, read_corpus_rows, to_aligned_rows,
     unresolved_report,
 )
@@ -30,6 +30,18 @@ class ReadCorpusRowsTests(unittest.TestCase):
             (root / "fr_msg.txt").write_text("Bonjour\n", encoding="utf-8")
             with self.assertRaisesRegex(ValueError, "not parallel"):
                 read_corpus_rows(root)
+
+    def test_chinese_contextual_dialogue_overrides_include_reviewed_visible_text(self):
+        values = load_gs_dialogue_overrides("zh-Hans")
+        self.assertTrue({
+            "21:66db", "21:66eb", "4f:4255", "50:443b", "50:4574",
+            "50:45cd", "50:46f3", "54:4453", "54:44cc", "54:44fd",
+            "59:4c99", "59:4d8a", "59:4de3", "59:4e55", "59:5131",
+            "61:46a2", "65:57dd",
+        }.issubset(values))
+        self.assertEqual(values["21:66db"], "名人堂大师！")
+        self.assertTrue(values["21:66eb"].startswith("    "))
+        self.assertIn("出发吧", values["65:57dd"])
 
 
 class JoinGoldPointersTests(unittest.TestCase):
@@ -122,6 +134,17 @@ class JoinGoldPointersTests(unittest.TestCase):
                 records, [("gs.city.Other", "Other", "Autre")],
                 qid_decisions={"48:0001": "gs.city.Other"},
             )
+
+    def test_empty_reviewed_qid_target_falls_back_without_guessing(self):
+        records = [GsTextRecord("48:0001", "Original")]
+        entries, stats = join_gs_pointers(
+            records,
+            [("gs.city.Original", "Original", "")],
+            qid_decisions={"48:0001": "gs.city.Original"},
+        )
+        self.assertIsNone(entries[0].translation)
+        self.assertEqual(entries[0].provenance, NO_MATCH)
+        self.assertEqual(stats["reviewed_qid"], 0)
 
     def test_override_wins_over_everything_else(self):
         records = [GsTextRecord("45:0001", "What?!")]

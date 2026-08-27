@@ -15,7 +15,7 @@ from .gs_engine import match_gs_engine_strings
 from .gs_index_join import join_by_index, join_dex_entries, join_landmarks, parse_indexed_catalog
 from .gs_join import (
     GsJoinEntry, GsPlaceholderDecision, audit_join, gs_coverage_report,
-    join_gs_pointers, load_gs_placeholder_decisions,
+    join_gs_pointers, load_gs_dialogue_overrides, load_gs_placeholder_decisions,
     load_gs_pointer_decisions, load_gold_silver_pointer_aliases, read_corpus_rows,
 )
 from .gs_text import parse_gs_text_catalog
@@ -67,6 +67,21 @@ GS_CATALOG_HOOKS["ui_labels"] = None
 # QID/segment recipes in config/gs/literal_handlers.json; the runtime hook
 # below only changes labels already exposed by gen1recomp's public hooks.
 _GS_UI_HANDLER_PATH = Path(__file__).resolve().parents[1] / "config" / "gs" / "literal_handlers.json"
+_GS_UI_OVERRIDE_SCHEMA = "gen1recomp-translation-mods/gs-ui-label-overrides"
+_GS_UI_OVERRIDE_ROOT = Path(__file__).resolve().parents[1] / "overrides"
+
+_ZH_HANS_SOURCE_NOTICE = """# Simplified Chinese translation sources
+
+This mod imports human fan translations from the following pinned revisions; it does not use machine translation:
+
+- [pokegoldCHS](https://github.com/TomJinW/pokegoldCHS), commit `c6f310d7c08feb9582798138893173c290b91f1d`
+- [PokeGSC_SharedXLSXCN](https://github.com/TomJinW/PokeGSC_SharedXLSXCN), commit `df11834308d89ce6473d4b76c73c3ad11fa2bcd8`
+- [PKMN_GSCHS](https://github.com/TomJinW/PKMN_GSCHS), commit `c3947b83c6c66a015103e1bc08bbca7f2a862d3b`
+
+No explicit license file was found in these source repositories when this importer was prepared. The commit pins and hashes make the imported text reproducible, but do not grant redistribution rights. Obtain permission from the respective translation authors before publicly redistributing a package that contains their text.
+
+Unmatched or ambiguous text deliberately remains in English for later human review.
+"""
 
 
 def _load_gs_ui_handlers() -> dict[str, tuple[str, int, int | None]]:
@@ -88,7 +103,33 @@ def _load_gs_ui_handlers() -> dict[str, tuple[str, int, int | None]]:
     return result
 
 
-def _gs_ui_labels(corpus_rows: list[tuple[str, str, str]]) -> dict[str, str]:
+def load_gs_ui_label_overrides(language: str) -> dict[str, str]:
+    """Load reviewed targets for UI rows left blank by the source corpus."""
+    language = canonical_language(language)
+    path = _GS_UI_OVERRIDE_ROOT / language / "gs" / "ui_labels.json"
+    if not path.is_file():
+        return {}
+    data = json.loads(path.read_text(encoding="utf-8"))
+    if (data.get("schema") != _GS_UI_OVERRIDE_SCHEMA or data.get("version") != 1
+            or not isinstance(data.get("entries"), dict)):
+        raise ValueError(f"unsupported Gold UI-label override schema: {path}")
+    known = _load_gs_ui_handlers()
+    result: dict[str, str] = {}
+    for source, row in data["entries"].items():
+        if source not in known:
+            raise ValueError(f"Gold UI-label override has unknown source: {source!r}")
+        if (not isinstance(row, dict) or not isinstance(row.get("override"), str)
+                or not row["override"] or not isinstance(row.get("reason"), str)
+                or not row["reason"].strip() or not isinstance(row.get("provenance"), str)
+                or not row["provenance"].strip()):
+            raise ValueError(f"invalid Gold UI-label override for {source!r}")
+        result[source] = row["override"]
+    return result
+
+
+def _gs_ui_labels(
+    corpus_rows: list[tuple[str, str, str]], language: str | None = None,
+) -> dict[str, str]:
     """Return corpus-backed labels used by already exposed Gold menu hooks."""
     rows = {qid: target for qid, _english, target in corpus_rows}
     result: dict[str, str] = {}
@@ -113,9 +154,12 @@ def _gs_ui_labels(corpus_rows: list[tuple[str, str, str]]) -> dict[str, str]:
                 # would render as literal garbage, so normalize it here.
                 value = value.replace("<PKMN>", "<PK><MN>")
                 result[source] = value
+    if language is not None:
+        result.update(load_gs_ui_label_overrides(language))
     return result
 
 GS_OAK_SPEECH_CATALOG = "oak_speech"
+GS_OPENING_CLOCK_STRING = "Zzz... Hm? Wha...?\nYou woke me up!\fWill you check the\nclock for me?"
 GS_OAK_SPEECH_KEYS = frozenset({
     "_OakText1", "_OakText2", "_OakText4", "_OakText5", "_OakText6", "_OakText7",
 })
@@ -131,6 +175,7 @@ _OAK_SPEECH_REGISTRATION = '''  local oakSpeech = catalog("oak_speech")
 '''
 
 _UI_LABEL_REGISTRATION = '''  local uiLabels = catalog("ui_labels")
+  local unpackArgs = table.unpack or unpack
   local function localizeItems(_, items)
     for _, item in ipairs(items or {}) do
       if type(item) == "table" and type(item.label) == "string" then
@@ -163,8 +208,40 @@ _UI_LABEL_REGISTRATION = '''  local uiLabels = catalog("ui_labels")
       -- Public list hooks use (identity, game, items, ...).
       local items = args[3] or args[2] or args[1]
       if type(items) == "table" then localizeItems(nil, items) end
-      return nextFn(table.unpack(args))
+      return nextFn(unpackArgs(args))
     end)
+  end
+'''
+
+# Gold's naming screen resolves these labels through Strings, but its mail
+# composer still prints the cartridge's raw Latin-keyboard row.  Scope the
+# substitution to that screen so ordinary prose containing words such as END
+# can never be changed globally.
+_RAW_GEN2_NAMING_LABEL_REGISTRATION = '''  local rawNamingLabels = {}
+  local namingStrings = catalog("strings")
+  for _, key in ipairs({ "lower", "UPPER", "DEL", "END" }) do
+    local value = namingStrings[key]
+    if type(value) == "string" and value ~= "" and value ~= key then
+      rawNamingLabels[key] = value
+    end
+  end
+  if next(rawNamingLabels) then
+    local okMail, MailCompose = pcall(require, "src.ui.gen2.MailCompose")
+    local okChrome, Chrome = pcall(require, "src.ui.gen2.Chrome")
+    if okMail and type(MailCompose) == "table" and type(MailCompose.drawPanel) == "function"
+        and okChrome and type(Chrome) == "table" and type(Chrome.print) == "function" then
+      local originalMailDrawPanel = MailCompose.drawPanel
+      MailCompose.drawPanel = function(self, ...)
+        local originalPrint = Chrome.print
+        Chrome.print = function(text, tx, ty)
+          return originalPrint(rawNamingLabels[text] or text, tx, ty)
+        end
+        local ok, result = pcall(originalMailDrawPanel, self, ...)
+        Chrome.print = originalPrint
+        if not ok then error(result, 0) end
+        return result
+      end
+    end
   end
 '''
 
@@ -234,6 +311,8 @@ def generate_gs_mod(
         )
         if "ui_labels" in catalogs:
             catalog_registration += _UI_LABEL_REGISTRATION
+        if language == "zh-Hans" and "strings" in catalogs:
+            catalog_registration += _RAW_GEN2_NAMING_LABEL_REGISTRATION
         if GS_OAK_SPEECH_CATALOG in catalogs:
             catalog_registration += _OAK_SPEECH_REGISTRATION
     main_body = (
@@ -243,11 +322,25 @@ def generate_gs_mod(
     (destination / "main.lua").write_text(main_body, encoding="utf-8")
     install_font_assets(destination, language, font_source, font_profile)
 
+    source_notice = destination / "TRANSLATION_SOURCE.md"
+    if language == "zh-Hans":
+        source_notice.write_text(_ZH_HANS_SOURCE_NOTICE, encoding="utf-8")
+    else:
+        source_notice.unlink(missing_ok=True)
+
     display_name = target_name or f"{language} translation for Gold and Silver"
-    description = target_description or (
-        f"{display_name}, based mostly on PokeCorpus."
-        + ("" if catalogs else " Text is not wired up yet; this is a loadable skeleton.")
-    )
+    if target_description:
+        description = target_description
+    elif language == "zh-Hans":
+        description = (
+            "Simplified Chinese translation for Gold and Silver from pinned human "
+            "fan-translation sources; unmatched text remains English."
+        )
+    else:
+        description = (
+            f"{display_name}, based mostly on PokeCorpus."
+            + ("" if catalogs else " Text is not wired up yet; this is a loadable skeleton.")
+        )
     # "silver" alongside "gold": this mod is still built and extracted from a
     # Gold ROM only, but Gold and Silver share the same pokegold source tree
     # and near-identical dialogue text-table addresses (gen1recomp's own
@@ -262,9 +355,11 @@ def generate_gs_mod(
     manifest_body = {
         "id": mod_id, "name": display_name, "version": project_version(), "api": 2,
         "entry": "main.lua", "profile": "content", "games": ["gold", "silver"],
-        "game_version": ">=0.0.0-dev <1.0.0", "category": "LANGUAGE",
+        "game_version": ">=0.0.0-dev <2.0.0", "category": "LANGUAGE",
         "priority": TRANSLATION_MOD_PRIORITY, "dependencies": [], "optional_dependencies": [],
-        "conflicts": [], "permissions": [], "description": description,
+        "conflicts": [],
+        "permissions": ["engine_internals"] if language == "zh-Hans" else [],
+        "description": description,
     }
     (destination / "manifest.json").write_text(
         json.dumps(manifest_body, ensure_ascii=False, indent=2) + "\n", encoding="utf-8",
@@ -354,11 +449,23 @@ def _write_gate_expectations(mod_dir: Path, catalogs: dict[str, dict[str, str]])
         values = catalogs[name]
         if not isinstance(values, dict) or not values:
             raise BuildError(f"Gold registry gate expectation is empty: {name}")
-        key = sorted(values)[0]
+        # The opening clock prompt is the first player-visible Gen 2 engine
+        # string. Prefer it for the strings registry gate when the selected
+        # language supplies it, so a source-layout regression cannot pass by
+        # checking an unrelated alphabetically-first label instead.
+        key = (
+            GS_OPENING_CLOCK_STRING
+            if name == "strings" and GS_OPENING_CLOCK_STRING in values
+            else sorted(values)[0]
+        )
         value = values[key]
         if not isinstance(key, str) or not isinstance(value, str) or not value:
             raise BuildError(f"Gold registry gate expectation is malformed: {name}")
         expected[name] = {"id": key, "value": value}
+    ui_values = catalogs.get("ui_labels")
+    if isinstance(ui_values, dict) and ui_values:
+        ui_key = "Contains\nitems" if "Contains\nitems" in ui_values else sorted(ui_values)[0]
+        expected["ui_labels"] = {"id": ui_key, "value": ui_values[ui_key]}
     path = mod_dir.parent / f".{mod_dir.name}.registry-gate.json"
     path.write_text(json.dumps(expected, ensure_ascii=False, sort_keys=True), encoding="utf-8")
     return path
@@ -468,6 +575,7 @@ def run_gs_release_gates(
             "ignored_markup_only": coverage["ignored_markup_only"],
             **({"engine": coverage_summary("engine")} if "engine" in coverage else {}),
             **({"engine_gen2": coverage_summary("engine_gen2")} if "engine_gen2" in coverage else {}),
+            **({"ui_labels": coverage_summary("ui_labels")} if "ui_labels" in coverage else {}),
         },
         "checks": [
             {
@@ -549,6 +657,8 @@ def build_gs_dialogue_mod(
         gold_out_dir / "gs_text.tsv", gold_out_dir / "gs_labels.tsv",
     )
     corpus_rows = read_corpus_rows(corpus_dir, target_lang=language)
+    if overrides is None:
+        overrides = load_gs_dialogue_overrides(language)
     entries, stats = join_gs_pointers(
         records, corpus_rows, overrides=overrides,
         qid_decisions=load_gs_pointer_decisions(),
@@ -598,7 +708,15 @@ def build_gs_dialogue_mod(
         )
         extra_catalogs["strings"] = engine_values
         stats.update(engine_coverage)
-    extra_catalogs["ui_labels"] = _gs_ui_labels(corpus_rows)
+    extra_catalogs["ui_labels"] = _gs_ui_labels(corpus_rows, language)
+    ui_label_total = len(_load_gs_ui_handlers())
+    ui_label_translated = len(extra_catalogs["ui_labels"])
+    stats["ui_labels"] = {
+        "translated": ui_label_translated,
+        "total": ui_label_total,
+        "percent": round(100.0 * ui_label_translated / ui_label_total, 2)
+        if ui_label_total else 100.0,
+    }
     stats["index_catalogs"] = index_stats
     pointer_coverage = gs_coverage_report(entries)
     registry_translated = sum(int(item["translated"]) for item in index_stats.values())
@@ -623,6 +741,7 @@ def build_gs_dialogue_mod(
     for key in ("engine", "engine_gen2"):
         if key in stats:
             stats["coverage"][key] = stats[key]
+    stats["coverage"]["ui_labels"] = stats["ui_labels"]
     # Kept in-memory for the pre-publication registry gate; callers that
     # serialize stats can omit this private payload.
     stats["_gate_catalogs"] = extra_catalogs
@@ -716,6 +835,7 @@ def build_gs(
     for key, label in (
         ("rom", "Gold and Silver ROM aggregate"),
         ("engine_gen2", "Gold and Silver-related engine strings"),
+        ("ui_labels", "Gold and Silver hooked UI labels"),
         ("engine", "All engine strings"),
     ):
         section = gate_report["coverage"].get(key) or {}

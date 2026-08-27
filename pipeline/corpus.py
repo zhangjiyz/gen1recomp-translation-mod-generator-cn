@@ -16,7 +16,7 @@ from .model import CorpusRecord
 
 _TEXT_KEYS = ("text", "translation", "value", "line", "content", "string")
 _QID_KEYS = ("qid", "q_id", "id", "key", "label", "pointer", "address")
-_LANG_RE = re.compile(r"(?:^|[-_.])(en|eng|fr|fra|french|english|de|deu|german|es|spa|spanish|it|ita|italian|ja|ja-hrkt|jpn|japanese|ko|kor|korean)(?:$|[-_.])", re.I)
+_LANG_RE = re.compile(r"(?:^|[-_.])(en|eng|fr|fra|french|english|de|deu|german|es|spa|spanish|it|ita|italian|ja|ja-hrkt|jpn|japanese|ko|kor|korean|zh|zh-hans|zh-cn|chs|chinese)(?:$|[-_.])", re.I)
 _GAME_RE = re.compile(r"(?:^|[-_.])(red|blue|yellow|redblue)(?:$|[-_.])", re.I)
 _VERSION_SUFFIX = re.compile(r"\^(RG|R|G|B)(?=\.|$)")
 
@@ -32,6 +32,7 @@ def canonical_language(value: Any, default: str = "en") -> str:
     if value in {"it", "ita", "italian", "italiano"}: return "it"
     if value in {"ja", "jpn", "japanese", "ja-hrkt", "ja_hrkt", "ja.hrkt"}: return "ja-Hrkt"
     if value in {"ko", "kor", "korean", "한국어"}: return "ko"
+    if value in {"zh", "zho", "chi", "chinese", "zh-hans", "zh_hans", "zh.cn", "zh-cn", "chs", "简体中文", "中文"}: return "zh-Hans"
     if value: return str(value)
     return default
 

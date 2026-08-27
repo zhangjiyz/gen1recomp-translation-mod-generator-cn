@@ -11,7 +11,7 @@ from pipeline.builder import _which_luajit
 from pipeline.gs_join import GsJoinEntry, NO_MATCH, UNIQUE
 from pipeline.gs_mod import (
     attach_gs_validation, build_gs_dialogue_mod, gs_archive_name,
-    gs_mod_id, gs_oak_speech_catalog_from_join,
+    gs_mod_id, gs_oak_speech_catalog_from_join, GS_OPENING_CLOCK_STRING,
     gs_text_catalog_from_join, generate_gs_mod, package_gs_mod,
     run_gs_release_gates,
 )
@@ -56,6 +56,7 @@ class GenerateGsModTests(unittest.TestCase):
             self.assertEqual(manifest["games"], ["gold", "silver"])
             self.assertEqual(manifest["api"], 2)
             self.assertEqual(manifest["entry"], "main.lua")
+            self.assertEqual(manifest["game_version"], ">=0.0.0-dev <2.0.0")
             self.assertEqual(manifest["permissions"], [])
             self.assertIn("Gold", manifest["description"])
 
@@ -78,8 +79,65 @@ class GenerateGsModTests(unittest.TestCase):
             self.assertEqual(manifest["id"], "custom-id")
             self.assertEqual(manifest["description"], "Custom description.")
 
+    def test_zh_hans_records_human_sources_and_clears_notice_for_other_languages(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            destination = Path(tmp) / "mod"
+            mod_dir = generate_gs_mod(destination, language="zh-Hans")
+            notice_path = mod_dir / "TRANSLATION_SOURCE.md"
+            notice = notice_path.read_text(encoding="utf-8")
+            manifest = json.loads((mod_dir / "manifest.json").read_text(encoding="utf-8"))
+
+            self.assertIn("TomJinW", notice)
+            self.assertIn("c6f310d7c08feb9582798138893173c290b91f1d", notice)
+            self.assertIn("does not use machine translation", notice)
+            self.assertIn("human fan-translation", manifest["description"])
+            self.assertEqual(manifest["permissions"], ["engine_internals"])
+
+            generate_gs_mod(destination, language="fr")
+            self.assertFalse(notice_path.exists())
+
+    def test_strings_catalog_localizes_the_raw_mail_naming_row_in_screen_scope(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            mod_dir = generate_gs_mod(
+                Path(tmp) / "mod", language="zh-Hans",
+                extra_catalogs={"strings": {
+                    "lower": "小写", "UPPER": "大写", "DEL": "删除", "END": "完成",
+                }},
+            )
+            main = (mod_dir / "main.lua").read_text(encoding="utf-8")
+            self.assertIn('pcall(require, "src.ui.gen2.MailCompose")', main)
+            self.assertIn('rawNamingLabels[text] or text', main)
+            self.assertIn('Chrome.print = originalPrint', main)
+
+    def test_ui_label_hooks_support_luajit_51_unpack(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            mod_dir = generate_gs_mod(
+                Path(tmp) / "mod", language="zh-Hans",
+                extra_catalogs={"ui_labels": {"Contains\nitems": "装有\n道具"}},
+            )
+            main = (mod_dir / "main.lua").read_text(encoding="utf-8")
+            self.assertIn("local unpackArgs = table.unpack or unpack", main)
+            self.assertIn("nextFn(unpackArgs(args))", main)
+            self.assertNotIn("nextFn(table.unpack(args))", main)
+
 
 class GsReleaseGateFlowTests(unittest.TestCase):
+    def test_registry_gate_prefers_the_first_player_visible_clock_string(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            catalogs = {name: {"ID": "VALUE"} for name in (
+                "strings", "species_names", "species_kinds", "species_dex_text", "move_names",
+                "item_names", "trainer_class_names", "landmarks", "oak_speech",
+            )}
+            catalogs["strings"] = {
+                " ALPH RUINS STAMP": "阿露福纪念章",
+                GS_OPENING_CLOCK_STRING: "嗯，唔唔……",
+            }
+            expectations = _write_gate_expectations(root / "mod", catalogs)
+            body = json.loads(expectations.read_text(encoding="utf-8"))
+        self.assertEqual(body["strings"]["id"], GS_OPENING_CLOCK_STRING)
+        self.assertEqual(body["strings"]["value"], "嗯，唔唔……")
+
     def test_registry_expectations_reject_missing_or_empty_catalogs(self):
         with tempfile.TemporaryDirectory() as tmp:
             with self.assertRaisesRegex(RuntimeError, "incomplete"):
@@ -663,6 +721,13 @@ class GsUiLabelsTests(unittest.TestCase):
         labels = _gs_ui_labels(corpus_rows)
         self.assertEqual(labels["POKéMON\ndatabase"], "Index\nPOKéMON")
         self.assertEqual(labels["Contains\nitems"], "Contient\nobjets")
+
+    def test_zh_hans_ui_overrides_fill_blank_source_rows(self):
+        labels = _gs_ui_labels([], "zh-Hans")
+        self.assertEqual(labels["Contains\nitems"], "装有\n道具")
+        self.assertEqual(labels["POKéMON\ndatabase"], "宝可梦\n数据库")
+        self.assertEqual(labels["FIGHT"], "战斗")
+        self.assertEqual(len(labels), 20)
 
 
 if __name__ == "__main__":

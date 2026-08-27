@@ -27,6 +27,17 @@ def rows(language, technical, hidden, quantity="×01@"):
     ], target_lang=language)
 
 
+def yellow_rows(language, technical, hidden, quantity="×01@"):
+    return align([
+        CorpusRecord("y.names.TechnicalPrefix", "en", "TM"),
+        CorpusRecord("y.names.TechnicalPrefix", language, technical),
+        CorpusRecord("y.names.HiddenPrefix", "en", "HM"),
+        CorpusRecord("y.names.HiddenPrefix", language, hidden),
+        CorpusRecord("y.list_menu.InitialQuantityText", "en", "×01@"),
+        CorpusRecord("y.list_menu.InitialQuantityText", language, quantity),
+    ], target_lang=language)
+
+
 class MachineTerminologyTests(unittest.TestCase):
     def test_fr_prefixes_and_ascii_numbers_are_corpus_derived(self):
         output, report = join_catalogs(rows("fr", "CT", "CS"), worksheets(
@@ -42,6 +53,24 @@ class MachineTerminologyTests(unittest.TestCase):
         self.assertEqual(de["item_names"]["TM_BIDE"], "TM34")
         self.assertEqual(ja["item_names"]["TM_BIDE"], "わざマシン３４")
         self.assertEqual(report["machine_display"]["number_style_status"], "style_proven_fullwidth")
+
+    def test_yellow_collection_uses_the_same_reviewed_anchor_roles(self):
+        output, report = join_catalogs(
+            yellow_rows("zh-Hans", "招式学习器", "秘传学习器", "×０１@"),
+            worksheets(
+                WorksheetEntry("TM_BIDE", "TM34", "item_names"),
+                WorksheetEntry("HM_CUT", "HM01", "item_names"),
+            ),
+            "zh-Hans",
+        )
+        self.assertEqual(
+            output["item_names"],
+            {"TM_BIDE": "招式学习器３４", "HM_CUT": "秘传学习器０１"},
+        )
+        self.assertEqual(
+            report["machine_display"]["anchors"]["technical_prefix"]["qid"],
+            "y.names.TechnicalPrefix",
+        )
 
     def test_es_and_it_prefixes_are_not_language_hardcoded(self):
         for language, technical, hidden in (("es", "MT", "MO"), ("it", "MT", "MN")):

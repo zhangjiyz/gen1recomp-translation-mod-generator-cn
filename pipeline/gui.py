@@ -93,7 +93,7 @@ def font_profile_code(value: str) -> str:
 
 def available_font_profiles(language: str) -> tuple[str, ...]:
     """Profiles the form may offer for a language's glyph coverage."""
-    return ("fusion",) if builder.canonical_language(language) in {"ja-Hrkt", "ko"} else ("fusion", "pokemon")
+    return ("fusion",) if builder.canonical_language(language) in {"ja-Hrkt", "ko", "zh-Hans"} else ("fusion", "pokemon")
 
 
 def validate_inputs(

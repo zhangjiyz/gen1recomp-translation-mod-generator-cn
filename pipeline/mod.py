@@ -17,6 +17,20 @@ from .literals import load_recipes, generate_handlers
 
 CATALOGS = ("dialogue", "strings", "species_names", "move_names", "item_names", "trainer_names", "status_labels", "type_names", "demo_names", "species_kinds")
 
+_ZH_HANS_RBY_SOURCE_NOTICE = """# Simplified Chinese translation sources
+
+This Red, Blue and Yellow mod imports human fan translations from the following pinned revisions; it does not use machine translation:
+
+- [pokeredCHS](https://github.com/TomJinW/pokeredCHS), commit `349ac93ba359306fc4f813b789d070f87dbcfc9b`
+- [pokeyellowCHS](https://github.com/TomJinW/pokeyellowCHS), commit `d3a076d3b8549700dddc580b91ff9df5e9536747`
+
+The generator aligns exact English blocks, retained source labels and reviewed event-label aliases. A small number of engine-only strings that do not exist as reusable ROM rows are contextually translated and marked as such in the checked-in override provenance.
+
+No explicit license file was found in these source repositories when this importer was prepared. The commit pins and hashes make the imported text reproducible, but do not grant redistribution rights. Obtain permission from the respective translation authors before publicly redistributing a package that contains their text.
+
+Unmatched or ambiguous text deliberately remains in English for later human review.
+"""
+
 # Shared between the standalone main.lua this module generates and the
 # scaffold-splice injection in pipeline/builder.py's preserve_scaffold_support
 # — one source of truth so the two injection sites cannot drift apart.
@@ -138,6 +152,7 @@ FONT_PROFILES = {
             "latin": ("fusion-pixel-10px-proportional-latin.ttf", 10),
             "ja": ("fusion-pixel-8px-proportional-ja.ttf", 8),
             "ko": ("fusion-pixel-10px-proportional-ko.ttf", 10),
+            "zh_hans": ("fusion-pixel-10px-proportional-zh_hans.ttf", 10),
         },
         "licenses": (
             Path("OFL.txt"),
@@ -160,6 +175,8 @@ def _font_variant(language: str) -> str:
         return "ja"
     if language == "ko":
         return "ko"
+    if language == "zh-Hans":
+        return "zh_hans"
     return "latin"
 
 
@@ -746,6 +763,11 @@ def generate_mod(items: Iterable[Alignment], destination: str | Path, mod_id: st
     # atomically, so a missing source leaves an existing refresh untouched.
     install_font_assets(destination, language, font_source, font_profile)
     (destination / "main.lua").write_text(main_body, encoding="utf-8")
+    source_notice = destination / "TRANSLATION_SOURCE.md"
+    if language == "zh-Hans":
+        source_notice.write_text(_ZH_HANS_RBY_SOURCE_NOTICE, encoding="utf-8")
+    else:
+        source_notice.unlink(missing_ok=True)
     worksheet_root = Path(str(destination) + "-worksheet")
     worksheet_root.mkdir(parents=True, exist_ok=True)
     for name in CATALOGS:
@@ -755,8 +777,16 @@ def generate_mod(items: Iterable[Alignment], destination: str | Path, mod_id: st
         (worksheet_root / f"{name}.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")
     import json
     display_name = target_name or f"{language} translation for Red, Blue and Yellow"
-    description = target_description or f"{display_name}, based mostly on PokeCorpus."
-    manifest_body = {"id": mod_id, "name": display_name, "version": project_version(), "api": 2, "entry": "main.lua", "profile": "content", "game_version": ">=0.0.0-dev <1.0.0", "category": "LANGUAGE", "priority": TRANSLATION_MOD_PRIORITY, "dependencies": [], "optional_dependencies": [], "conflicts": [], "description": description}
+    if target_description:
+        description = target_description
+    elif language == "zh-Hans":
+        description = (
+            "Simplified Chinese translation for Red, Blue and Yellow from pinned "
+            "human fan-translation sources; unmatched text remains English."
+        )
+    else:
+        description = f"{display_name}, based mostly on PokeCorpus."
+    manifest_body = {"id": mod_id, "name": display_name, "version": project_version(), "api": 2, "entry": "main.lua", "profile": "content", "game_version": ">=0.0.0-dev <2.0.0", "category": "LANGUAGE", "priority": TRANSLATION_MOD_PRIORITY, "dependencies": [], "optional_dependencies": [], "conflicts": [], "description": description}
     manifest = json.dumps(manifest_body, ensure_ascii=False, indent=2) + "\n"
     (destination / "manifest.json").write_text(manifest, encoding="utf-8")
     if report_path and join_report is not None:
