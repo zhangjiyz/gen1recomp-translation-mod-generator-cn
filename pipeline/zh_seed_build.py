@@ -14,6 +14,7 @@ import re
 import shutil
 
 from .builder import BuildError, _run, inspect_archive
+from .generate import lua_string
 from .gs_join import GsJoinEntry, NO_MATCH, OVERRIDE
 from .gs_mod import generate_gs_mod, gs_archive_name
 from .mod import generate_mod
@@ -85,6 +86,18 @@ def _copy_seed_catalogs(seed: dict, mod_dir: Path) -> None:
     destination.mkdir(parents=True, exist_ok=True)
     for path in sorted(source.glob("*.lua")):
         shutil.copy2(path, destination / path.name)
+    # load_seed() merges reviewed third-party Mod overlays into the in-memory
+    # catalogs. Copying only the immutable seed files would report those keys
+    # in the counts without actually shipping them. Rewrite every loaded
+    # catalog so the packaged strings match the catalog that was validated.
+    for name, entries in sorted(seed["catalogs"].items()):
+        lines = ["return {"]
+        lines.extend(
+            f"  [{lua_string(key)}] = {lua_string(value)},"
+            for key, value in sorted(entries.items())
+        )
+        lines.append("}")
+        (destination / f"{name}.lua").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
 def _env(luajit: str | Path | None) -> dict[str, str] | None:

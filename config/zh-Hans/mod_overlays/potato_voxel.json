@@ -4,27 +4,28 @@
   "language": "zh-Hans",
   "mod": {
     "id": "potato_voxel",
-    "version": "1.9.3"
+    "version": "1.9.4-main.a4675f9"
   },
   "source_package": {
-    "name": "potato_voxel-1.9.3-zh-hans.zip",
-    "sha256": "575c91c6b783d3e1fb63dee68bce4bf6ef3beef8d56ee29386aeeee281653731"
+    "name": "potato_voxel-1.9.4-main-a4675f9-zh-hans.zip",
+    "sha256": "e24bfaf6b5ad02fc9def79a10e7ad2d9e3f85ec04fdfdaf0a6a5963df10aec5b"
   },
   "coverage": {
-    "catalog_entries": 66,
-    "explicit_strings_callsites": 13,
-    "explicit_strings_unique": 12,
-    "explicit_strings_covered": 12,
+    "catalog_entries": 68,
+    "explicit_strings_callsites": 16,
+    "explicit_strings_unique": 14,
+    "explicit_strings_covered": 14,
     "schema_help_physical_lines": 74,
     "schema_help_unique_lines": 73,
     "schema_help_rendered_by_current_mod": 0,
-    "note": "SettingsFeature help arrays are schema metadata but PotatoVoxel 1.9.3 does not render them; translate them when a UI begins displaying descriptions."
+    "note": "SettingsFeature help arrays are schema metadata but PotatoVoxel main@a4675f9 does not render them; translate them when a UI begins displaying descriptions."
   },
   "reviewed_overrides": {
     "MEDIUM": "Use the quality-level meaning 中. The old GSC strings seed matched the trainer class Medium; trainer_class_names owns that separate context.",
     "WATER": "Use the PotatoVoxel and launcher option label 水面效果 instead of the short RBY type-style value 水."
   },
   "entries": {
+    "%d AREAS LEFT": "剩余 %d 个区域",
     "%s\fGEOMETRY %d\fDIR: %s": "%s\f几何版本 %d\f位置：%s",
     "100%": "100%",
     "33%": "33%",
@@ -37,6 +38,7 @@
     "AA": "抗锯齿",
     "ATMOS": "环境雾效",
     "BACK SPRITES": "背面精灵图",
+    "BUILDING VOXELS": "正在生成体素",
     "BUILD %d/%d": "生成 %d/%d",
     "CACHE READY": "缓存已就绪",
     "CACHE STATUS": "缓存状态",

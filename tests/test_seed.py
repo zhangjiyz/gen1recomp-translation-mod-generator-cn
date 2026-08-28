@@ -9,6 +9,7 @@ from pipeline.seed import load_seed, read_lua_catalog
 from pipeline.gs_join import NO_MATCH, audit_join, join_gs_pointers
 from pipeline.gs_text import GsTextRecord
 from pipeline.tokens import check_placeholders
+from pipeline.zh_seed_build import _copy_seed_catalogs
 from tools.import_crystal_zh_catalog import _runtime_text
 
 
@@ -49,14 +50,25 @@ class SeedTests(unittest.TestCase):
         rby = load_seed("rby")
         gs = load_seed("gsc")
         self.assertEqual(len(rby["catalogs"]["dialogue"]), 2592)
-        self.assertEqual(len(rby["catalogs"]["strings"]), 1319)
+        self.assertEqual(len(rby["catalogs"]["strings"]), 1321)
         self.assertEqual(len(gs["catalogs"]["dialogue"]), 3045)
-        self.assertEqual(len(gs["catalogs"]["strings"]), 466)
+        self.assertEqual(len(gs["catalogs"]["strings"]), 468)
         self.assertEqual(len(gs["crystal_rows"]), 5157)
         self.assertEqual(len({row[0] for row in gs["crystal_rows"]}), 5157)
         self.assertEqual(gs["catalogs"]["strings"]["MEDIUM"], "中")
         self.assertEqual(rby["catalogs"]["strings"]["WATER"], "水面效果")
+        self.assertEqual(rby["catalogs"]["strings"]["BUILDING VOXELS"], "正在生成体素")
+        self.assertEqual(gs["catalogs"]["strings"]["%d AREAS LEFT"], "剩余 %d 个区域")
         self.assertEqual(len(rby["mod_overlays"]), 1)
+
+    def test_rom_free_copy_materializes_mod_overlay_entries(self):
+        seed = load_seed("rby")
+        with tempfile.TemporaryDirectory() as tmp:
+            mod = Path(tmp) / "mod"
+            _copy_seed_catalogs(seed, mod)
+            strings = read_lua_catalog(mod / "lang" / "strings.lua")
+        self.assertEqual(strings["BUILDING VOXELS"], "正在生成体素")
+        self.assertEqual(strings["%d AREAS LEFT"], "剩余 %d 个区域")
 
     def test_crystal_workbook_controls_match_gen2_runtime_markers(self):
         lines = ["你好【0】", "第一行", "第二行", "", "下一页【1】"]

@@ -6,6 +6,7 @@
 *.bps
 *.ups
 *.patch
+!config/zh-Hans/mod_overlays/*.patch
 *.diff
 
 # Reproducible build outputs, distributions, and reports.

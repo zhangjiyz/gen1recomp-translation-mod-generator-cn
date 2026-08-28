@@ -41,6 +41,26 @@ ROM-backed builder remains available as an optional stronger audit when
 upstream pointer tables or registry ids change; it is not required just to
 produce the Mod ZIP files.
 
+### PotatoVoxel localization bridge (no ROM required)
+
+PotatoVoxel renders a small set of labels directly, so its source needs a
+bridge that routes those labels through Gen1Recomp's `Strings(...)` catalog.
+Build the reviewed bridge from the pinned official upstream revision:
+
+```sh
+git clone https://github.com/ShaneMcGovernIE/potato_voxel.git /tmp/potato_voxel
+git -C /tmp/potato_voxel checkout a4675f9017c78a3a00bbefe389f1bc33ec4c1394
+python3 tools/build_potato_zh_mod.py \
+  --source /tmp/potato_voxel \
+  --gen1recomp ../Gen1RecompCN
+```
+
+This writes `dist/potato_voxel-1.9.4-main-a4675f9-zh-hans.zip`. Install it
+alongside `translation-zh-hans-0.8.0.zip` for Red/Blue/Yellow or
+`translation-zh-hans-gen2-0.8.0.zip` for Gold/Silver/Crystal. The PotatoVoxel
+ZIP contains the localization call sites; the two translation ZIPs provide
+the 68 reviewed Simplified Chinese catalog entries.
+
 ### Recommended: use the graphical application
 
 Download the GUI executable for your platform from the
