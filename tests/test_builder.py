@@ -118,8 +118,9 @@ class BuilderTests(unittest.TestCase):
     def test_gui_language_and_coverage_helpers(self):
         self.assertEqual(language_code("French (fr)"), "fr")
         self.assertEqual(language_code("ja-Hrkt"), "ja-Hrkt")
-        self.assertEqual(builder.languages_for_generation(1)[-1][0], "ja-Hrkt")
+        self.assertEqual(builder.languages_for_generation(1)[-1][0], "zh-Hans")
         self.assertEqual(builder.languages_for_generation(2)[-1][0], "ko")
+        self.assertIn(("zh-Hans", "Simplified Chinese"), builder.languages_for_generation(2))
         self.assertEqual(language_code("Korean (ko)", 2), "ko")
         with tempfile.TemporaryDirectory() as directory:
             report = Path(directory) / "coverage.json"
@@ -168,6 +169,22 @@ class BuilderTests(unittest.TestCase):
                 "All engine strings: 2/4 (50.00%)",
             ])
 
+    def test_chinese_seed_is_filtered_through_current_worksheet(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for name in ("dialogue", "strings", "species_names", "move_names", "item_names", "trainer_names", "status_labels"):
+                (root / f"{name}.txt").write_text("# header\n", encoding="utf-8")
+            (root / "dialogue.txt").write_text(
+                '"Current"\t"English"\n"Missing"\t"New upstream"\n',
+                encoding="utf-8",
+            )
+            joined, report = builder._seed_catalogs_for_worksheet(
+                {"dialogue": {"Current": "当前", "Removed": "旧键"}}, root,
+            )
+            self.assertEqual(joined["dialogue"], {"Current": "当前"})
+            self.assertEqual(report["seed"]["missing"]["dialogue"], ["Missing"])
+            self.assertEqual(report["seed"]["stale"]["dialogue"], ["Removed"])
+
     def test_gui_validation_requires_output_only(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -201,6 +218,7 @@ class BuilderTests(unittest.TestCase):
         self.assertEqual(builder._prompt_font_profile("ko", lambda _: self.fail("Pokemon must not be offered")), "fusion")
         self.assertEqual(available_font_profiles("ko"), ("fusion",))
         self.assertEqual(available_font_profiles("ja-Hrkt"), ("fusion",))
+        self.assertEqual(available_font_profiles("zh-Hans"), ("fusion",))
         self.assertEqual(available_font_profiles("fr"), ("fusion", "pokemon"))
 
     def test_release_collections_are_derived_from_game_specs(self):

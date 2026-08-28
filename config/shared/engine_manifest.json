@@ -1,7 +1,7 @@
 {
   "schema": "gen1recomp-translation-mods/engine-manifest",
   "version": 1,
-  "gen1recomp_revision": "0c6c813e87d61a0b61ebd904cbb98a830a8f4be1",
+  "gen1recomp_revision": "e5fc4740c836d298fed2d60fbb139ae3dd8c9509",
   "source_subdir": "src",
   "forced_dynamic_keys": {
     "NAME": {

@@ -10,6 +10,7 @@ from pipeline.engine_backlog import (
     analyze_engine_backlog,
     analyze_engine_backlog_matrix,
     iter_literal_strings_callsites,
+    iter_render_literal_callsites,
     iter_romtext_fallback_callsites,
     run_backlog,
     run_backlog_matrix,
@@ -18,6 +19,29 @@ from pipeline.cli import main as cli_main
 
 
 class EngineBacklogTests(unittest.TestCase):
+    def test_render_literal_scanner_includes_direct_sinks_and_textbox_argument(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source = root / "src" / "ui" / "Example.lua"
+            source.parent.mkdir(parents=True)
+            source.write_text(
+                'Chrome.print("HELLO" .. " WORLD", 1, 2)\n'
+                'Font.draw(label, 0, 0)\n'
+                'TextBox.new(game, "SECOND ARG", done)\n'
+                'love.graphics.printf("DIRECT", 0, 0, 10)\n'
+                'Chrome.print("▶", 1, 2)\n',
+                encoding="utf-8",
+            )
+            calls = iter_render_literal_callsites(root)
+            self.assertEqual(
+                {row["source"] for row in calls},
+                {"HELLO WORLD", "SECOND ARG", "DIRECT"},
+            )
+            self.assertEqual(
+                {row["sink"] for row in calls},
+                {"Chrome.print", "TextBox.new", "love.graphics.printf"},
+            )
+
     def _fixture(self):
         tmp = tempfile.TemporaryDirectory()
         root = Path(tmp.name)

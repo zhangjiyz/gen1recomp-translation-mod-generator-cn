@@ -1,0 +1,89 @@
+{
+  "schema": "gen1recomp-translation-mods/zh-seed",
+  "version": 1,
+  "profile": "rby",
+  "language": "zh-Hans",
+  "source_archive_name": "translation-zh-hans-1.0.0.zip",
+  "source_archive_sha256": "cb33caf3ec6bab76bbe73dc7ea6d5f166b7bcd824777f2428e0ed3fdf963b273",
+  "files": [
+    {
+      "path": "TRANSLATION_SOURCE.md",
+      "bytes": 1070,
+      "sha256": "bf68b59e495949717f64e12a1a569dd103c8b57c601011f240453e2536726d3d"
+    },
+    {
+      "path": "lang/demo_names.lua",
+      "bytes": 127,
+      "sha256": "6a7f5db07256df8d91585b60ece2643a203dbb9e6d54837198ddcc3aa4a0a01b"
+    },
+    {
+      "path": "lang/dialogue.lua",
+      "bytes": 296339,
+      "sha256": "4af2670cfcbdd5e0a630a40aa3187eabfd822f9504dd9a52b4a590abf6e6808b"
+    },
+    {
+      "path": "lang/dialogue_yellow.lua",
+      "bytes": 54163,
+      "sha256": "f27090a72d1f7a3e437195d82a46e75c890ffec3954f9525ec6927ab6a948fe9"
+    },
+    {
+      "path": "lang/item_names.lua",
+      "bytes": 5670,
+      "sha256": "a9d53124652eac942b5d7aaacf6fdb8526770678d3e42862431746429b04e9ed"
+    },
+    {
+      "path": "lang/literal_handlers.lua",
+      "bytes": 146,
+      "sha256": "9f6bec710f3a9f8179169da03dd2c7c9e7fad941a2ec715ea5a30951e3434359"
+    },
+    {
+      "path": "lang/move_names.lua",
+      "bytes": 4975,
+      "sha256": "67fd47c6fd98c8653a2efa10899cd86061a841c6362fc9a55f3da575833f1040"
+    },
+    {
+      "path": "lang/naming.lua",
+      "bytes": 656,
+      "sha256": "06bd10f65544e93f5ef4286a8cb7caa6bae4e629d0f6104668133d4aaed5dee3"
+    },
+    {
+      "path": "lang/species_kinds.lua",
+      "bytes": 4010,
+      "sha256": "8c494db5e6dc2de35714952358b6bbf9163cf6f8303d4344eef0bee36ef17169"
+    },
+    {
+      "path": "lang/species_names.lua",
+      "bytes": 4493,
+      "sha256": "6b526bca5f71da798f1d6f8980e71c8e51acfa21836b60d59940de1f06008a26"
+    },
+    {
+      "path": "lang/status_labels.lua",
+      "bytes": 184,
+      "sha256": "1f8cf01cafb60f2a88e01227ed0530a3f9777022e56b09120265d30acccaa916"
+    },
+    {
+      "path": "lang/strings.lua",
+      "bytes": 55417,
+      "sha256": "9b1612c938524c5f5cd400658832edf59c4d42e6c986ec24a4b0ef19d282d56b"
+    },
+    {
+      "path": "lang/trainer_names.lua",
+      "bytes": 1577,
+      "sha256": "4acdf6623da671ae019751ab6c10889c943e52524ae9d718a8a75da252775db5"
+    },
+    {
+      "path": "lang/trainer_names_yellow.lua",
+      "bytes": 147,
+      "sha256": "12af7c5cbef56f1c7a44603883950636ec69dc6d573d518295ed8ca641d0abd0"
+    },
+    {
+      "path": "lang/type_names.lua",
+      "bytes": 422,
+      "sha256": "5497273b5b8cfacc857ebfd9a69e07a9cf1bb3c9eea076cc37bacc629086fb87"
+    }
+  ],
+  "notice": "Imported from a user-reviewed generated mod. Rebuild release packaging and validation against the current pinned engine; do not redistribute fan-translation text without permission from its authors.",
+  "derived_changes": [
+    "Added 17 reviewed v0.2.32 engine and UI translations shared with the main zh_CN catalog."
+  ]
+}

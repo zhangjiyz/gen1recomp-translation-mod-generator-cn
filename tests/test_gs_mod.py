@@ -10,13 +10,14 @@ from unittest.mock import patch
 from pipeline.builder import _which_luajit
 from pipeline.gs_join import GsJoinEntry, NO_MATCH, UNIQUE
 from pipeline.gs_mod import (
-    attach_gs_validation, build_gs_dialogue_mod, gs_archive_name,
+    attach_gs_validation, build_gs_dialogue_mod, build_gs_zh_seed_mod, gs_archive_name,
     gs_mod_id, gs_oak_speech_catalog_from_join,
     gs_text_catalog_from_join, generate_gs_mod, package_gs_mod,
     run_gs_release_gates,
 )
 from pipeline.gs_mod import _gs_ui_labels, _write_dialogue_gate_expectation, _write_gate_expectations
 from pipeline.project import project_version
+from pipeline.seed import load_seed, read_lua_catalog
 
 ROOT = Path(__file__).resolve().parents[1]
 ENGINE_ROOT = ROOT / ".cache" / "dependencies" / "gen1recomp"
@@ -118,6 +119,68 @@ class GenerateGsModTests(unittest.TestCase):
             self.assertEqual(manifest["games"], ["gold", "silver"])
             main = (mod_dir / "main.lua").read_text(encoding="utf-8")
             self.assertNotIn("crystal_game_version", main)
+
+    def test_zh_seed_build_filters_current_ids_and_emits_crystal_layer(self):
+        seed = load_seed("gsc")
+        catalogs = seed["catalogs"]
+        species_id = next(iter(
+            set(catalogs["species_names"])
+            & set(catalogs["species_kinds"])
+            & set(catalogs["species_dex_text"])
+        ))
+        crystal_qid, crystal_english, crystal_translation = next(
+            row for row in seed["crystal_rows"] if "{" not in row[1] and row[1].strip()
+        )
+        gold_pointer, gold_translation = next(iter(catalogs["dialogue"].items()))
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            gold = root / "gold"
+            crystal = root / "crystal"
+            font = root / "font"
+            engine = root / "engine" / "src"
+            for path in (gold, crystal, font, engine):
+                path.mkdir(parents=True)
+            (gold / "gs_text.tsv").write_text(f"{gold_pointer}\tObject event\n", encoding="utf-8")
+            (gold / "gs_labels.tsv").write_text("", encoding="utf-8")
+            (crystal / "gs_text.tsv").write_text(
+                f"00:4000\t{crystal_english.replace(chr(10), r'\n')}\n", encoding="utf-8"
+            )
+            (crystal / "gs_labels.tsv").write_text("", encoding="utf-8")
+            fixture_ids = {
+                "gs_species.tsv": species_id,
+                "gs_moves.tsv": next(iter(catalogs["move_names"])),
+                "gs_items.tsv": next(iter(catalogs["item_names"])),
+                "gs_trainer_classes.tsv": next(iter(catalogs["trainer_class_names"])),
+                "gs_landmarks.tsv": next(iter(catalogs["landmarks"])),
+            }
+            for filename, id_ in fixture_ids.items():
+                (gold / filename).write_text(f"{id_}\t1\tFixture\n", encoding="utf-8")
+            (font / "fusion-pixel-10px-proportional-zh_hans.ttf").write_bytes(b"font")
+            (font / "OFL.txt").write_text("Fusion Pixel Font\n", encoding="utf-8")
+            for relative in (
+                "LICENSES/boutique-bitmap-9x9/OFL.txt",
+                "LICENSES/ark-pixel/OFL.txt",
+                "LICENSES/galmuri/LICENSE.txt",
+            ):
+                license_path = font / relative
+                license_path.parent.mkdir(parents=True, exist_ok=True)
+                license_path.write_text("fixture license\n", encoding="utf-8")
+            with (
+                patch("pipeline.engine_scope.verified_source", return_value=(engine, engine.parent, "rev")),
+                patch("pipeline.engine_scope.iter_callsites", return_value=[]),
+                patch("pipeline.gs_engine.engine_string_keys", return_value=(set(), set())),
+            ):
+                mod, entries, stats = build_gs_zh_seed_mod(
+                    gold, crystal, root / "mod", engine_source=engine.parent,
+                    font_source=font,
+                )
+            manifest = json.loads((mod / "manifest.json").read_text(encoding="utf-8"))
+            self.assertEqual(manifest["games"], ["gold", "silver", "crystal"])
+            self.assertEqual(entries[0].translation, gold_translation)
+            self.assertEqual(stats["crystal"]["translated"], 1)
+            crystal_values = read_lua_catalog(mod / "lang" / "dialogue_crystal.lua")
+            self.assertEqual(crystal_values["00:4000"], crystal_translation)
+            self.assertIn(crystal_qid, {row[0] for row in seed["crystal_rows"]})
 
 
 class GsReleaseGateFlowTests(unittest.TestCase):

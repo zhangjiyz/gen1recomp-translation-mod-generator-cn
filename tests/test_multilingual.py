@@ -202,6 +202,8 @@ class MultilingualTests(unittest.TestCase):
         self.assertEqual(canonical_language("ja"), "ja-Hrkt")
         self.assertEqual(canonical_language("jpn"), "ja-Hrkt")
         self.assertEqual(canonical_language("deu"), "de")
+        self.assertEqual(canonical_language("zh_CN"), "zh-Hans")
+        self.assertEqual(canonical_language("简体中文"), "zh-Hans")
 
     def test_anchor_strips_fullwidth_delimiter_only_at_edges(self):
         spec = {"kind": "segment", "index": 0}

@@ -4,6 +4,7 @@ from __future__ import annotations
 import json
 import os
 import shutil
+from dataclasses import replace
 from pathlib import Path
 from typing import Callable
 
@@ -18,11 +19,13 @@ from .gs_join import (
     GsJoinEntry, GsPlaceholderDecision, audit_join, gs_coverage_report,
     join_gs_pointers, load_gs_placeholder_decisions,
     load_gs_pointer_decisions, load_gold_silver_pointer_aliases, read_corpus_rows,
+    MARKUP_ONLY, NO_MATCH, OVERRIDE,
 )
-from .gs_text import parse_gs_text_catalog
-from .tokens import corpus_to_engine
+from .gs_text import normalise, parse_gs_text_catalog
+from .tokens import check_placeholders, corpus_to_engine
 from .mod import TRANSLATION_MOD_PRIORITY, install_font_assets, ttf_registration, validate_font_profile
 from .project import is_frozen, project_config, project_version, resource_root
+from .seed import load_seed
 from .specs import game_spec, release_profile
 
 MAIN = '''-- Generated Gold translation mod.
@@ -713,6 +716,158 @@ def build_gs_dialogue_mod(
     return mod_dir, entries, stats
 
 
+def build_gs_zh_seed_mod(
+    gold_out_dir: str | Path,
+    crystal_out_dir: str | Path,
+    destination: str | Path,
+    *,
+    engine_source: str | Path,
+    font_source: str | Path,
+    font_profile: str = "fusion",
+    target_name: str = "简体中文（金、银、水晶）",
+) -> tuple[Path, list[GsJoinEntry], dict]:
+    """Rebuild Gen 2 Chinese against current private ROM extractions.
+
+    Gold/Silver's reviewed package is already pointer keyed, so current Gold
+    records can be filtered exactly. Crystal is intentionally different: the
+    pinned workbook rows are joined to the user's own extracted English text,
+    and only conservative unique/equivalent-ambiguity matches are emitted.
+    """
+    gold_out_dir = Path(gold_out_dir)
+    crystal_out_dir = Path(crystal_out_dir)
+    seed = load_seed("gsc")
+    catalogs = seed["catalogs"]
+    gold_records = parse_gs_text_catalog(
+        gold_out_dir / "gs_text.tsv", gold_out_dir / "gs_labels.tsv",
+    )
+    gold_values = catalogs.get("dialogue", {})
+    entries = [
+        GsJoinEntry(
+            record.pointer, record.label, record.text,
+            gold_values.get(record.pointer),
+            OVERRIDE if gold_values.get(record.pointer) else (
+                MARKUP_ONLY if not normalise(record.text) else NO_MATCH
+            ),
+            f"zh-seed.gold.{record.pointer}" if gold_values.get(record.pointer) else None,
+        )
+        for record in gold_records
+    ]
+
+    crystal_records = parse_gs_text_catalog(
+        crystal_out_dir / "gs_text.tsv", crystal_out_dir / "gs_labels.tsv",
+    )
+    crystal_entries, crystal_stats = join_gs_pointers(
+        crystal_records, seed["crystal_rows"],
+    )
+    safe_crystal_entries: list[GsJoinEntry] = []
+    rejected_placeholders = 0
+    for entry in crystal_entries:
+        if entry.translation and check_placeholders(entry.english, entry.translation):
+            if entry.provenance in crystal_stats:
+                crystal_stats[entry.provenance] -= 1
+            crystal_stats["no_match"] += 1
+            rejected_placeholders += 1
+            entry = replace(entry, translation=None, provenance=NO_MATCH)
+        safe_crystal_entries.append(entry)
+    crystal_entries = safe_crystal_entries
+    crystal_stats["rejected_placeholder_mismatch"] = rejected_placeholders
+    crystal_text_catalog = crystal_text_catalog_from_join(crystal_entries)
+
+    id_sources = {
+        "species_names": "gs_species.tsv",
+        "species_kinds": "gs_species.tsv",
+        "species_dex_text": "gs_species.tsv",
+        "move_names": "gs_moves.tsv",
+        "item_names": "gs_items.tsv",
+        "trainer_class_names": "gs_trainer_classes.tsv",
+        "landmarks": "gs_landmarks.tsv",
+    }
+    extra_catalogs: dict[str, dict[str, str]] = {}
+    registry_stats: dict[str, dict[str, int]] = {}
+    for name, filename in id_sources.items():
+        current_ids = {entry.id for entry in parse_indexed_catalog(gold_out_dir / filename)}
+        values = {
+            key: value for key, value in catalogs.get(name, {}).items()
+            if key in current_ids and value
+        }
+        extra_catalogs[name] = values
+        registry_stats[name] = {
+            "translated": len(values), "total": len(current_ids),
+        }
+
+    from .engine_scope import iter_callsites, load_manifest, verified_source
+    from .gs_engine import engine_string_keys
+    source, _root, revision = verified_source(engine_source, load_manifest())
+    all_engine_keys, gen2_engine_keys = engine_string_keys(iter_callsites(source), load_manifest())
+    string_values = {
+        key: value for key, value in catalogs.get("strings", {}).items()
+        if key in all_engine_keys and value
+    }
+    extra_catalogs["strings"] = string_values
+    extra_catalogs["ui_labels"] = dict(catalogs.get("ui_labels", {}))
+    extra_catalogs[GS_OAK_SPEECH_CATALOG] = {
+        key: value for key, value in catalogs.get(GS_OAK_SPEECH_CATALOG, {}).items()
+        if key in GS_OAK_SPEECH_KEYS and value
+    }
+
+    pointer_coverage = gs_coverage_report(entries)
+    registry_translated = sum(row["translated"] for row in registry_stats.values())
+    registry_total = sum(row["total"] for row in registry_stats.values())
+    rom_translated = pointer_coverage["rom"]["translated"] + registry_translated
+    rom_total = pointer_coverage["rom"]["total"] + registry_total
+    translated_engine = set(string_values)
+    coverage = {
+        **pointer_coverage,
+        "rom_dialogue": pointer_coverage["rom"],
+        "rom_catalogs": {
+            "translated": registry_translated,
+            "total": registry_total,
+            "percent": round(100.0 * registry_translated / registry_total, 2) if registry_total else 100.0,
+        },
+        "rom": {
+            "translated": rom_translated,
+            "total": rom_total,
+            "percent": round(100.0 * rom_translated / rom_total, 2) if rom_total else 100.0,
+        },
+        "engine": {
+            "translated": len(translated_engine & all_engine_keys),
+            "total": len(all_engine_keys),
+            "percent": round(100.0 * len(translated_engine & all_engine_keys) / len(all_engine_keys), 2)
+            if all_engine_keys else 100.0,
+            "source_revision": revision,
+        },
+        "engine_gen2": {
+            "translated": len(translated_engine & gen2_engine_keys),
+            "total": len(gen2_engine_keys),
+            "percent": round(100.0 * len(translated_engine & gen2_engine_keys) / len(gen2_engine_keys), 2)
+            if gen2_engine_keys else 100.0,
+            "source_revision": revision,
+        },
+    }
+    stats = {
+        "total": len(entries),
+        "translated": pointer_coverage["rom"]["translated"],
+        "unresolved": pointer_coverage["rom"]["total"] - pointer_coverage["rom"]["translated"],
+        "coverage": coverage,
+        "index_catalogs": registry_stats,
+        "crystal": {**crystal_stats, "translated": len(crystal_text_catalog)},
+        "_gate_catalogs": extra_catalogs,
+        "_placeholder_decisions": {},
+    }
+    mod_dir = generate_gs_mod(
+        destination, language="zh-Hans", target_name=target_name,
+        target_description=(
+            "Simplified Chinese translation rebuilt from reviewed Gold/Silver catalogs "
+            "and a provenance-pinned Crystal workbook; unmatched text remains English."
+        ),
+        font_source=font_source, font_profile=font_profile,
+        text_catalog=gs_text_catalog_from_join(entries),
+        extra_catalogs=extra_catalogs,
+        crystal_text_catalog=crystal_text_catalog,
+    )
+    return mod_dir, entries, stats
+
+
 def build_gs(
     gold_rom: str | Path,
     crystal_rom: str | Path,
@@ -773,35 +928,49 @@ def build_gs(
     status("Extracting private Crystal ROM data")
     crystal_out = workspace / "crystal" / "extracted"
     import_crystal_rom(crystal_rom, gen1recomp, crystal_out, log_fn=log_fn)
-    crystal_entries, crystal_stats = join_crystal_dialogue(crystal_out, corpus_crystal, language)
-    crystal_text_catalog = crystal_text_catalog_from_join(crystal_entries)
-    if crystal_stats["total"]:
-        # len(crystal_text_catalog), not a hand-picked sum of stats
-        # categories: join_gs_pointers() may grow new resolution categories
-        # over time, and a hand-picked sum silently drifts out of sync with
-        # what actually ships (this line undercounted twice already, first
-        # omitting reviewed_qid then override).
-        crystal_resolved = len(crystal_text_catalog)
-        log(
-            f"  crystal dialogue: {crystal_resolved}/{crystal_stats['total']} pointers"
-            f" ({crystal_stats['unresolved']} unresolved, {crystal_stats['no_match']} no-match,"
-            " left in English)"
-        )
 
     build_root = workspace / "interactive-gs" / language
     mod_id = gs_mod_id(language)
     mod_dir = build_root / mod_id
-    log("\nJoining corpus and generating the mod...")
-    status("Joining corpus and generating the mod")
-    mod_dir, entries, stats = build_gs_dialogue_mod(
-        gold_out, corpus_gold_silver, mod_dir, mod_id=mod_id, language=language,
-        target_name=f"{language_name} translation for Gold, Silver and Crystal", font_source=font_source, font_profile=font_profile,
-        engine_source=gen1recomp, crystal_text_catalog=crystal_text_catalog,
-    )
-    log(
-        f"  text: {stats['unique'] + stats['harmless_ambiguous'] + stats['override'] + stats['reviewed_qid']}/{stats['total']} pointers"
-        f" ({stats['unresolved']} unresolved, left in English)"
-    )
+    if language == "zh-Hans":
+        log("\nJoining reviewed Simplified Chinese seeds and generating the mod...")
+        status("Joining Simplified Chinese seeds and generating the mod")
+        mod_dir, entries, stats = build_gs_zh_seed_mod(
+            gold_out, crystal_out, mod_dir, engine_source=gen1recomp,
+            font_source=font_source, font_profile=font_profile,
+            target_name=f"{language_name} translation for Gold, Silver and Crystal",
+        )
+        crystal_stats = stats["crystal"]
+        log(
+            f"  crystal dialogue: {crystal_stats['translated']}/{crystal_stats['total']} pointers"
+            f" ({crystal_stats['unresolved']} unresolved, {crystal_stats['no_match']} no-match,"
+            " left in English)"
+        )
+        log(
+            f"  gold dialogue: {stats['translated']}/{stats['total']} pointers"
+            f" ({stats['unresolved']} unresolved, left in English)"
+        )
+    else:
+        crystal_entries, crystal_stats = join_crystal_dialogue(crystal_out, corpus_crystal, language)
+        crystal_text_catalog = crystal_text_catalog_from_join(crystal_entries)
+        if crystal_stats["total"]:
+            crystal_resolved = len(crystal_text_catalog)
+            log(
+                f"  crystal dialogue: {crystal_resolved}/{crystal_stats['total']} pointers"
+                f" ({crystal_stats['unresolved']} unresolved, {crystal_stats['no_match']} no-match,"
+                " left in English)"
+            )
+        log("\nJoining corpus and generating the mod...")
+        status("Joining corpus and generating the mod")
+        mod_dir, entries, stats = build_gs_dialogue_mod(
+            gold_out, corpus_gold_silver, mod_dir, mod_id=mod_id, language=language,
+            target_name=f"{language_name} translation for Gold, Silver and Crystal", font_source=font_source, font_profile=font_profile,
+            engine_source=gen1recomp, crystal_text_catalog=crystal_text_catalog,
+        )
+        log(
+            f"  text: {stats['unique'] + stats['harmless_ambiguous'] + stats['override'] + stats['reviewed_qid']}/{stats['total']} pointers"
+            f" ({stats['unresolved']} unresolved, left in English)"
+        )
 
     status("Running Gold release gates")
     gate_report = run_gs_release_gates(

@@ -138,6 +138,7 @@ FONT_PROFILES = {
             "latin": ("fusion-pixel-10px-proportional-latin.ttf", 10),
             "ja": ("fusion-pixel-8px-proportional-ja.ttf", 8),
             "ko": ("fusion-pixel-10px-proportional-ko.ttf", 10),
+            "zh_hans": ("fusion-pixel-10px-proportional-zh_hans.ttf", 10),
         },
         "licenses": (
             Path("OFL.txt"),
@@ -148,7 +149,7 @@ FONT_PROFILES = {
     },
     "pokemon": {
         "warning": "Pokemon Font is 8px; some translated text may overflow.",
-        "files": {"latin": ("pokemon-font.ttf", 8), "ja": None, "ko": None},
+        "files": {"latin": ("pokemon-font.ttf", 8), "ja": None, "ko": None, "zh_hans": None},
         "licenses": (Path("LICENSES/pokemon-font/LICENSE.md"),),
     },
 }
@@ -160,6 +161,8 @@ def _font_variant(language: str) -> str:
         return "ja"
     if language == "ko":
         return "ko"
+    if language == "zh-Hans":
+        return "zh_hans"
     return "latin"
 
 
@@ -518,7 +521,7 @@ end
 '''
 
 
-def generate_mod(items: Iterable[Alignment], destination: str | Path, mod_id: str = "translation-fr", language: str = "fr", modkit_worksheet: str | Path | None = None, report_path: str | Path | None = None, engine_catalog: str | Path | None = None, engine_overrides: str | Path | None = None, strict_engine: bool = False, semantic_anchors: str | Path | None = None, semantic_anchor_decisions: str | Path | None = None, target_name: str | None = None, literal_handlers: str | Path | None = None, target_description: str | None = None, engine_source: str | Path | None = None, engine_scope: str | Path | None = None, engine_manifest: str | Path | None = None, font_source: str | Path | None = None, font_profile: str = "fusion", yellow_dialogue: dict[str, str] | None = None, yellow_stats: dict | None = None, yellow_catalogs: dict[str, dict[str, str]] | None = None, yellow_engine_overrides: dict[str, str] | None = None, precomputed_join: tuple[dict, dict] | None = None) -> Path:
+def generate_mod(items: Iterable[Alignment], destination: str | Path, mod_id: str = "translation-fr", language: str = "fr", modkit_worksheet: str | Path | None = None, report_path: str | Path | None = None, engine_catalog: str | Path | None = None, engine_overrides: str | Path | None = None, strict_engine: bool = False, semantic_anchors: str | Path | None = None, semantic_anchor_decisions: str | Path | None = None, target_name: str | None = None, literal_handlers: str | Path | None = None, target_description: str | None = None, engine_source: str | Path | None = None, engine_scope: str | Path | None = None, engine_manifest: str | Path | None = None, font_source: str | Path | None = None, font_profile: str = "fusion", yellow_dialogue: dict[str, str] | None = None, yellow_stats: dict | None = None, yellow_catalogs: dict[str, dict[str, str]] | None = None, yellow_engine_overrides: dict[str, str] | None = None, seed_engine_values: Mapping[str, str] | None = None, precomputed_join: tuple[dict, dict] | None = None) -> Path:
     """Generate a mod; ``strict_engine`` requires scaffold/catalog presence only.
 
     It does not require complete engine translations: unresolved entries remain
@@ -632,6 +635,44 @@ def generate_mod(items: Iterable[Alignment], destination: str | Path, mod_id: st
     enemy_values, enemy_report = enemy_qualifier_catalog(rows, language)
     qid_values.update(enemy_values)
     engine_values.update(enemy_values)
+    seed_stats = None
+    if seed_engine_values:
+        recognized = 0
+        applied = 0
+        stale: list[str] = []
+        for key, value in seed_engine_values.items():
+            if key not in engine_values:
+                stale.append(key)
+                continue
+            recognized += 1
+            if not isinstance(value, str) or not value:
+                continue
+            previous = engine_values.get(key, "")
+            engine_values[key] = value
+            applied += 1
+            if engine_report is not None:
+                if not previous:
+                    engine_report["translated"] += 1
+                    if key in engine_report.get("unmatched", []):
+                        engine_report["unmatched"] = [item for item in engine_report["unmatched"] if item != key]
+                        engine_report["fallback_english"] = max(0, engine_report.get("fallback_english", 0) - 1)
+                    engine_report.get("ambiguous", {}).pop(key, None)
+                engine_report["details"][key] = "reviewed-seed"
+                engine_report["provenance"][key] = {
+                    "method": "reviewed-seed",
+                    "reason": "versioned Simplified Chinese catalog seed",
+                }
+        seed_stats = {
+            "provided": len(seed_engine_values),
+            "recognized": recognized,
+            "applied": applied,
+            "stale": sorted(stale),
+        }
+        if engine_report is not None:
+            engine_report["seed"] = seed_stats
+            engine_report["percent"] = round(
+                engine_report["translated"] * 100 / engine_report["total"], 2
+            ) if engine_report["total"] else 100.0
     # The qid-driven catalogs above inject translated values AFTER the matcher
     # ran, so the engine report still lists those keys as unmatched (or omits
     # them).  Sync the report so "All engine strings" reflects what ships.

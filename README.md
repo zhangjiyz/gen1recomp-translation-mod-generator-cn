@@ -8,7 +8,7 @@ artifacts per language:
 
 - a universal Pokémon Red, Blue and Yellow mod, with a runtime-selected Yellow
   layer;
-- a Pokémon Gold and Silver mod for Gen1Recomp's generation-2 runtime.
+- a Pokémon Gold, Silver and Crystal mod for Gen1Recomp's generation-2 runtime.
 
 The artifacts have distinct mod IDs and filenames, so they can be installed
 side by side.
@@ -76,11 +76,13 @@ blue = "/absolute/path/to/PokemonBlue.gb"
 yellow = "/absolute/path/to/PokemonYellow.gb"
 gold = "/absolute/path/to/PokemonGold.gbc"
 silver = "/absolute/path/to/PokemonSilver.gbc"
+crystal = "/absolute/path/to/PokemonCrystal.gbc"
 ```
 
-The three RBY entries are required for the universal build; `gold`/`silver` are
-required only for the Gold and Silver build, and either one alone is enough (the
-prompt accepts a Gold or a Silver ROM interchangeably). Relative paths resolve from this file and `~` expands, although
+The three RBY entries are required for the universal build; either `gold` or
+`silver`, plus `crystal`, is required for the generation-2 build (the prompt
+accepts Gold and Silver interchangeably for the shared layer). Relative paths
+resolve from this file and `~` expands, although
 absolute paths are recommended. On Windows, use forward slashes or TOML
 single-quoted paths such as `red = 'C:\Games\PokemonRed.gb'`. Configured files
 are still checked for existence and SHA-1; declining one returns to the normal
@@ -154,12 +156,26 @@ font profiles are:
 | --- | --- | --- | --- |
 | `fr`, `de`, `es`, `it` | RBY, Gold/Silver/Crystal | Fusion Pixel Latin, 10px | Pokemon Font, 8px |
 | `ja-Hrkt` | RBY, Gold/Silver/Crystal | Fusion Pixel Japanese, 8px | — |
+| `zh-Hans` | RBY and Gold/Silver reviewed seeds; Crystal workbook seed with conservative runtime join | Fusion Pixel Simplified Chinese, 10px | — |
 | `ko` | Gold/Silver/Crystal only (Crystal's own dialogue stays in English) | Fusion Pixel Hangul, 10px | — |
 
 The optional Pokemon Font is more compact, but translated text can still
 overflow fixed-width interfaces.
 Macros and interface chrome remain tile-rendered. Each mod packages only the
 selected TTF and its applicable license notices.
+
+The Simplified Chinese target starts from the reviewed catalogs under
+[`seeds/zh-Hans`](seeds/zh-Hans). The seed importer excludes the old package's
+entry point, manifest, font and validation claims, then verifies every imported
+catalog by SHA-256 so current packaging and gates can be rebuilt against the
+pinned engine. The `gsc-gs` seed contains 5,157 source-labelled Crystal rows
+converted from a pinned `text.xlsx`. The private build emits only unique
+matches or ambiguities whose Chinese result is identical; placeholder
+mismatches and unresolved text stay English. The source repositories named by
+the seed notices did not provide an explicit redistribution license, so public
+release requires permission from their translation authors. See
+[`docs/zh-Hans-localization-plan.md`](docs/zh-Hans-localization-plan.md) for the
+current inventory, gates and remaining acceptance work.
 
 ## Translation coverage
 
@@ -425,7 +441,7 @@ archive before upload.
 - [Gen1Recomp](https://github.com/bryanthaboi/gen1recomp) by [bryanthaboi](https://github.com/bryanthaboi), the native Lua / LÖVE2D recreation.
 - [PokéCorpus](https://github.com/abcboy101/poke-corpus) by [abcboy101](https://github.com/abcboy101), the multilingual translation corpus.
 - [pokemon-font](https://github.com/cooljeanius/pokemon-font) v1.8.2, the Pokemon Font clone by Superpencil, sourced from the fork maintained by [cooljeanius](https://github.com/cooljeanius), available as the optional Latin profile.
-- [Fusion Pixel Font](https://github.com/TakWolf/fusion-pixel-font) by [TakWolf](https://github.com/TakWolf), used by the recommended Latin profile, the Japanese profile, and the Korean profile (Gold and Silver only).
+- [Fusion Pixel Font](https://github.com/TakWolf/fusion-pixel-font) by [TakWolf](https://github.com/TakWolf), used by the recommended Latin, Japanese, Korean and Simplified Chinese profiles.
 
 ## Contributors ✨
 

@@ -41,6 +41,14 @@ MATRIX_VERSION = 1
 MATRIX_LANGUAGES = ("fr", "de", "es", "it", "ja-Hrkt")
 _CALL_RE = re.compile(r"\bStrings(?:\.source)?\s*\(")
 _ROMTEXT_CALL_RE = re.compile(r"\bromText\s*\(")
+_RENDER_CALL_RE = re.compile(
+    r"\b(?P<sink>"
+    r"Chrome\.(?:print|printThrough|printInverted|printRight|printRightThrough|printWrapped)"
+    r"|Font\.(?:draw|drawShadow)"
+    r"|love\.graphics\.(?:print|printf)"
+    r")\s*\("
+)
+_TEXTBOX_CALL_RE = re.compile(r"\bTextBox\.new\s*\(")
 _LANGUAGE_CODES = {"fr", "de", "es", "it", "ja-Hrkt"}
 
 
@@ -182,6 +190,55 @@ def _read_concatenated_lua_literal(raw: str, cleaned: str, start: int) -> tuple[
     return "".join(parts), end
 
 
+def _literal_argument(
+    raw: str, cleaned: str, call_end: int, argument: int,
+) -> tuple[str, int] | None:
+    """Return a literal-only Lua call argument by zero-based position.
+
+    The lightweight scanner is deliberately not a Lua parser, but it does
+    balance nested calls/tables and skips quoted/long literals.  This is enough
+    to identify direct render sinks such as ``TextBox.new(game, "text")``
+    without mistaking a comma inside another argument for the separator.
+    """
+    current = 0
+    depth = 0
+    index = call_end
+    while index < len(cleaned):
+        char = cleaned[index]
+        if char in {"'", '"', "["}:
+            token = _read_lua_literal(raw, index)
+            if token is not None:
+                if current == argument and depth == 0:
+                    return _read_concatenated_lua_literal(raw, cleaned, index)
+                index = token[1]
+                continue
+        if char in "({[":
+            depth += 1
+        elif char in ")}]":
+            if char == ")" and depth == 0:
+                return None
+            depth = max(0, depth - 1)
+        elif char == "," and depth == 0:
+            current += 1
+        elif current == argument and depth == 0 and not char.isspace():
+            # The selected argument starts with a non-literal expression.
+            return None
+        index += 1
+    return None
+
+
+def _textual_render_literal(value: str) -> bool:
+    """Exclude glyph-only draw calls from the translation denominator."""
+    candidate = value
+    try:
+        # Lua source often spells UTF-8 glyphs as byte escapes.  Decode the
+        # byte-shaped Python string before deciding whether it contains text.
+        candidate = value.encode("latin1").decode("utf-8")
+    except (UnicodeEncodeError, UnicodeDecodeError):
+        pass
+    return any(char.isalpha() for char in candidate)
+
+
 def iter_literal_strings_callsites(checkout: str | Path) -> list[dict[str, Any]]:
     """Collect every literal ``Strings(...)``/``Strings.source(...)`` use.
 
@@ -221,6 +278,46 @@ def iter_literal_strings_callsites(checkout: str | Path) -> list[dict[str, Any]]
                 "kind": "source" if ".source" in match.group(0) else "call",
             })
     return sorted(result, key=lambda item: (item["source"], item["path"], item["line"], item["kind"], item["context"]))
+
+
+def iter_render_literal_callsites(checkout: str | Path) -> list[dict[str, Any]]:
+    """Collect literal text sent directly to known display entry points.
+
+    These strings are important even when a central render helper performs the
+    runtime lookup: they do not appear as literal ``Strings`` calls and were
+    therefore absent from the old engine catalog.  ``TextBox.new`` is handled
+    separately because its rendered text is its second argument.
+    """
+    root = Path(checkout)
+    if not root.is_dir():
+        raise FileNotFoundError(f"Gen1Recomp checkout missing: {root}")
+    scan_root = root / "src" if (root / "src").is_dir() else root
+    result: list[dict[str, Any]] = []
+    for path in sorted(p for p in scan_root.rglob("*.lua") if ".git" not in p.parts):
+        raw = path.read_text(encoding="utf-8", errors="replace")
+        cleaned = _strip_lua_comments(raw)
+        lines = raw.splitlines()
+        matches = [(match, 0, match.group("sink")) for match in _RENDER_CALL_RE.finditer(cleaned)]
+        matches.extend((match, 1, "TextBox.new") for match in _TEXTBOX_CALL_RE.finditer(cleaned))
+        for match, argument, sink in matches:
+            token = _literal_argument(raw, cleaned, match.end(), argument)
+            if token is None:
+                continue
+            source, end = token
+            if not source or not _textual_render_literal(source):
+                continue
+            line = cleaned.count("\n", 0, match.start()) + 1
+            end_line = cleaned.count("\n", 0, end) + 1
+            context = " ".join(item.strip() for item in lines[line - 1:end_line] if item.strip())
+            result.append({
+                "path": path.relative_to(root).as_posix(),
+                "line": line,
+                "context": context[:300],
+                "source": source,
+                "kind": "render-literal",
+                "sink": sink,
+            })
+    return sorted(result, key=lambda item: (item["source"], item["path"], item["line"], item["sink"]))
 
 
 def iter_romtext_fallback_callsites(checkout: str | Path) -> list[dict[str, Any]]:
@@ -504,7 +601,11 @@ def analyze_engine_backlog(
     unmatched_set = {str(key) for key in (unmatched if isinstance(unmatched, list) else unmatched.keys() if isinstance(unmatched, dict) else [])}
     ambiguous_map = {str(key): value for key, value in ambiguous.items()} if isinstance(ambiguous, dict) else {}
     keys = sorted(set(catalog) & (unmatched_set | set(ambiguous_map)) or (unmatched_set | set(ambiguous_map)))
-    callsite_rows = iter_literal_strings_callsites(checkout) + iter_romtext_fallback_callsites(checkout)
+    callsite_rows = (
+        iter_literal_strings_callsites(checkout)
+        + iter_render_literal_callsites(checkout)
+        + iter_romtext_fallback_callsites(checkout)
+    )
     classified = classify_catalog(catalog, callsite_rows, scope)
     callsites = defaultdict(list)
     for key, info in classified.items():

@@ -1,0 +1,80 @@
+{
+  "schema": "gen1recomp-translation-mods/zh-seed",
+  "version": 1,
+  "profile": "gsc-gs",
+  "language": "zh-Hans",
+  "source_archive_name": "translation-zh-hans-gen2-1.0.0.zip",
+  "source_archive_sha256": "f124dfc1de6a7da0f101a9ccb0b9ffb939b677cc67ebc7e579b5d7002c2b493e",
+  "files": [
+    {
+      "path": "TRANSLATION_SOURCE.md",
+      "bytes": 1595,
+      "sha256": "74c227957e1ccc50753c05e2d9dd4c0de53bdfd2c01a54e8707468515000552f"
+    },
+    {
+      "path": "crystal_catalog.json",
+      "bytes": 2149386,
+      "sha256": "398bf7698ea89188e3c7577ac8b5c5b60a45c4ded1eaed815cdaebe8965fc01b"
+    },
+    {
+      "path": "lang/dialogue.lua",
+      "bytes": 311079,
+      "sha256": "3191da2aa16e7114a09165d84b6355502eb27fc828f6749b415cc10354008a8b"
+    },
+    {
+      "path": "lang/item_names.lua",
+      "bytes": 8693,
+      "sha256": "f787966db7b09418a297b3cb17f94cbbc01157dae07dba2fcb2927f51c3e7475"
+    },
+    {
+      "path": "lang/landmarks.lua",
+      "bytes": 4094,
+      "sha256": "0ecf31f0f399f5313c035c9fb517d0ee98aa941fd75b3728ef4c1fc9c20a2d6d"
+    },
+    {
+      "path": "lang/move_names.lua",
+      "bytes": 7597,
+      "sha256": "044ad354321eae1fbfd7271f96473acd97ceb4d5976d3bf0818426dc9270db2d"
+    },
+    {
+      "path": "lang/oak_speech.lua",
+      "bytes": 1069,
+      "sha256": "a6c438aa3827ba8a345e71eb19998e77941f6c64336b186bc9e1710b6ebbcadd"
+    },
+    {
+      "path": "lang/species_dex_text.lua",
+      "bytes": 28796,
+      "sha256": "2895885f805e7620b89c433e11df38828b87095931c52b4fb78e767becb09a4c"
+    },
+    {
+      "path": "lang/species_kinds.lua",
+      "bytes": 6651,
+      "sha256": "897b58dac62e4b68d20bbb8e3ceee097ba882ea647c78242a1680963e9054029"
+    },
+    {
+      "path": "lang/species_names.lua",
+      "bytes": 7446,
+      "sha256": "60fa9ddd4ea8358b5cf22cedf6f84f369e89df41b2fa8b0c75e4a5767a777f23"
+    },
+    {
+      "path": "lang/strings.lua",
+      "bytes": 28547,
+      "sha256": "40fa847ebbbefd37daf6ea67ff0c348da14dbf89499d8cdbdce64f2e45210b36"
+    },
+    {
+      "path": "lang/trainer_class_names.lua",
+      "bytes": 2149,
+      "sha256": "217f4934436477f7ae127c0118d9c249603a794c77a88837ea292f7b324edeaf"
+    },
+    {
+      "path": "lang/ui_labels.lua",
+      "bytes": 1851,
+      "sha256": "8c679affd569af4e427b994b9ee5f3234d74ffbd1361782c1af1e27abfae9aef"
+    }
+  ],
+  "notice": "Imported from a user-reviewed generated mod. Rebuild release packaging and validation against the current pinned engine; do not redistribute fan-translation text without permission from its authors.",
+  "derived_changes": [
+    "Added 17 reviewed v0.2.32 engine and UI translations shared with the main zh_CN catalog.",
+    "Added 5,157 Crystal text rows converted from SnDream's pinned text.xlsx using runtime-safe control markers."
+  ]
+}
