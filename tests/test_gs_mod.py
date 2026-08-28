@@ -88,11 +88,12 @@ class GenerateGsModTests(unittest.TestCase):
             )
             manifest = json.loads((mod_dir / "manifest.json").read_text(encoding="utf-8"))
             self.assertEqual(manifest["games"], ["gold", "silver", "crystal"])
+            self.assertEqual(manifest["permissions"], ["engine_internals"])
             self.assertIn("Crystal", manifest["description"])
             crystal_lua = (mod_dir / "lang" / "dialogue_crystal.lua").read_text(encoding="utf-8")
             self.assertIn('["00:0001"] = "Salut!"', crystal_lua)
             main = (mod_dir / "main.lua").read_text(encoding="utf-8")
-            self.assertIn('GameVersion.get() == "crystal"', main)
+            self.assertIn("game_info.fixes.reflectOverflow == true", main)
             self.assertIn("crystal_game_version", main)
             self.assertIn("dialogue_crystal.lua", main)
             # Gold/Silver's own base dialogue catalog is untouched by the

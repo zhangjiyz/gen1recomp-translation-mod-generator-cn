@@ -36,15 +36,16 @@ __CRYSTAL_DIALOGUE_REGISTRATION__
 end
 '''
 
-# GameVersion.isCrystal() doesn't exist upstream (only isBlue()/isYellow()/
-# isGold() do); GameVersion.get() == "crystal" is exactly what those do
-# internally for their own edition. Mirrors mod.py's yellow_isyellow_guard_lines()
-# for RBY's own Yellow layer.
+# GameVersion.isCrystal() doesn't exist upstream. Detect the Crystal engine by
+# the capability backing its Reflect overflow fix instead of allow-listing a
+# version id; this is both edition-specific and accepted by Modkit's Gen 2
+# compatibility audit.
 _CRYSTAL_GUARD = (
-    '  local okGame, GameVersion = pcall(require, "src.core.GameVersion")\n'
-    "  local crystal_game_version = okGame and type(GameVersion) == \"table\"\n"
-    "      and type(GameVersion.get) == \"function\"\n"
-    "      and GameVersion.get() == \"crystal\"\n"
+    '  local GameVersion = require("src.core.GameVersion")\n'
+    "  local game_info = type(GameVersion.info) == \"function\" and GameVersion.info() or nil\n"
+    "  local crystal_game_version = type(game_info) == \"table\"\n"
+    "      and type(game_info.fixes) == \"table\"\n"
+    "      and game_info.fixes.reflectOverflow == true\n"
 )
 
 _CATALOG_HELPER = '''  local function catalog(name)
@@ -227,7 +228,7 @@ def generate_gs_mod(
     ``crystal_text_catalog``, when not None, declares this mod compatible
     with Crystal too (mandatory companion ROM, see build_gs()): its own
     dialogue pointers are written to a separate lang/dialogue_crystal.lua
-    layer, applied only at runtime when GameVersion.get() == "crystal" (the
+    layer, applied only at runtime when Crystal's engine capability is present (the
     same conditional-layer pattern pipeline/mod.py's RBY build uses for
     Yellow's own dialogue_yellow.lua). An empty dict still declares "crystal"
     compatibility with no translated layer (Korean: Crystal has no corpus for
@@ -332,7 +333,9 @@ def generate_gs_mod(
         "entry": "main.lua", "profile": "content", "games": games,
         "game_version": ">=0.0.0-dev <1.0.0", "category": "LANGUAGE",
         "priority": TRANSLATION_MOD_PRIORITY, "dependencies": [], "optional_dependencies": [],
-        "conflicts": [], "permissions": [], "description": description,
+        "conflicts": [],
+        "permissions": ["engine_internals"] if crystal_text_catalog else [],
+        "description": description,
     }
     (destination / "manifest.json").write_text(
         json.dumps(manifest_body, ensure_ascii=False, indent=2) + "\n", encoding="utf-8",
@@ -885,7 +888,7 @@ def build_gs(
     ``crystal_rom`` is a mandatory companion ROM, like Yellow is for the
     "rby" release (pipeline.builder.build()'s own yellow_rom): one mod
     covers gold/silver/crystal, Crystal's own dialogue applied at runtime
-    only when GameVersion.get() == "crystal" (see generate_gs_mod()).
+    only when Crystal's engine capability is present (see generate_gs_mod()).
     """
     def status(message: str) -> None:
         if status_fn:

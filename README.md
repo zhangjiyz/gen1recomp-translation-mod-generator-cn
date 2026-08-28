@@ -19,6 +19,28 @@ side by side.
 
 ## Quick start
 
+### Simplified Chinese seed build (no ROM required)
+
+The reviewed Simplified Chinese catalogs can be repackaged without a ROM.
+Crystal pointers come from pret/pokecrystal's public linker symbol table, not
+from game data. Download the pinned symbol file and build both ZIPs:
+
+```sh
+curl -L --fail \
+  https://raw.githubusercontent.com/pret/pokecrystal/cc6fc04f19c645f5c40f64f8d88b2ab42c7bdde8/pokecrystal.sym \
+  -o /tmp/pokecrystal.sym
+shasum -a 256 /tmp/pokecrystal.sym
+# Must print: 697fe20b3c659273a3ab8aa85db2eb78dcf674a3dd17c98b52fc1dddd37783f2
+python3 tools/build_zh_seed_mods.py \
+  --gen1recomp ../Gen1RecompCN \
+  --crystal-symbols /tmp/pokecrystal.sym
+```
+
+This is the normal Simplified Chinese edit/repack path. The interactive
+ROM-backed builder remains available as an optional stronger audit when
+upstream pointer tables or registry ids change; it is not required just to
+produce the Mod ZIP files.
+
 ### Recommended: use the graphical application
 
 Download the GUI executable for your platform from the
@@ -110,15 +132,17 @@ Gold, Silver and Crystal are published together as `translation-<lang>-gen2`. Go
 and Silver's own text is built and extracted from either a real Gold or a real
 Silver ROM (whichever one is supplied) and covers dialogue, Pokédex entries,
 named ROM catalogs and engine strings matched from production Gen 2 callsites.
-Crystal is a mandatory companion ROM, the same way Yellow is for the universal
-RBY mod: its own dialogue text uses different `bank:address` pointers from
+For corpus-based languages, Crystal is a mandatory companion ROM in the
+interactive extraction/audit path. Its own dialogue text uses different `bank:address` pointers from
 Gold/Silver (95.8% of shared symbol names diverge), so it gets its own corpus
 join against poke-corpus's separate `Crystal/` collection and ships as a
 `lang/dialogue_crystal.lua` layer, applied only at runtime on an actual Crystal
 save. Crystal reuses Gold/Silver's own engine-string catalog as-is (the
 Options/Menu `Strings()` code is identical across all three editions) and has
 no named ROM catalogs of its own yet (species/moves/items/trainer classes).
-Korean has no Crystal corpus in poke-corpus, unlike Gold/Silver -- Crystal's
+Simplified Chinese instead uses the reviewed seed plus the pinned public
+linker symbol table described above, so its normal repack does not require a
+ROM. Korean has no Crystal corpus in poke-corpus, unlike Gold/Silver -- Crystal's
 own dialogue simply stays in English for that language. Missing or ambiguous
 matches remain in English. The manifest declares `"gold"`, `"silver"` and
 `"crystal"` as supported games, so the same mod loads on any of the three
@@ -212,9 +236,11 @@ the generated coverage report and
 
 ### Gold, Silver and Crystal
 
-Gold and Silver are built as a separate generation-2 artifact, from either ROM. Crystal is
-a mandatory companion ROM merged into the same artifact, applied at runtime only on an
-actual Crystal save:
+Gold and Silver are built as a separate generation-2 artifact. The normal
+Simplified Chinese seed build requires no ROM; the multilingual extraction
+audit can rebuild from either Gold or Silver and uses Crystal as a companion
+ROM. In both paths, Crystal is merged into the same artifact and applied only
+on an actual Crystal save:
 
 - `Gold and Silver ROM aggregate` combines dialogue, Pokédex entries and the named ROM
   catalogs. Its denominator excludes 14 markup-only records with no visible
@@ -226,8 +252,10 @@ actual Crystal save:
   -- none of it exists on a real Gold or Silver cart, so it has no PokeCorpus
   row and is not part of what this mod could ever cover; see
   [`config/gsc/engine_scope_exclusions.json`](config/gsc/engine_scope_exclusions.json).
-- `Crystal dialogue coverage` is Crystal's own dialogue pointers, joined
-  separately against poke-corpus's own `Crystal/` collection (different
+- `Crystal dialogue coverage` is Crystal's own dialogue pointers. Corpus-based
+  targets join separately against poke-corpus's own `Crystal/` collection; the
+  Simplified Chinese seed resolves its source labels against the pinned public
+  linker symbol table (different
   `bank:address` values from Gold/Silver almost throughout, so this is not
   the same catalog as the aggregate above). Its denominator excludes 16
   markup-only records, same convention as the ROM aggregate. This is

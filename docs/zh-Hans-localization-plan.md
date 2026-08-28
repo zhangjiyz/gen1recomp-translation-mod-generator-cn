@@ -42,9 +42,9 @@ mixed 127, modern 80, RBY 239, UI 168 and unknown 29.
 | Type names / status labels / demo names | 15 / 5 / 2 |
 | Raw catalog entries | 5,035 |
 
-The final effective coverage denominator is recalculated from the user's
-current ROM extractions and Modkit worksheet; stale seed keys are reported and
-never counted as shipped coverage.
+The normal seed build packages these reviewed entries directly. An optional
+ROM-backed audit can recalculate the effective denominator from current
+extractions and a Modkit worksheet, reporting stale keys separately.
 
 ### Gold/Silver seed
 
@@ -58,9 +58,10 @@ never counted as shipped coverage.
 | Oak speech / UI labels | 6 / 40 |
 | Raw Gold/Silver catalog entries | 4,972 |
 
-At build time every pointer and registry ID is filtered through the current
-private Gold extraction. Missing or changed keys remain English and are listed
-in `coverage.json`.
+The normal seed build preserves all reviewed pointer and registry entries.
+The optional ROM-backed audit filters them through a current private Gold
+extraction; missing or changed keys then remain English and are listed in
+`coverage.json`.
 
 ### Crystal seed
 
@@ -74,13 +75,14 @@ Pinned sources:
   `03fe83335bc8041cfe503cea3b9565110e7be30df5a32239c57f15084b36c0bd`.
 
 The workbook contains 5,169 mapped rows. Twelve are empty or cannot become a
-visible translated row, leaving 5,157 imported Chinese rows. A self-join of
-the full source inventory yields 4,717 unique matches and 387 harmless
-ambiguities with an identical Chinese result. Nineteen conflicting
-ambiguities remain English, 34 control-only rows do not enter the visible-text
-denominator, and ten placeholder-incompatible translations are rejected by
-the build safety filter. Actual shipped pointer counts are determined only
-after extracting the user's verified US Crystal ROM.
+visible translated row, leaving 5,157 imported Chinese rows. The no-ROM build
+resolves labels against pret/pokecrystal's pinned public linker symbol table
+(commit `cc6fc04f19c645f5c40f64f8d88b2ab42c7bdde8`, SHA-256
+`697fe20b3c659273a3ab8aa85db2eb78dcf674a3dd17c98b52fc1dddd37783f2`).
+It safely emits 5,130 Crystal pointers. Seventeen rows have no usable symbol
+and ten placeholder-incompatible translations are rejected; those 27 lines
+fall back to English. A headless gate proves the Crystal layer applies on a
+Crystal run and does not leak into Gold.
 
 Runtime controls are converted without flattening semantics:
 
@@ -105,16 +107,21 @@ content rather than claimed visible translations.
 
 ## Build and release gates
 
-The following gates must pass for each produced archive:
+The following gates pass for the normal no-ROM seed archives:
 
-1. ROM SHA-1 verification for Red/Blue, Yellow, Gold/Silver and Crystal.
-2. Current engine dependency revision and source-tree hash verification.
-3. Seed file SHA-256 verification and source-provenance validation.
-4. Current worksheet/ROM-key filtering; stale keys excluded from coverage.
-5. Dynamic placeholder identity/count audit.
-6. Headless Gen 2 dialogue and named-registry runtime gates.
-7. ZIP inspection: no ROM, generated ROM data, worksheets, unsafe paths or
+1. Seed file SHA-256 and source-provenance validation.
+2. Pinned Crystal symbol-file SHA-256 validation.
+3. Dynamic placeholder identity/count audit.
+4. Headless Gen 2 dialogue, named-registry and Crystal/Gold isolation gates.
+5. Strict Modkit fixture validation and Gen 2 compatibility scan.
+6. ZIP inspection: no ROM, generated ROM data, worksheets, unsafe paths or
    symlinks.
+7. Reproducible archive comparison.
+
+The optional stronger extraction audit additionally verifies ROM SHA-1s,
+re-extracts current pointer/id inventories and runs MK103 against imported
+data. Remaining acceptance work is:
+
 8. One-process LÖVE smoke test to avoid the earlier repeated Dock-icon flash.
 9. Manual in-game smoke matrix: new game, naming, battle, bag, Pokédex,
    options, save/load, link UI, Gold/Silver intro and Crystal-exclusive scenes.
@@ -128,8 +135,9 @@ The following gates must pass for each produced archive:
 | C | Add `zh-Hans`, Fusion Chinese font and reviewed RBY/GS seed import | Complete |
 | D | Refresh main `zh_CN` gaps and prove 1,771/1,771 engine-key coverage | Complete statically |
 | E | Add PotatoVoxel overlay and conflict decisions | Complete statically |
-| F | Import Crystal workbook and conservative private-ROM join | Complete in code |
-| G | Build both ZIPs against verified user ROMs and run release gates | Waiting for configured ROM paths |
+| F | Import Crystal workbook and add pinned no-ROM symbol join | Complete |
+| G | Build both no-ROM ZIPs and run strict/runtime gates | Complete locally |
+| G2 | Optional re-extraction audit against verified user ROMs | Not required for normal repack |
 | H | Manual play-through acceptance and author redistribution permission | Required before public release |
 
 ## Release policy
