@@ -1,115 +1,120 @@
-# Gen1Recomp translation mod generator
+# Gen1Recomp 简体中文多语言 Mod 生成工程
 
-[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
+这个仓库是我们维护的 `Gen1Recomp` 多语言/汉化 Mod 生成工程。当前分支重点服务简体中文：可以从已经审校过的种子目录重新打包 Gen1、Gen2 汉化 Mod，也保留原上游的多语言 ROM 抽取/审计流水线。
 
-This repository reproducibly generates multilingual `Gen1Recomp` translation
-mods without storing a ROM or ROM extract. It currently produces two separate
-artifacts per language:
+原英文 README 已完整保存为 [`README.en.md`](README.en.md)。如果需要查看上游原始说明、GUI/CLI 多语言构建背景、贡献者列表或英文维护者文档，请看那个文件。
 
-- a universal Pokémon Red, Blue and Yellow mod, with a runtime-selected Yellow
-  layer;
-- a Pokémon Gold, Silver and Crystal mod for Gen1Recomp's generation-2 runtime.
+> AI 辅助开发说明：本仓库的流水线和部分汉化适配改动曾使用 AI 辅助完成。所有可发布内容仍以当前仓库的自动测试、打包校验、人工审校文本和实机烟测为准。
 
-The artifacts have distinct mod IDs and filenames, so they can be installed
-side by side.
+## 当前定位
 
-> **AI-assisted development disclosure:** The repository and pipeline were
-> developed with AI assistance. Changes are checked through automated tests,
-> generated-artifact validation, and code review.
+本工程不提供 ROM、不存放 ROM 提取物，也不分发任何受版权保护的游戏数据。它做的事情是：
 
-## Quick start
+- 生成 `Gen1Recomp` 可导入的简体中文语言 Mod。
+- 维护 Red/Blue/Yellow 共用的 Gen1 汉化包。
+- 维护 Gold/Silver/Crystal 共用的 Gen2 汉化包。
+- 为主工程中已经接入 `Strings(...)` 的文本提供翻译 catalog。
+- 保留多语言抽取、匹配、审计和 GUI/CLI 打包能力，方便以后继续跟上游。
 
-### Simplified Chinese seed build (no ROM required)
+当前项目版本来自 [`pyproject.toml`](pyproject.toml)：`0.8.1`。默认输出文件名也是这个版本号。
 
-The reviewed Simplified Chinese catalogs can be repackaged without a ROM.
-Crystal pointers come from pret/pokecrystal's public linker symbol table, not
-from game data. Download the pinned symbol file and build both ZIPs:
+## 快速构建简体中文包
+
+简体中文常规打包不需要 ROM。它使用仓库里已经审校过的 `seeds/zh-Hans` catalog；Crystal 对话层需要一个固定版本的 `pret/pokecrystal` 公共符号表，用来把已审校文本绑定到 Crystal 运行时指针。
+
+从本仓库根目录运行：
 
 ```sh
 curl -L --fail \
   https://raw.githubusercontent.com/pret/pokecrystal/cc6fc04f19c645f5c40f64f8d88b2ab42c7bdde8/pokecrystal.sym \
   -o /tmp/pokecrystal.sym
+
 shasum -a 256 /tmp/pokecrystal.sym
-# Must print: 697fe20b3c659273a3ab8aa85db2eb78dcf674a3dd17c98b52fc1dddd37783f2
+# 必须输出：
+# 697fe20b3c659273a3ab8aa85db2eb78dcf674a3dd17c98b52fc1dddd37783f2
+
 python3 tools/build_zh_seed_mods.py \
   --gen1recomp ../Gen1RecompCN \
   --crystal-symbols /tmp/pokecrystal.sym
 ```
 
-This is the normal Simplified Chinese edit/repack path. The interactive
-ROM-backed builder remains available as an optional stronger audit when
-upstream pointer tables or registry ids change; it is not required just to
-produce the Mod ZIP files.
+成功后会输出两个 ZIP：
 
-### PotatoVoxel localization bridge (no ROM required)
+- `dist/translation-zh-hans-0.8.1.zip`
+- `dist/translation-zh-hans-gen2-0.8.1.zip`
 
-PotatoVoxel renders a small set of labels directly, so its source needs a
-bridge that routes those labels through Gen1Recomp's `Strings(...)` catalog.
-Build the reviewed bridge from the pinned official upstream revision:
+第一个用于 Red/Blue/Yellow，第二个用于 Gold/Silver/Crystal。两个 Mod ID 和文件名不同，可以同时安装。
 
-```sh
-git clone https://github.com/ShaneMcGovernIE/potato_voxel.git /tmp/potato_voxel
-git -C /tmp/potato_voxel checkout a4675f9017c78a3a00bbefe389f1bc33ec4c1394
-python3 tools/build_potato_zh_mod.py \
-  --source /tmp/potato_voxel \
-  --gen1recomp ../Gen1RecompCN
-```
+## 简体中文覆盖范围
 
-This writes `dist/potato_voxel-1.9.4-main-a4675f9-zh-hans.zip`. Install it
-alongside `translation-zh-hans-0.8.0.zip` for Red/Blue/Yellow or
-`translation-zh-hans-gen2-0.8.0.zip` for Gold/Silver/Crystal. The PotatoVoxel
-ZIP contains the localization call sites; the two translation ZIPs provide
-the 68 reviewed Simplified Chinese catalog entries.
+下面统计的是当前简体中文发布包里实际写入的 catalog 条目数。原上游 README 里的 `ROM aggregate` 是覆盖率口径，分母只统计一组可见 ROM 文本和既定引擎字符串；我们新增的道具描述、招式描述、第二页 Pokédex、Crystal 独立对话层等并不都会改变那个旧分母。
 
-### Recommended: use the graphical application
+| 发布包 | 支持游戏 | Catalog 条目 |
+| --- | --- | ---: |
+| `translation-zh-hans-0.8.1.zip` | Red / Blue / Yellow | 5039 |
+| `translation-zh-hans-gen2-0.8.1.zip` | Gold / Silver / Crystal | 10932 |
 
-Download the GUI executable for your platform from the
-[latest release](https://github.com/thibautbus/gen1recomp-translation-mod-generator/releases/latest),
-then select the target games and the corresponding ROM dumps:
+### Gen1: Red / Blue / Yellow
 
-![Gen1Recomp translation mod generator GUI](docs/gui.png)
+RBY 是一个通用 Mod。Red/Blue 共用主 catalog；Yellow 专有或差异文本放在 Yellow layer，只有实际运行 Yellow 存档时才应用。
 
-1. Red, Blue and Yellow, or Gold and Silver;
-2. your own canonical US ROM dumps for the selected games;
-3. the target language and output directory.
+### Gen2: Gold / Silver / Crystal
 
-The GUI writes a ready-to-import ZIP into the selected directory. It bundles
-Python, Pillow and LuaJIT; network access is still required to download the
-pinned Gen1Recomp and PokeCorpus inputs.
+Gen2 是一个独立 Mod。Gold/Silver 使用共享 catalog；Crystal 的独立对话通过 `seeds/zh-Hans/gsc-gs/crystal_catalog.json` 和固定符号表生成独立 layer，只在 Crystal 运行时应用：
 
-### Build from source with the CLI
+| 层 | 条目数 |
+| --- | ---: |
+| Gold/Silver 共享层 | 5785 |
+| Crystal 独立对话层 | 5147 |
 
-Install Python 3.11+, Git, LuaJIT (`sudo apt install luajit` on
-Ubuntu/Debian or `brew install luajit` on macOS), and Pillow
-(`python -m pip install Pillow`). The builder checks prerequisites and prints
-an installation hint; it never installs software silently. If LuaJIT is not
-on `PATH`, set `MODKIT_LUAJIT` to its full executable path (it is a native
-executable, not a Python package).
+Gold/Silver 共享层包含对话、Pokédex、宝可梦/招式/道具/训练家名称、道具描述、招式描述、地图名和引擎字符串。简中 seed 额外覆盖 48 条 Crystal 独有引擎字符串；普通 Gold/Silver 引擎字符串 catalog 也会在 Crystal 存档中复用。
 
-From the repository root:
+## 普通多语言构建路径
+
+原上游的 ROM 抽取构建仍然保留，适合做多语言生成、审计或跟上游数据格式时使用。这个路径需要你自己的合法美版 ROM dump。
+
+安装依赖：
 
 ```sh
-python build_translation.py
+python3 -m pip install Pillow
+brew install luajit
 ```
 
-Latin builds default to Fusion Pixel. Use
-`python build_translation.py --font-profile pokemon` to select the optional
-Pokemon Font profile. Substitute `python3`, `py -3`, or a virtual-environment
-interpreter when appropriate.
+从源码启动交互式 CLI：
 
-The builder asks for the target games, canonical US ROM dumps and language. It
-verifies the ROM fingerprints, asks before downloading pinned dependencies,
-then extracts, translates, validates and packages the selected release in a
-private ignored workspace.
+```sh
+python3 build_translation.py
+```
 
-The final file is `dist/translation-<lang>-<version>.zip` for RBY or
-`dist/translation-<lang>-gen2-<version>.zip` for Gold and Silver; the command prints its
-absolute path.
+它会提示选择：
 
-### Optional local path configuration
+- 目标游戏：RBY 或 GSC。
+- ROM 路径：Red/Blue/Yellow，或 Gold/Silver/Crystal。
+- 目标语言。
+- 输出目录。
 
-Copy [`config/rom_paths.example.toml`](config/rom_paths.example.toml) to the
-ignored `config/rom_paths.toml` and edit it:
+支持的 ROM SHA-1 仍沿用上游校验：
+
+| 游戏 | SHA-1 |
+| --- | --- |
+| Red | `ea9bcae617fdf159b045185467ae58b2e4a48b9a` |
+| Blue | `d7037c83e1ae5b39bde3c30787637ba1d4c48ce2` |
+| Yellow | `cc7d03262ebfaf2f06772c1a480c7d9d5f4a38e1` |
+| Gold | `d8b8a3600a465308c9953dfa04f0081c05bdcb94` |
+| Silver | `49b163f7e57702bc939d642a18f591de55d92dae` |
+| Crystal | `f4cd194bdee0d04ca4eac29e09b8e4e9d818c133` |
+
+ROM 只用于本地验证和抽取，不会被打进 Mod，也不会上传。
+
+## 本地 ROM 路径配置
+
+如果经常跑抽取路径，可以复制示例配置：
+
+```sh
+cp config/rom_paths.example.toml config/rom_paths.toml
+```
+
+然后编辑 `config/rom_paths.toml`：
 
 ```toml
 [rom]
@@ -121,399 +126,68 @@ silver = "/absolute/path/to/PokemonSilver.gbc"
 crystal = "/absolute/path/to/PokemonCrystal.gbc"
 ```
 
-The three RBY entries are required for the universal build; either `gold` or
-`silver`, plus `crystal`, is required for the generation-2 build (the prompt
-accepts Gold and Silver interchangeably for the shared layer). Relative paths
-resolve from this file and `~` expands, although
-absolute paths are recommended. On Windows, use forward slashes or TOML
-single-quoted paths such as `red = 'C:\Games\PokemonRed.gb'`. Configured files
-are still checked for existence and SHA-1; declining one returns to the normal
-prompt.
+`config/rom_paths.toml` 是本地私有配置，应该保持 ignored，不要提交。
 
-## Universal Yellow support
+## 常用维护命令
 
-One ZIP per language works on Pokémon Red, Blue and Yellow US. Red/Blue data
-lives in the common catalogs; entries whose source or translation differs in
-Yellow are emitted into `lang/*_yellow.lua` and applied only when
-`GameVersion.isYellow()`. Building it only needs a real Red *or* Blue ROM
-(whichever one is supplied) plus a real Yellow ROM: Red and Blue share
-byte-identical dialogue text and pointer tables, so either extracts into an
-equally correct build.
+构建简中 Gen1 + Gen2：
 
-Shared translations are not duplicated. Missing matches keep the appropriate
-ROM English text. The generated coverage report and
-`.cache/audit/yellow/<language>.json` retain the full shared/versioned/Yellow-only
-breakdown. Yellow-specific manual translations live in
-`overrides/<language>/rby/yellow_engine.json`.
+```sh
+python3 tools/build_zh_seed_mods.py \
+  --gen1recomp ../Gen1RecompCN \
+  --crystal-symbols /tmp/pokecrystal.sym
+```
 
-## Pokémon Gold, Silver and Crystal support
+运行测试：
 
-Gold, Silver and Crystal are published together as `translation-<lang>-gen2`. Gold's
-and Silver's own text is built and extracted from either a real Gold or a real
-Silver ROM (whichever one is supplied) and covers dialogue, Pokédex entries,
-named ROM catalogs and engine strings matched from production Gen 2 callsites.
-For corpus-based languages, Crystal is a mandatory companion ROM in the
-interactive extraction/audit path. Its own dialogue text uses different `bank:address` pointers from
-Gold/Silver (95.8% of shared symbol names diverge), so it gets its own corpus
-join against poke-corpus's separate `Crystal/` collection and ships as a
-`lang/dialogue_crystal.lua` layer, applied only at runtime on an actual Crystal
-save. Crystal reuses Gold/Silver's own engine-string catalog as-is (the
-Options/Menu `Strings()` code is identical across all three editions) and has
-no named ROM catalogs of its own yet (species/moves/items/trainer classes).
-Simplified Chinese instead uses the reviewed seed plus the pinned public
-linker symbol table described above, so its normal repack does not require a
-ROM. Korean has no Crystal corpus in poke-corpus, unlike Gold/Silver -- Crystal's
-own dialogue simply stays in English for that language. Missing or ambiguous
-matches remain in English. The manifest declares `"gold"`, `"silver"` and
-`"crystal"` as supported games, so the same mod loads on any of the three
-editions' saves.
+```sh
+python3 -m pytest
+```
 
-Before packaging, headless generation-2 gates verify that the translated
-values reach the Gold and Silver registries (Crystal's own dialogue layer is
-not yet covered by a release gate). These checks do not replace an in-game
-smoke test before release.
+刷新简中种子 hash：
 
-## Legal inputs and privacy
+```sh
+python3 tools/refresh_seed_hashes.py
+```
 
-Use dumps from your own original US cartridges:
+生成引擎字符串 backlog：
 
-| Game | Expected SHA-1 |
+```sh
+python3 scripts/pipeline.py engine-backlog --language zh-Hans
+```
+
+## 目录说明
+
+| 路径 | 说明 |
 | --- | --- |
-| Red | `ea9bcae617fdf159b045185467ae58b2e4a48b9a` |
-| Blue | `d7037c83e1ae5b39bde3c30787637ba1d4c48ce2` |
-| Yellow | `cc7d03262ebfaf2f06772c1a480c7d9d5f4a38e1` |
-| Gold | `d8b8a3600a465308c9953dfa04f0081c05bdcb94` |
-| Silver | `49b163f7e57702bc939d642a18f591de55d92dae` |
-| Crystal | `f4cd194bdee0d04ca4eac29e09b8e4e9d818c133` |
-
-The pipeline verifies these fingerprints and never downloads, provides or
-redistributes ROMs, patches or copyrighted text extracts. Generated data,
-worksheets and reports remain under ignored `.cache/` paths and are not
-packaged. Keep ROMs and the ignored `config/rom_paths.toml` private.
-
-## Languages and fonts
-
-English is the source language and runtime fallback. Supported targets and
-font profiles are:
-
-| Target languages | Releases | Default font | Optional font |
-| --- | --- | --- | --- |
-| `fr`, `de`, `es`, `it` | RBY, Gold/Silver/Crystal | Fusion Pixel Latin, 10px | Pokemon Font, 8px |
-| `ja-Hrkt` | RBY, Gold/Silver/Crystal | Fusion Pixel Japanese, 8px | — |
-| `zh-Hans` | RBY and Gold/Silver reviewed seeds; Crystal workbook seed with conservative runtime join | Fusion Pixel Simplified Chinese, 10px | — |
-| `ko` | Gold/Silver/Crystal only (Crystal's own dialogue stays in English) | Fusion Pixel Hangul, 10px | — |
-
-The optional Pokemon Font is more compact, but translated text can still
-overflow fixed-width interfaces.
-Macros and interface chrome remain tile-rendered. Each mod packages only the
-selected TTF and its applicable license notices.
-
-The Simplified Chinese target starts from the reviewed catalogs under
-[`seeds/zh-Hans`](seeds/zh-Hans). The seed importer excludes the old package's
-entry point, manifest, font and validation claims, then verifies every imported
-catalog by SHA-256 so current packaging and gates can be rebuilt against the
-pinned engine. The Gen 2 seed also contains all 251 move descriptions, all 250
-item slots, both Pokédex text pages for all 251 species, and the six persistent
-status labels. Move and item prose uses official Simplified Chinese wording
-from the pinned PokéCorpus Ultra Sun/Ultra Moon catalog; the second Pokédex
-page is a layout split of the seed's existing reviewed full entry, not a second
-machine translation. `tools/import_zh_hans_gsc_descriptions.py` records that
-one-time reproducible import and validates the three-row description limit.
-The `gsc-gs` seed contains 5,157 source-labelled Crystal rows
-converted from a pinned `text.xlsx`. The private build emits only unique
-matches or ambiguities whose Chinese result is identical; placeholder
-mismatches and unresolved runtime text stay English. Ten workbook rows have no
-independent runtime pointer (duplicates, source-marked unused text, removed
-Gold-only text, or non-addressable fragments) and are reported separately via
-[`crystal_non_runtime_exclusions.json`](config/gsc/crystal_non_runtime_exclusions.json),
-not counted as English fallback. The source repositories named by
-the seed notices did not provide an explicit redistribution license, so public
-release requires permission from their translation authors. See
-[`docs/zh-Hans-localization-plan.md`](docs/zh-Hans-localization-plan.md) for the
-current inventory, gates and remaining acceptance work.
-
-## Translation coverage
-
-### Red, Blue and Yellow
-
-The ZIP is universal, but ROM coverage is reported separately for Red/Blue
-and Yellow:
-
-- `Red Blue ROM aggregate` is the release metric. It combines the six effective ROM
-  catalogs (dialogue, species/move/item/trainer names, status labels) with a
-  handful of shared runtime entries (types, species kinds, literal handlers,
-  demo names and ROM-derived engine templates): `3286` for Red/Blue and
-  `3400` for Yellow.
-- `RBY-related engine strings` covers engine keys used by original RBY
-  gameplay and interfaces.
-
-Engine metrics are informational: unmatched or ambiguous entries keep the
-engine's English fallback.
-
-| Target | Red Blue ROM aggregate | Yellow ROM aggregate | RBY-related engine strings |
-| --- | ---: | ---: | ---: |
-| `fr` | 3286/3286 (100%) | 3400/3400 (100%) | 241/241 (100%) |
-| `de` | 3286/3286 (100%) | 3400/3400 (100%) | 241/241 (100%) |
-| `es` | 3286/3286 (100%) | 3400/3400 (100%) | 241/241 (100%) |
-| `it` | 3286/3286 (100%) | 3400/3400 (100%) | 241/241 (100%) |
-| `ja-Hrkt` | 3286/3286 (100%) | 3400/3400 (100%) | 241/241 (100%) |
-
-The ROM aggregates exclude extracted labels that do not render visible text.
-Reviewed exceptions are recorded in
-[`yellow_coverage_exceptions.json`](config/rby/yellow_coverage_exceptions.json).
-Full per-key scope, matching strategy and fallback provenance remain available in
-the generated coverage report and
-[`engine_scope.json`](config/rby/engine_scope.json).
-
-### Gold, Silver and Crystal
-
-Gold and Silver are built as a separate generation-2 artifact. The normal
-Simplified Chinese seed build requires no ROM; the multilingual extraction
-audit can rebuild from either Gold or Silver and uses Crystal as a companion
-ROM. In both paths, Crystal is merged into the same artifact and applied only
-on an actual Crystal save:
-
-- `Gold and Silver ROM aggregate` combines dialogue, Pokédex entries and the named ROM
-  catalogs. Its denominator excludes 14 markup-only records with no visible
-  prose.
-- `Gold and Silver-related engine strings` covers the 302 engine keys used by
-  at least one production Gen 2 callsite. 48 keys reachable only from a
-  Crystal-exclusive feature (Move Tutor, gender selection, the "PokeSeer"/
-  Buena's Password radio special, Battle Tower) are excluded from this scope
-  -- none of it exists on a real Gold or Silver cart, so it has no PokeCorpus
-  row and is not part of the shared multilingual denominator. The Simplified
-  Chinese seed carries a separate reviewed translation for all 48 keys; see
-  [`config/gsc/engine_scope_exclusions.json`](config/gsc/engine_scope_exclusions.json).
-- `Crystal dialogue coverage` is Crystal's own dialogue pointers. Corpus-based
-  targets join separately against poke-corpus's own `Crystal/` collection; the
-  Simplified Chinese seed resolves its source labels against the pinned public
-  linker symbol table (different
-  `bank:address` values from Gold/Silver almost throughout, so this is not
-  the same catalog as the aggregate above). Its denominator excludes 16
-  markup-only records, same convention as the ROM aggregate. This is
-  dialogue only for the corpus-backed targets -- Crystal's own named catalogs
-  (species/moves/items/trainer classes) are shared with Gold/Silver. The
-  Simplified Chinese seed additionally covers all 48 Crystal-exclusive engine
-  strings; other target languages do not yet. The `Gold and Silver-related engine strings` catalog
-  already applies unchanged on a Crystal save (same shared `Strings()`
-  code, no separate work needed there). `ko` has no Crystal corpus at all
-  in poke-corpus, so its dialogue stays in English.
-
-The generated report retains the dialogue/catalog breakdown and per-key
-provenance. Future unresolved entries will keep their original English text.
-
-| Target | Gold and Silver ROM aggregate | Gold and Silver-related engine strings | Crystal dialogue coverage |
-| --- | ---: | ---: | ---: |
-| `fr` | 4452/4452 (100%) | 302/302 (100%) | 3994/3994 (100%) |
-| `de` | 4452/4452 (100%) | 302/302 (100%) | 3994/3994 (100%) |
-| `es` | 4452/4452 (100%) | 302/302 (100%) | 3994/3994 (100%) |
-| `it` | 4452/4452 (100%) | 302/302 (100%) | 3994/3994 (100%) |
-| `ja-Hrkt` | 4452/4452 (100%) | 302/302 (100%) | 3994/3994 (100%) |
-| `ko` | 4452/4452 (100%) | 302/302 (100%) | 0/3994 (0%) |
-
-### Other engine strings
-
-The remaining engine keys are reported separately below. They are keys used by
-neither RBY nor Gold and Silver, so their denominator is the residual scope:
-`1240 - (242 + 302 - 20) = 716`. The numerator counts keys translated in at
-least one of the two artifacts; this is a project-level metric, not a claim
-that every key is present in both games.
-
-| Target | Other engine strings |
-| --- | ---: |
-| `fr` | 122/716 (17.04%) |
-| `de` | 122/716 (17.04%) |
-| `es` | 121/716 (16.9%) |
-| `it` | 122/716 (17.04%) |
-| `ja-Hrkt` | 117/716 (16.34%) |
-| `ko` | 46/716 (6.42%) |
-
-The denominator is calculated as follows: `1240` total engine keys, minus the
-`242` RBY-related keys and the `302` Gold and Silver-related keys, plus back the `20` keys
-shared by both scopes so they are subtracted only once. The resulting residual
-scope is `716` keys.
-
-These values use the pinned ROMs, corpus snapshots and Gen1Recomp revision
-`aea38240`; regenerate them whenever one of those inputs changes.
-
-## Translation provenance
-
-Every translated engine string remains traceable:
-
-| Origin | Meaning | Recorded in |
-| --- | --- | --- |
-| Automatic match | Exact, normalized, or structural match proved by the generator. | Generation report |
-| Deterministic anchor | Reliable PokeCorpus qid, composition, or extraction rule. | `config/{rby,gs}/semantic_anchors.json` |
-| Human-reviewed RBY anchor | Contextual or language-specific extraction reviewed by a maintainer; text still comes from PokeCorpus. | `config/rby/semantic_anchor_decisions.json` |
-| Human-reviewed Gold pointer | Ambiguous ROM pointer resolved to a reviewed PokeCorpus qid. | `config/gsc/pointer_decisions.json` |
-| Reviewed placeholder exception | Official localized wording legitimately adds or omits a runtime value such as the player name or an item quantity. This records no translated text and does not disable the audit; each exception is scoped to a language, ROM pointer, corpus QID, and exact audit message. | `config/gsc/placeholder_decisions.json` |
-| Manual corpus correction | A maintainer corrects one selected-language corpus translation without changing the upstream corpus. Entries are indexed by qid. | `overrides/<language>/rby/corpus.json` |
-| Manual translation — engine contract gap | PokeCorpus has the text, but Gen1Recomp merges contexts or hides required parameters. | `overrides/<language>/{rby,gs}/engine.json`, `reason: "engine-contract-gap"` |
-| Manual translation — engine original | Engine-specific text with no compatible ROM source. | `overrides/<language>/{rby,gs}/engine.json`, `reason: "engine-original"` |
-| Editorial correction | Deliberately preferred engine formulation. | `overrides/<language>/rby/engine.json`, `reason: "editorial-correction"` |
-| Manual translation — Yellow-only engine text | Engine-authored, Yellow-exclusive text (Surfing Pikachu minigame HUD) with no PokeCorpus source; applied only when `GameVersion.isYellow()`. | `overrides/<language>/rby/yellow_engine.json`, `reason: "yellow-only-engine-text"` |
-| Known limitation | Active anchor/override knowingly imperfect in a context or language; a status, not an origin. | Anchor metadata or override provenance |
-| English fallback | No sufficiently reliable translation; runtime keeps English. | Generation report |
-
-Generated coverage reports are the authoritative inventory of unmatched and
-ambiguous strings. Every manual override must explain its source and accepted
-limitations; otherwise the English fallback is preferred.
-
-## Windows/Linux standalone executables
-
-The GitHub Actions workflow builds CLI and graphical Tkinter executables for
-Windows x64 and Linux x86_64:
-
-- `gen1recomp-translation-mod-generator-<version>-<cli|gui>-windows-x64.exe`
-- `gen1recomp-translation-mod-generator-<version>-<cli|gui>-linux-x86_64.tar.gz`
-
-Windows users can run the downloaded EXE directly. Linux builds target Ubuntu
-22.04 (glibc) and compatible newer systems; extract the selected archive and
-run its binary:
-
-```sh
-tar -xzf gen1recomp-translation-mod-generator-<version>-gui-linux-x86_64.tar.gz
-chmod +x gen1recomp-translation-mod-generator-<version>-gui-linux-x86_64
-./gen1recomp-translation-mod-generator-<version>-gui-linux-x86_64
-```
-
-Standalone builds verify their pinned downloads and never bundle or upload
-ROMs. The CLI stores its cache in the current directory; the GUI uses the
-selected output directory. Keep ROMs and `config/rom_paths.toml` outside the
-application bundle.
-
-## Maintainer reference
-
-### Data flow and matching
-
-```text
-resolve release -> verify ROMs -> prepare pinned inputs -> extract and match
--> generate -> validate -> inspect and publish archive
-```
-
-Text resolution is deterministic:
-
-```text
-explicit override > semantic anchor > exact > normalized
-> structural placeholder match > empty entry (runtime English fallback)
-```
-
-Game-specific configuration lives under `config/rby/` and `config/gsc/`;
-language overrides follow the same split under `overrides/<language>/`.
-
-| Configuration | Purpose |
-| --- | --- |
-| `config/rby/engine_scope.json` | RBY coverage classification for engine strings. |
-| `config/rby/terminology_anchors.json` | Evidence for corpus terminology used by RBY. |
-| `config/rby/literal_handlers.json` | Documented RBY extraction gaps. |
-| `config/shared/engine_manifest.json` | Pinned engine revision and complete string universe shared by the releases. |
-
-The semantic anchors and reviewed decisions are described in the
-`Translation provenance` section above.
-Gold and Silver identify their production strings directly from Gen 2 source subtrees.
-Missing or ambiguous evidence always falls back to English. Private review
-candidates never become executable configuration automatically.
-`strict_engine` requires the engine catalog and scaffold to be present, not
-fully translated.
-
-### Module map
-
-| Area | Modules | Responsibility |
-| --- | --- | --- |
-| Entry points and policy | `cli.py`, `builder.py`, `gui.py`, `orchestration.py`, `specs.py` | Resolve release requests and dispatch the command, interactive and GUI flows. |
-| Inputs and workspace | `project.py`, `dependencies.py`, `rom_paths.py`, `roms.py` | Resolve paths, verify private ROMs and prepare pinned dependencies. |
-| Corpus model | `corpus.py`, `model.py`, `align.py`, `worksheet.py`, `tokens.py` | Parse parallel corpora, align qids and preserve control-token contracts. |
-| RBY generation | `join.py`, `generate.py`, `literals.py`, `yellow.py`, `yellow_audit.py`, `mod.py` | Join Red/Blue catalogs, build the Yellow layer and emit the universal mod. |
-| Gold and Silver generation | `gs_text.py`, `gs_join.py`, `gs_index_join.py`, `gs_engine.py`, `gs_mod.py` | Join GoldSilver to pointer/index catalogs, engine strings and the Gen 2 artifact. |
-| Engine strings | `engine.py`, `engine_scope.py` | Match the versioned engine catalog and classify production callsites. |
-| Validation and audits | `validate.py`, `disassembly_audit.py`, `engine_backlog.py` | Enforce release gates and produce private diagnostic reports. |
-
-`build_translation.py` is the normal entry point. Intermediate and audit files
-stay under `.cache/`.
-
-### Audit commands
-
-Disassembly audit:
-
-```sh
-python scripts/pipeline.py audit-disassemblies
-```
-
-This writes private comparison reports under `.cache/audit/`. Never publish
-them: they can contain copyrighted text and local paths.
-
-Engine backlog:
-
-```sh
-python scripts/pipeline.py engine-backlog --language fr
-```
-
-This records unresolved keys, callsites, fallback reasons and qid candidates
-without modifying anchors, overrides or catalogs. It requires a matching
-cached coverage/catalog snapshot.
-
-For all languages (default `fr,de,es,it,ja-Hrkt`):
-
-```sh
-python scripts/pipeline.py engine-backlog-matrix
-```
-
-This produces the cross-language backlog matrix under
-`.cache/audit/engine-backlog/`.
-
-### Release builds
-
-Build standalone artifacts locally with:
-
-```powershell
-./packaging/build_windows_executable.ps1
-```
-
-```sh
-./packaging/build_linux_executable.sh
-```
-
-Tag pushes matching `v<version>` validate the version and publish all four
-CLI/GUI artifacts. `workflow_dispatch` builds them without publishing. The
-workflow compiles pinned LuaJIT, validates both front ends and inspects each
-archive before upload.
-
-### Remaining limitations
-
-- Automated gates validate data loading and packaging, not rendering; releases
-  still need in-game smoke tests.
-- Some engine strings remain in English, as shown by the coverage tables.
-- Translated text can exceed fixed UI widths with either font profile.
-- The `X ATTACK`/`X DEFENSE`/etc. battle-item and the vitamin (`PROTEIN`,
-  `IRON`, `CALCIUM`, `ZINC`, `CARBOS`, `HP UP`) stat-rose messages always
-  show the raised stat's name in English: Gen1Recomp substitutes it with a
-  raw uppercase value (`stat:upper()`), not through the translated engine
-  string catalog. This is different from the SummaryMenu's own stat labels,
-  which are fully translated.
-- RBY type names are replaced at draw time by exact string match, so a nickname
-  identical to an English type name is translated too.
-- The desktop launcher uses a separate renderer and is outside the content
-  mod's translation hooks.
-- RBY- and Gold and Silver-specific upstream engine gaps are tracked in
-  [docs/upstream-fixes.md](docs/upstream-fixes.md).
-
-## Credits
-
-- [Gen1Recomp](https://github.com/bryanthaboi/gen1recomp) by [bryanthaboi](https://github.com/bryanthaboi), the native Lua / LÖVE2D recreation.
-- [PokéCorpus](https://github.com/abcboy101/poke-corpus) by [abcboy101](https://github.com/abcboy101), the multilingual translation corpus.
-- [pokemon-font](https://github.com/cooljeanius/pokemon-font) v1.8.2, the Pokemon Font clone by Superpencil, sourced from the fork maintained by [cooljeanius](https://github.com/cooljeanius), available as the optional Latin profile.
-- [Fusion Pixel Font](https://github.com/TakWolf/fusion-pixel-font) by [TakWolf](https://github.com/TakWolf), used by the recommended Latin, Japanese, Korean and Simplified Chinese profiles.
-
-## Contributors ✨
-
-Thanks go to these wonderful people:
-
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<table>
-  <tr>
-    <td align="center" valign="top" width="14.28%"><a href="https://github.com/thibautbus"><img src="https://avatars.githubusercontent.com/thibautbus?s=100" width="100px;" alt="thibautbus"/><br /><sub><b>thibautbus</b></sub></a><br /><a href="https://github.com/thibautbus/gen1recomp-translation-mod-generator/commits?author=thibautbus" title="Code">💻</a> <a href="https://github.com/thibautbus/gen1recomp-translation-mod-generator/commits?author=thibautbus" title="Documentation">📖</a> <a href="https://github.com/thibautbus/gen1recomp-translation-mod-generator/commits?author=thibautbus" title="Maintenance">🚧</a></td>
-    <td align="center" valign="top" width="14.28%"><a href="https://github.com/antoniman31"><img src="https://avatars.githubusercontent.com/u/268696974?s=100" width="100px;" alt="AntoniMan31"/><br /><sub><b>AntoniMan31</b></sub></a><br /><a href="https://github.com/thibautbus/gen1recomp-translation-mod-generator/pull/10" title="Bug fixes">🐛</a> <a href="https://github.com/thibautbus/gen1recomp-translation-mod-generator/commits?author=antoniman31" title="Code">💻</a></td>
-  </tr>
-</table>
-
-<!-- ALL-CONTRIBUTORS-LIST:END -->
+| `seeds/zh-Hans/` | 当前简体中文审校种子。 |
+| `seeds/zh-Hans/rby/` | Red/Blue/Yellow 汉化 catalog。 |
+| `seeds/zh-Hans/gsc-gs/` | Gold/Silver/Crystal 汉化 catalog 和 Crystal 对话种子。 |
+| `config/rby/` | RBY 匹配、scope、例外和人工决策。 |
+| `config/gsc/` | GSC 匹配、scope、Crystal 指针和例外。 |
+| `pipeline/` | 生成、匹配、验证、GUI/CLI 主逻辑。 |
+| `tools/` | 简中构建、导入、审计和 gate 工具。 |
+| `tests/` | 自动测试。 |
+| `dist/` | 本地构建输出目录，通常不提交。 |
+| `.cache/` | 本地中间文件和审计报告，通常不提交。 |
+
+## 已知限制
+
+- 主工程里没有走 `Strings(...)` 的硬编码文字，普通 translation Mod 不能自动翻译；需要主工程改为语言 catalog 调用。
+- 自动 gate 验证的是数据加载、打包和部分运行时接入，不等于完整渲染验收；发布前仍需要实机烟测。
+- 固定宽度 UI 可能因为中文长度出现溢出，需要结合主工程字体、字号和布局继续调。
+- 桌面 launcher 自身有独立渲染/界面路径，不完全受内容 Mod 的语言 hook 覆盖。
+- 部分运行时字符串如果由主工程直接拼接原始英文值，例如某些 `stat:upper()` 类型替换，仍需要主工程侧继续改造。
+
+## 授权和来源提醒
+
+本工程只发布生成工具、配置、审校 catalog 和 Mod 包装逻辑。不要提交 ROM、ROM patch、ROM 提取物、私有审计表或本地路径配置。
+
+简中种子来源中包含社区汉化成果；公开发布前应确认原翻译仓库或翻译作者授权。详见各 seed 目录下的 `TRANSLATION_SOURCE.md` 和 [`docs/zh-Hans-localization-plan.md`](docs/zh-Hans-localization-plan.md)。
+
+## 上游致谢
+
+- [Gen1Recomp](https://github.com/bryanthaboi/gen1recomp)：主工程和 Mod 平台。
+- [PokéCorpus](https://github.com/abcboy101/poke-corpus)：多语言语料来源。
+- [Fusion Pixel Font](https://github.com/TakWolf/fusion-pixel-font)：当前推荐的中文、日文、韩文和拉丁字体。
+- [pokemon-font](https://github.com/cooljeanius/pokemon-font)：可选拉丁字体 profile。
