@@ -46,9 +46,23 @@ def audit(checkout: Path) -> dict:
     built_in = set()
     for relative in ("src/locales/zh_CN.lua", "src/locales/zh_CN_app.lua"):
         built_in.update(locale_keys(checkout / relative))
-    seed_keys = set(load_seed("rby")["catalogs"]["strings"])
+    # Both generation packages contribute engine text.  A seed keeps empty
+    # values as explicit review backlog, and the generated mod skips them, so
+    # presence alone must not count as coverage.
+    seed_declared_keys = set()
+    seed_keys = set()
+    for generation in ("rby", "gsc"):
+        seed_catalog = load_seed(generation)["catalogs"]["strings"]
+        seed_declared_keys.update(seed_catalog)
+        seed_keys.update(
+            key for key, value in seed_catalog.items()
+            if isinstance(value, str) and value.strip()
+        )
     covered = keys & (built_in | seed_keys)
     missing = sorted(keys - covered)
+    empty_seed_backlog = sorted(set(missing) & (seed_declared_keys - seed_keys))
+    undeclared_missing = sorted(set(missing) - seed_declared_keys)
+    missing_categories = Counter(classified[key]["category"] for key in missing)
     return {
         "schema": "gen1recomp-translation-mods/zh-coverage-audit",
         "version": 1,
@@ -62,8 +76,13 @@ def audit(checkout: Path) -> dict:
             "seed_engine_keys": len(seed_keys),
             "covered": len(covered),
             "missing": len(missing),
+            "empty_seed_backlog": len(empty_seed_backlog),
+            "undeclared_missing": len(undeclared_missing),
         },
         "categories": dict(sorted(Counter(row["category"] for row in classified.values()).items())),
+        "missing_categories": dict(sorted(missing_categories.items())),
+        "empty_seed_backlog": empty_seed_backlog,
+        "undeclared_missing": undeclared_missing,
         "missing": missing,
     }
 

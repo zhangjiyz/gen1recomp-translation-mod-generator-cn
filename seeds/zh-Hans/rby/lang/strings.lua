@@ -1257,4 +1257,6 @@ return {
   ["UI LETTERBOX"] = "界面留边",
   ["VIDEO"] = "视频",
   ["When you change a\nPOKéMON BOX, data\vwill be saved.\fIs that okay?"] = "更换宝可梦盒子时，\n数据将会保存。\f可以吗？",
+  [" AREA UNKNOWN"] = " 地区不明",
+  ["To"] = "前往",
 }

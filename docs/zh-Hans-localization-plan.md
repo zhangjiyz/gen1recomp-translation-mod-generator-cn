@@ -1,6 +1,6 @@
 # Simplified Chinese localization adaptation plan
 
-Status date: 2026-08-28. This document separates implemented code and imported
+Status date: 2026-08-31. This document separates implemented code and imported
 translation assets from ROM-dependent release acceptance.
 
 ## Target deliverables
@@ -17,16 +17,22 @@ translation assets from ROM-dependent release acceptance.
 
 ### Main engine
 
-The current v0.2.32-aligned checkout has 2,276 `Strings` callsites, 60 direct
-render-literal callsites and six `RomText` fallbacks. These reduce to 1,771
-unique engine keys. The built-in `zh_CN` catalog contains 1,332 keys and the
-reviewed RBY seed contains 1,319; their union covers all 1,771 current keys.
+The current v0.2.43-aligned checkout has 2,646 `Strings` callsites, 60 direct
+render-literal callsites and six `RomText` fallbacks. These reduce to 2,011
+unique engine keys. The built-in `zh_CN` catalog contains 1,606 keys and the
+non-empty RBY/GSC seed catalogs contribute 715 unique keys; their union covers
+1,849 current keys. The remaining 162 keys are all explicitly retained as
+empty review backlog in the RBY seed; there are no current engine keys absent
+from both the translated catalogs and that declared backlog.
 The direct-render scanner is part of the audit, so strings passed directly to
 `Chrome.print*`, `Font.draw*`, `love.graphics.print/printf` and `TextBox.new`
 are no longer invisible to coverage checks.
 
-Current unique-key categories are: core 40, Gen 2 519, import 483, link 86,
-mixed 127, modern 80, RBY 239, UI 168 and unknown 29.
+Current unique-key categories are: core 41, Gen 2 518, import 498, link 297,
+mixed 138, modern 80, RBY 239, UI 171 and unknown 29. The 162 untranslated
+keys are core 12, Gen 2 36, import 6, link 46, mixed 7, modern 17, RBY 30 and
+UI 8. `tools/audit_zh_coverage.py` reports the complete key list and treats an
+empty seed value as missing rather than as translated coverage.
 
 ### RBY seed
 
@@ -34,7 +40,7 @@ mixed 127, modern 80, RBY 239, UI 168 and unknown 29.
 | --- | ---: |
 | Red/Blue dialogue | 2,592 |
 | Yellow dialogue layer | 434 |
-| Engine strings | 1,319 |
+| Engine strings | 1,323 declared / 437 translated |
 | Species names / kinds | 151 / 151 |
 | Move names | 165 |
 | Item names | 152 |
@@ -51,7 +57,7 @@ extractions and a Modkit worksheet, reporting stale keys separately.
 | Catalog | Entries |
 | --- | ---: |
 | Dialogue pointers | 3,045 |
-| Engine strings | 466 |
+| Engine strings | 468 translated |
 | Species names / kinds / Pokédex text | 251 / 251 / 251 |
 | Move names / item names | 251 / 250 |
 | Trainer class names / landmarks | 66 / 95 |
@@ -131,9 +137,9 @@ data. Remaining acceptance work is:
 | Phase | Work | State |
 | --- | --- | --- |
 | A | Sync both forks to their upstream baselines with backup branches | Complete locally |
-| B | Pin Gen1Recomp v0.2.32 and expand engine/direct-render auditing | Complete |
+| B | Track the upstream generator pin and audit the current Gen1Recomp v0.2.43 checkout | Complete |
 | C | Add `zh-Hans`, Fusion Chinese font and reviewed RBY/GS seed import | Complete |
-| D | Refresh main `zh_CN` gaps and prove 1,771/1,771 engine-key coverage | Complete statically |
+| D | Refresh main `zh_CN` gaps and audit effective non-empty coverage | 1,849/2,011; 162 reviewed blanks remain |
 | E | Add PotatoVoxel overlay and conflict decisions | Complete statically |
 | F | Import Crystal workbook and add pinned no-ROM symbol join | Complete |
 | G | Build both no-ROM ZIPs and run strict/runtime gates | Complete locally |
