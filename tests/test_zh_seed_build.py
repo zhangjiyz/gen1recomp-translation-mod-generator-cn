@@ -48,6 +48,21 @@ class CrystalSymbolCatalogTests(unittest.TestCase):
             with self.assertRaises(BuildError):
                 crystal_catalog_from_symbols(path, [], expected_sha256="0" * 64)
 
+    def test_reviewed_non_runtime_row_is_not_reported_as_english_fallback(self):
+        body = b"01:4000 OtherLabel\n"
+        rows = [("::msg_003_D_event", "No. {NUM}", "号码{NUM}")]
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "pokecrystal.sym"
+            path.write_bytes(body)
+            catalog, stats, entries = crystal_catalog_from_symbols(
+                path, rows, expected_sha256=hashlib.sha256(body).hexdigest(),
+            )
+        self.assertEqual(catalog, {})
+        self.assertEqual(entries, [])
+        self.assertEqual(stats["fallback_english"], 0)
+        self.assertEqual(stats["runtime_rows"], 0)
+        self.assertEqual(stats["excluded_non_runtime"], ["::msg_003_D_event"])
+
 
 if __name__ == "__main__":
     unittest.main()

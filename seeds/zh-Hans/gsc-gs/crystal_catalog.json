@@ -3960,7 +3960,7 @@
       "label": "IrwinRisingBadgeGossipText",
       "block": "msg_telboy01_type19_05_r35",
       "english": "I saw, I saw!\fI saw you go into\nthe DRAGON'S DEN!\fI'm certain you\npassed! Aww, no\fneed to be modest!\nYou can't fail!",
-      "translation": "看到{PLAYER}啦！\n看到你进龙穴啦！\f你肯定通过考验了吧！\n别害羞啊！毕竟是你啊！"
+      "translation": "看到你啦！\n看到你进龙穴啦！\f你肯定通过考验了吧！\n别害羞啊！毕竟是你啊！"
     },
     {
       "qid": "data/phone/text/irwin_caller.asm:IrwinRocketHideoutGossipText:msg_telboy01_type19_03_r35",
@@ -5224,7 +5224,7 @@
       "label": "MomYouveSavedText",
       "block": "msg_mama_08_telmsg",
       "english": "By the way, you've\nsaved up ${STRBUF}.\fWant to start\nsaving again?",
-      "translation": "对了，{PLAYER}\n之前在妈妈这儿\u000b存了{STRBUF}元，\u000b要重新开始存吗？"
+      "translation": "对了，你已经在妈妈这儿\n存了${STRBUF}。\f要重新开始存钱吗？"
     },
     {
       "qid": "data/phone/text/parry_callee.asm:ParryAnswerPhoneDayText:msg_telboy02_type01_02_r45",
@@ -8176,7 +8176,7 @@
       "label": "StoleText",
       "block": "dorobou_m01",
       "english": "{USER}\nstole {STRBUF}\u000bfrom its foe!",
-      "translation": "{USER}从\n{TARGET}那里\u000b夺取了{STRBUF}！"
+      "translation": "{USER}\n从对手那里\u000b夺取了{STRBUF}！"
     },
     {
       "qid": "data/text/battle.asm:StoringEnergyText:gaman_m01",
@@ -8248,7 +8248,7 @@
       "label": "TookAimText",
       "block": "lock_on_m01",
       "english": "{USER}\ntook aim!",
-      "translation": "{USER}将目标\n对准了{TARGET}！"
+      "translation": "{USER}\n瞄准了目标！"
     },
     {
       "qid": "data/text/battle.asm:TookDownWithItText:mitizure_m02",
@@ -9392,7 +9392,7 @@
       "label": "_MomBoughtWithYourMoneyText",
       "block": "MotherShoppingMsg_016_Decorate",
       "english": "I bought it with\nyour money. Sorry!",
-      "translation": "就用{PLAYER}的钱\n买下来了！抱歉呢！"
+      "translation": "我用你的钱\n买下来了！抱歉！"
     },
     {
       "qid": "data/text/common_1.asm:_MomFoundADollText:MotherShoppingMsg_018_Decorate",
@@ -18592,7 +18592,7 @@
       "label": "EusineAfterText",
       "block": "msg_minaki01_03_t24",
       "english": "You're amazing,\n{PLAYER}!\fNo wonder #MON\ngravitate to you.\fI get it now.\fI'm going to keep\nsearching for\u000bSUICUNE.\fI'm sure we'll see\neach other again.\fSee you around!",
-      "translation": "你真厉害，{PLAYER}！\f所以选了{PLAYER}……\f原来如此。\f我会继续寻找水君的。\f我们还会再次见面吧。\n再会！"
+      "translation": "你真厉害，{PLAYER}！\f难怪宝可梦都被你吸引……\f原来如此。\f我会继续寻找水君的。\f我们还会再次见面吧。\n再会！"
     },
     {
       "qid": "maps/CianwoodCity.asm:EusineBeatenText:msg_minaki01_02_t24",
@@ -27096,7 +27096,7 @@
       "label": "OakYesKantoBadgesText",
       "block": "msg_ookid_12_t01r0301",
       "english": "OAK: Ah, you're\ncollecting KANTO\u000bGYM BADGES.\fI imagine that\nit's hard, but the\fexperience is sure\nto help you.\fCome see me when\nyou get them all.\fI'll have a gift\nfor you.\fKeep trying hard,\n{PLAYER}!",
-      "translation": "大木：你好像正在\n收集关都的徽章吧！\f虽然并不轻松，\n但是，{PLAYER}，\u000b经验会成为你的力量！\f等你全部集齐以后，\n再来我这里玩吧。\u000b到时候我有礼物送你！\f{PLAYER}，\n加油吧！"
+      "translation": "大木：你好像正在\n收集关都的徽章吧！\f虽然并不轻松，\n但经验一定会成为你的力量！\f等你全部集齐以后，\n再来我这里玩吧。\u000b到时候我有礼物送你！\f{PLAYER}，\n加油吧！"
     },
     {
       "qid": "maps/OaksLab.asm:OaksAssistant1Text:msg_assistm01_00_t01r0301",
@@ -27112,7 +27112,7 @@
       "label": "OaksAssistant2Text",
       "block": "msg_assistm02_00_t01r0301",
       "english": "Thanks to your\nwork on the #-\u000bDEX, the PROF's\fresearch is coming\nalong great.",
-      "translation": "多亏了{PLAYER}\n努力地填满图鉴，\u000b博士的研究工作\u000b进展得非常顺利！"
+      "translation": "多亏你努力地\n填满图鉴，\u000b博士的研究工作\u000b进展得非常顺利！"
     },
     {
       "qid": "maps/OaksLab.asm:OaksAssistant3Text:msg_assistm03_00_t01r0301",
@@ -40992,7 +40992,7 @@
       "label": "WillScript_WillBeforeText",
       "block": "msg_ituki_01_r23r0102",
       "english": "Welcome to #MON\nLEAGUE, {PLAYER}.\fAllow me to intro-\nduce myself. I am\u000bWILL.\fI have trained all\naround the world,\fmaking my psychic\n#MON powerful.\fAnd, at last, I've\nbeen accepted into\u000bthe ELITE FOUR.\fI can only keep\ngetting better!\fLosing is not an\noption!",
-      "translation": "欢迎来到宝可梦联盟！\f我的名字是一树。\f以前环游世界的时候，\n我日夜不停地锻炼着\u000b我的超能力宝可梦。\f最后终于成为了\n四天王中的一员。\f我还要变得更强！\n可不会在这里输掉！"
+      "translation": "欢迎来到宝可梦联盟，\n{PLAYER}！\f我的名字是一树。\f以前环游世界的时候，\n我日夜不停地锻炼着\u000b我的超能力宝可梦。\f最后终于成为了\n四天王中的一员。\f我还要变得更强！\n可不会在这里输掉！"
     },
     {
       "qid": "maps/WillsRoom.asm:WillScript_WillDefeatText:msg_ituki_03_r23r0102",
@@ -41000,7 +41000,7 @@
       "label": "WillScript_WillDefeatText",
       "block": "msg_ituki_03_r23r0102",
       "english": "Even though I was\ndefeated, I won't\u000bchange my course.\fI will continue\nbattling until I\fstand above all\ntrainers!\fNow, {PLAYER}, move\non and experience\fthe true ferocity\nof the ELITE FOUR.",
-      "translation": "虽然这次输了，\n但我的计划没有改变。\u000b为了站上训练家的顶点，\u000b我还会不断地战斗。\f你就继续前进，\n好好体会一下\u000b四天王的可怕之处吧！"
+      "translation": "虽然这次输了，\n但我的计划没有改变。\u000b为了站上训练家的顶点，\u000b我还会不断地战斗。\f{PLAYER}，继续前进吧，\n好好体会一下\u000b四天王的可怕之处！"
     },
     {
       "qid": "maps/WiseTriosRoom.asm:SageGakuAfterBattleText:msg_bouzu11_03_t27r0202",

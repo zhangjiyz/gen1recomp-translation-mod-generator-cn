@@ -108,7 +108,7 @@ class SeedTests(unittest.TestCase):
         self.assertEqual(stats["unique"], 4717)
         self.assertEqual(stats["harmless_ambiguous"], 387)
         self.assertEqual(stats["unresolved"], 19)
-        self.assertEqual(sum(entry.translation is not None for entry in entries), 5094)
+        self.assertEqual(sum(entry.translation is not None for entry in entries), 5104)
         self.assertEqual(audit_join(entries), [])
 
 

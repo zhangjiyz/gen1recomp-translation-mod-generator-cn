@@ -222,7 +222,11 @@ one-time reproducible import and validates the three-row description limit.
 The `gsc-gs` seed contains 5,157 source-labelled Crystal rows
 converted from a pinned `text.xlsx`. The private build emits only unique
 matches or ambiguities whose Chinese result is identical; placeholder
-mismatches and unresolved text stay English. The source repositories named by
+mismatches and unresolved runtime text stay English. Ten workbook rows have no
+independent runtime pointer (duplicates, source-marked unused text, removed
+Gold-only text, or non-addressable fragments) and are reported separately via
+[`crystal_non_runtime_exclusions.json`](config/gsc/crystal_non_runtime_exclusions.json),
+not counted as English fallback. The source repositories named by
 the seed notices did not provide an explicit redistribution license, so public
 release requires permission from their translation authors. See
 [`docs/zh-Hans-localization-plan.md`](docs/zh-Hans-localization-plan.md) for the

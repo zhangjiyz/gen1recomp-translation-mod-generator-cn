@@ -1,0 +1,16 @@
+{
+  "schema": "gen1recomp-translation-mods/crystal-non-runtime-exclusions",
+  "version": 1,
+  "entries": {
+    "::msg_003_D_event": "A workbook fragment inside the composed Bug Contest prize message; it has no independent text pointer.",
+    "::msg_009_D_event": "A workbook fragment from an unavailable mobile/debug status screen; it has no independent text pointer in the pinned international Crystal build.",
+    "::msg_bigman_00_t25r0701": "Gold-only Goldenrod Pokemon Center NPC text removed from Crystal; no matching text or symbol exists in the pinned Crystal source.",
+    "::msg_cableboy_00_t25r0701": "Duplicate workbook row; the same live Crystal text is already bound through GoldenrodPokecenter1FGameboyKidText.",
+    "::msg_littleg_01_t25r0701": "Duplicate workbook row; the same live Crystal text is already bound through GoldenrodPokecenter1FLassText.",
+    "::msg_rocketm_00_t23r0401": "Gold-only Slowpoke Well fragment removed from Crystal; no matching text or symbol exists in the pinned Crystal source.",
+    "data/text/std_text.asm:NurseSeeYouAgainTextUnused:msg_heal_05_common": "Explicitly marked unused in the canonical Crystal source; the live nurse goodbye has its own translated symbol.",
+    "data/text/std_text.asm:PokemonRadioTextUnused:msg_radio_common": "Explicitly marked unused and has no linker symbol in the canonical Crystal source.",
+    "data/text/std_text.asm:RockSmashTextUnused:msg_rock02_common": "Explicitly marked unused and has no linker symbol in the canonical Crystal source.",
+    "data/text/std_text.asm:StrengthTextUnused:msg_rock01_common": "Explicitly marked unused and has no linker symbol in the canonical Crystal source."
+  }
+}

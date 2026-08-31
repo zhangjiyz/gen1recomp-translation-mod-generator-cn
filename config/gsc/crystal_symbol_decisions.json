@@ -9,6 +9,34 @@
     "maps/TimeCapsule.asm:.FriendReadyText:msg_hero_t00r0104": {
       "symbol": "TimeCapsuleFriendScript.FriendReadyText",
       "reason": "Local label is scoped under TimeCapsuleFriendScript in the canonical linker symbol table."
+    },
+    "data/text/common_3.asm:_PutLongItemInPocketText:AddSuccessMessage_005_Script_CKN": {
+      "symbol": "PutItemInPocketText",
+      "reason": "The workbook uses an older label; the pinned Crystal symbol carries the same two-buffer item-pocket text."
+    },
+    "maps/BillsBrothersHouse.asm:BillsBrotherText:msg_middlew_00_t08r0401": {
+      "symbol": "BillsOlderSisterText",
+      "reason": "The map and NPC were renamed in Crystal; the English text uniquely matches BillsOlderSisterText."
+    },
+    "maps/BillsBrothersHouse.asm:BillsBrothersHouseYoungsterText:msg_boy_00_t08r0401": {
+      "symbol": "BillsOlderSistersHouseYoungsterText",
+      "reason": "The map was renamed in Crystal; the English text uniquely matches the current symbol."
+    },
+    "maps/BillsFamilysHouse.asm:BillsSisterPhoneFullText:msg_littleg_13_t25r0401": {
+      "symbol": "BillsYoungerSisterPhoneFullText",
+      "reason": "Crystal names Bill's younger sister explicitly; the English text is unchanged."
+    },
+    "maps/BillsFamilysHouse.asm:BillsSisterRefusedNumberText:msg_littleg_12_t25r0401": {
+      "symbol": "BillsYoungerSisterRefusedNumberText",
+      "reason": "Crystal names Bill's younger sister explicitly; the English text is unchanged."
+    },
+    "maps/BillsFamilysHouse.asm:BillsSisterStorageSystemText:msg_littleg_02_t25r0401": {
+      "symbol": "BillsYoungerSisterStorageSystemText",
+      "reason": "Crystal names Bill's younger sister explicitly; the English text is unchanged."
+    },
+    "maps/BillsFamilysHouse.asm:BillsSisterUsefulNumberText:msg_littleg_10_t25r0401": {
+      "symbol": "BillsYoungerSisterUsefulNumberText",
+      "reason": "Crystal names Bill's younger sister explicitly; the English text is unchanged."
     }
   }
 }

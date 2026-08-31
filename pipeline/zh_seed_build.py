@@ -46,6 +46,18 @@ def _crystal_symbol_decisions() -> dict[str, str]:
     return decisions
 
 
+def _crystal_non_runtime_exclusions() -> dict[str, str]:
+    path = resource_root() / "config" / "gsc" / "crystal_non_runtime_exclusions.json"
+    data = json.loads(path.read_text(encoding="utf-8"))
+    if (data.get("schema") != "gen1recomp-translation-mods/crystal-non-runtime-exclusions"
+            or data.get("version") != 1 or not isinstance(data.get("entries"), dict)):
+        raise BuildError(f"unsupported Crystal non-runtime exclusions: {path}")
+    for qid, reason in data["entries"].items():
+        if not isinstance(qid, str) or not qid or not isinstance(reason, str) or not reason:
+            raise BuildError(f"invalid Crystal non-runtime exclusion for {qid!r}")
+    return data["entries"]
+
+
 def _engine_zh_font(engine: Path) -> tuple[Path, int]:
     root = engine / "assets" / "fonts" / "fusionpixel"
     candidates = (
@@ -143,15 +155,20 @@ def crystal_catalog_from_symbols(
     entries: list[GsJoinEntry] = []
     missing_labels: list[str] = []
     rejected_placeholders: list[str] = []
+    excluded_non_runtime: list[str] = []
     duplicate_pointers: list[str] = []
     decisions = _crystal_symbol_decisions()
+    non_runtime = _crystal_non_runtime_exclusions()
     for qid, english, translation in rows:
         parts = qid.split(":", 2)
         label = parts[1] if len(parts) == 3 else ""
         symbol = decisions.get(qid, label)
         pointer = symbols.get(symbol) if symbol and symbol not in duplicates else None
         if pointer is None:
-            missing_labels.append(qid)
+            if qid in non_runtime:
+                excluded_non_runtime.append(qid)
+            else:
+                missing_labels.append(qid)
             continue
         if check_placeholders(english, translation):
             rejected_placeholders.append(qid)
@@ -168,6 +185,8 @@ def crystal_catalog_from_symbols(
         "source_rows": len(rows),
         "translated": len(catalog),
         "fallback_english": len(missing_labels) + len(rejected_placeholders),
+        "runtime_rows": len(rows) - len(excluded_non_runtime),
+        "excluded_non_runtime": excluded_non_runtime,
         "missing_labels": missing_labels,
         "rejected_placeholder_mismatch": rejected_placeholders,
         "symbol_revision": CRYSTAL_SYMBOL_REVISION,

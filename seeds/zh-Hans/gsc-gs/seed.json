@@ -13,8 +13,8 @@
     },
     {
       "path": "crystal_catalog.json",
-      "bytes": 2149386,
-      "sha256": "398bf7698ea89188e3c7577ac8b5c5b60a45c4ded1eaed815cdaebe8965fc01b"
+      "bytes": 2149349,
+      "sha256": "0afa887e0f6b5f11542cbe2f1359dd3a835b0525f98e9d9a2d8881204f3371e5"
     },
     {
       "path": "lang/dialogue.lua",
@@ -101,6 +101,7 @@
     "Recorded official description import provenance and complete two-page Gen 2 coverage.",
     "Refined original Gen 2 key-item descriptions and kept the description importer idempotent.",
     "Localized all 40 previously missing Crystal-only engine strings.",
-    "Corrected PokéCorpus provenance URL and clarified text redistribution rights."
+    "Corrected PokéCorpus provenance URL and clarified text redistribution rights.",
+    "Repaired 10 Crystal placeholder translations and resolved 9 renamed or label-less runtime symbols."
   ]
 }
