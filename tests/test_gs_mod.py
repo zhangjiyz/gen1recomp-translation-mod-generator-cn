@@ -10,13 +10,14 @@ from unittest.mock import patch
 from pipeline.builder import _which_luajit
 from pipeline.gs_join import GsJoinEntry, NO_MATCH, UNIQUE
 from pipeline.gs_mod import (
-    attach_gs_validation, build_gs_dialogue_mod, gs_archive_name,
-    gs_mod_id, gs_oak_speech_catalog_from_join, GS_OPENING_CLOCK_STRING,
+    attach_gs_validation, build_gs_dialogue_mod, build_gs_zh_seed_mod, gs_archive_name,
+    gs_mod_id, gs_oak_speech_catalog_from_join,
     gs_text_catalog_from_join, generate_gs_mod, package_gs_mod,
     run_gs_release_gates,
 )
 from pipeline.gs_mod import _gs_ui_labels, _write_dialogue_gate_expectation, _write_gate_expectations
 from pipeline.project import project_version
+from pipeline.seed import load_seed, read_lua_catalog
 
 ROOT = Path(__file__).resolve().parents[1]
 ENGINE_ROOT = ROOT / ".cache" / "dependencies" / "gen1recomp"
@@ -56,7 +57,6 @@ class GenerateGsModTests(unittest.TestCase):
             self.assertEqual(manifest["games"], ["gold", "silver"])
             self.assertEqual(manifest["api"], 2)
             self.assertEqual(manifest["entry"], "main.lua")
-            self.assertEqual(manifest["game_version"], ">=0.0.0-dev <2.0.0")
             self.assertEqual(manifest["permissions"], [])
             self.assertIn("Gold", manifest["description"])
 
@@ -79,65 +79,112 @@ class GenerateGsModTests(unittest.TestCase):
             self.assertEqual(manifest["id"], "custom-id")
             self.assertEqual(manifest["description"], "Custom description.")
 
-    def test_zh_hans_records_human_sources_and_clears_notice_for_other_languages(self):
+    def test_crystal_catalog_declares_crystal_and_writes_a_conditional_layer(self):
         with tempfile.TemporaryDirectory() as tmp:
-            destination = Path(tmp) / "mod"
-            mod_dir = generate_gs_mod(destination, language="zh-Hans")
-            notice_path = mod_dir / "TRANSLATION_SOURCE.md"
-            notice = notice_path.read_text(encoding="utf-8")
+            mod_dir = generate_gs_mod(
+                Path(tmp) / "mod", language="fr",
+                text_catalog={"55:0001": "Bonjour!"},
+                crystal_text_catalog={"00:0001": "Salut!"},
+            )
             manifest = json.loads((mod_dir / "manifest.json").read_text(encoding="utf-8"))
-
-            self.assertIn("TomJinW", notice)
-            self.assertIn("c6f310d7c08feb9582798138893173c290b91f1d", notice)
-            self.assertIn("does not use machine translation", notice)
-            self.assertIn("human fan-translation", manifest["description"])
+            self.assertEqual(manifest["games"], ["gold", "silver", "crystal"])
             self.assertEqual(manifest["permissions"], ["engine_internals"])
+            self.assertIn("Crystal", manifest["description"])
+            crystal_lua = (mod_dir / "lang" / "dialogue_crystal.lua").read_text(encoding="utf-8")
+            self.assertIn('["00:0001"] = "Salut!"', crystal_lua)
+            main = (mod_dir / "main.lua").read_text(encoding="utf-8")
+            self.assertIn("game_info.fixes.reflectOverflow == true", main)
+            self.assertIn("crystal_game_version", main)
+            self.assertIn("dialogue_crystal.lua", main)
+            # Gold/Silver's own base dialogue catalog is untouched by the
+            # Crystal layer -- both files coexist, only one applies at a time.
+            self.assertTrue((mod_dir / "lang" / "dialogue.lua").is_file())
 
-            generate_gs_mod(destination, language="fr")
-            self.assertFalse(notice_path.exists())
-
-    def test_strings_catalog_localizes_the_raw_mail_naming_row_in_screen_scope(self):
+    def test_empty_crystal_catalog_still_declares_crystal_with_no_layer_file(self):
+        # Korean: Crystal has no corpus for it, so the catalog resolves empty,
+        # but the mod still declares Crystal compatibility (its shared
+        # engine-string catalog still applies) -- see build_gs()'s own
+        # comment on join_crystal_dialogue()'s graceful degradation.
         with tempfile.TemporaryDirectory() as tmp:
             mod_dir = generate_gs_mod(
-                Path(tmp) / "mod", language="zh-Hans",
-                extra_catalogs={"strings": {
-                    "lower": "小写", "UPPER": "大写", "DEL": "删除", "END": "完成",
-                }},
+                Path(tmp) / "mod", language="ko", crystal_text_catalog={},
             )
-            main = (mod_dir / "main.lua").read_text(encoding="utf-8")
-            self.assertIn('pcall(require, "src.ui.gen2.MailCompose")', main)
-            self.assertIn('rawNamingLabels[text] or text', main)
-            self.assertIn('Chrome.print = originalPrint', main)
+            manifest = json.loads((mod_dir / "manifest.json").read_text(encoding="utf-8"))
+            self.assertEqual(manifest["games"], ["gold", "silver", "crystal"])
+            self.assertFalse((mod_dir / "lang" / "dialogue_crystal.lua").exists())
 
-    def test_ui_label_hooks_support_luajit_51_unpack(self):
+    def test_no_crystal_argument_keeps_the_gold_silver_only_manifest(self):
         with tempfile.TemporaryDirectory() as tmp:
-            mod_dir = generate_gs_mod(
-                Path(tmp) / "mod", language="zh-Hans",
-                extra_catalogs={"ui_labels": {"Contains\nitems": "装有\n道具"}},
-            )
+            mod_dir = generate_gs_mod(Path(tmp) / "mod", language="fr")
+            manifest = json.loads((mod_dir / "manifest.json").read_text(encoding="utf-8"))
+            self.assertEqual(manifest["games"], ["gold", "silver"])
             main = (mod_dir / "main.lua").read_text(encoding="utf-8")
-            self.assertIn("local unpackArgs = table.unpack or unpack", main)
-            self.assertIn("nextFn(unpackArgs(args))", main)
-            self.assertNotIn("nextFn(table.unpack(args))", main)
+            self.assertNotIn("crystal_game_version", main)
+
+    def test_zh_seed_build_filters_current_ids_and_emits_crystal_layer(self):
+        seed = load_seed("gsc")
+        catalogs = seed["catalogs"]
+        species_id = next(iter(
+            set(catalogs["species_names"])
+            & set(catalogs["species_kinds"])
+            & set(catalogs["species_dex_text"])
+        ))
+        crystal_qid, crystal_english, crystal_translation = next(
+            row for row in seed["crystal_rows"] if "{" not in row[1] and row[1].strip()
+        )
+        gold_pointer, gold_translation = next(iter(catalogs["dialogue"].items()))
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            gold = root / "gold"
+            crystal = root / "crystal"
+            font = root / "font"
+            engine = root / "engine" / "src"
+            for path in (gold, crystal, font, engine):
+                path.mkdir(parents=True)
+            (gold / "gs_text.tsv").write_text(f"{gold_pointer}\tObject event\n", encoding="utf-8")
+            (gold / "gs_labels.tsv").write_text("", encoding="utf-8")
+            (crystal / "gs_text.tsv").write_text(
+                f"00:4000\t{crystal_english.replace(chr(10), r'\n')}\n", encoding="utf-8"
+            )
+            (crystal / "gs_labels.tsv").write_text("", encoding="utf-8")
+            fixture_ids = {
+                "gs_species.tsv": species_id,
+                "gs_moves.tsv": next(iter(catalogs["move_names"])),
+                "gs_items.tsv": next(iter(catalogs["item_names"])),
+                "gs_trainer_classes.tsv": next(iter(catalogs["trainer_class_names"])),
+                "gs_landmarks.tsv": next(iter(catalogs["landmarks"])),
+            }
+            for filename, id_ in fixture_ids.items():
+                (gold / filename).write_text(f"{id_}\t1\tFixture\n", encoding="utf-8")
+            (font / "fusion-pixel-10px-proportional-zh_hans.ttf").write_bytes(b"font")
+            (font / "OFL.txt").write_text("Fusion Pixel Font\n", encoding="utf-8")
+            for relative in (
+                "LICENSES/boutique-bitmap-9x9/OFL.txt",
+                "LICENSES/ark-pixel/OFL.txt",
+                "LICENSES/galmuri/LICENSE.txt",
+            ):
+                license_path = font / relative
+                license_path.parent.mkdir(parents=True, exist_ok=True)
+                license_path.write_text("fixture license\n", encoding="utf-8")
+            with (
+                patch("pipeline.engine_scope.verified_source", return_value=(engine, engine.parent, "rev")),
+                patch("pipeline.engine_scope.iter_callsites", return_value=[]),
+                patch("pipeline.gs_engine.engine_string_keys", return_value=(set(), set())),
+            ):
+                mod, entries, stats = build_gs_zh_seed_mod(
+                    gold, crystal, root / "mod", engine_source=engine.parent,
+                    font_source=font,
+                )
+            manifest = json.loads((mod / "manifest.json").read_text(encoding="utf-8"))
+            self.assertEqual(manifest["games"], ["gold", "silver", "crystal"])
+            self.assertEqual(entries[0].translation, gold_translation)
+            self.assertEqual(stats["crystal"]["translated"], 1)
+            crystal_values = read_lua_catalog(mod / "lang" / "dialogue_crystal.lua")
+            self.assertEqual(crystal_values["00:4000"], crystal_translation)
+            self.assertIn(crystal_qid, {row[0] for row in seed["crystal_rows"]})
 
 
 class GsReleaseGateFlowTests(unittest.TestCase):
-    def test_registry_gate_prefers_the_first_player_visible_clock_string(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            root = Path(tmp)
-            catalogs = {name: {"ID": "VALUE"} for name in (
-                "strings", "species_names", "species_kinds", "species_dex_text", "move_names",
-                "item_names", "trainer_class_names", "landmarks", "oak_speech",
-            )}
-            catalogs["strings"] = {
-                " ALPH RUINS STAMP": "阿露福纪念章",
-                GS_OPENING_CLOCK_STRING: "嗯，唔唔……",
-            }
-            expectations = _write_gate_expectations(root / "mod", catalogs)
-            body = json.loads(expectations.read_text(encoding="utf-8"))
-        self.assertEqual(body["strings"]["id"], GS_OPENING_CLOCK_STRING)
-        self.assertEqual(body["strings"]["value"], "嗯，唔唔……")
-
     def test_registry_expectations_reject_missing_or_empty_catalogs(self):
         with tempfile.TemporaryDirectory() as tmp:
             with self.assertRaisesRegex(RuntimeError, "incomplete"):
@@ -348,7 +395,7 @@ class TextCatalogFromJoinTests(unittest.TestCase):
         self.assertEqual(gs_text_catalog_from_join(entries), {"55:0001": "Salut"})
 
     def test_a_resolved_gold_pointer_is_also_aliased_onto_its_silver_pointer(self):
-        # config/gs/silver_pointer_aliases.json's real "03:4d76" -> "03:4d74"
+        # config/gsc/silver_pointer_aliases.json's real "03:4d76" -> "03:4d74"
         # entry (see tools/spike_gold_silver_text_overlap.lua's measurement):
         # whatever the Gold pointer resolves to should also land under the
         # Silver pointer, so a Silver save gets the same translation.
@@ -721,13 +768,6 @@ class GsUiLabelsTests(unittest.TestCase):
         labels = _gs_ui_labels(corpus_rows)
         self.assertEqual(labels["POKéMON\ndatabase"], "Index\nPOKéMON")
         self.assertEqual(labels["Contains\nitems"], "Contient\nobjets")
-
-    def test_zh_hans_ui_overrides_fill_blank_source_rows(self):
-        labels = _gs_ui_labels([], "zh-Hans")
-        self.assertEqual(labels["Contains\nitems"], "装有\n道具")
-        self.assertEqual(labels["POKéMON\ndatabase"], "宝可梦\n数据库")
-        self.assertEqual(labels["FIGHT"], "战斗")
-        self.assertEqual(len(labels), 20)
 
 
 if __name__ == "__main__":

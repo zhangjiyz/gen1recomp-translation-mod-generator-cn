@@ -1,0 +1,118 @@
+diff --git a/lib/CacheFeature.lua b/lib/CacheFeature.lua
+--- a/lib/CacheFeature.lua
++++ b/lib/CacheFeature.lua
+@@ -4,17 +4,24 @@
+ local V = ...
+ 
+ local RuntimeHooks = V.require("RuntimeHooks")
++local Strings = require("src.core.Strings")
+ local CacheFeature = {}
+ 
++local function statusLabel(status)
++  local done, total = tostring(status or ""):match("^BUILD (%d+)/(%d+)$")
++  if done then return Strings("BUILD %d/%d", tonumber(done), tonumber(total)) end
++  return Strings(status)
++end
++
+ function CacheFeature.new(ctx)
+   local feature = { pending = false }
+ 
+   local function cacheReadyLabel(status)
+     if status ~= "READY" then return status end
+     local codec = ctx.MeshCache.codec()
+-    if codec then return "READY " .. codec:upper() end
++    if codec then return Strings("READY %s", codec:upper()) end
+     local mode = ctx.MeshCache.compressionStatus()
+-    if mode == "mixed" then return "READY MIX" end
+-    if mode == "raw" then return "READY RAW" end
+-    return "READY"
++    if mode == "mixed" then return Strings("READY MIX") end
++    if mode == "raw" then return Strings("READY RAW") end
++    return Strings("READY")
+   end
+@@ -38,6 +45,6 @@
+     -- name), so a support report names the store it lives in.
+     local backendLabel = ctx.MeshCache.dir() and "STORAGE" or "NONE"
+     game.stack:push(TextBox.new(game,
+-      ("%s\fGEOMETRY %d\fDIR: %s"):format(label,
+-        ctx.MeshCache.GEOMETRY_VERSION, backendLabel)))
++      Strings("%s\fGEOMETRY %d\fDIR: %s", statusLabel(label),
++        ctx.MeshCache.GEOMETRY_VERSION, Strings(backendLabel))))
+   end
+@@ -176,5 +183,5 @@
+       rows[#rows + 1] = {
+         id = "potato_voxel:prebuild",
+         label = "PREBUILD CACHE",
+-        value = function() return ctx.CachePrebuild.status() end,
++        value = function() return statusLabel(ctx.CachePrebuild.status()) end,
+         activate = function(g)
+@@ -218,5 +225,5 @@
+         local status = ctx.CachePrebuild.status()
+         return status == "READY"
+                and cacheReadyLabel(status)
+-               or ("GEO %d"):format(ctx.MeshCache.GEOMETRY_VERSION)
++               or Strings("GEO %d", ctx.MeshCache.GEOMETRY_VERSION)
+       end,
+diff --git a/lib/CachePrebuildScreen.lua b/lib/CachePrebuildScreen.lua
+--- a/lib/CachePrebuildScreen.lua
++++ b/lib/CachePrebuildScreen.lua
+@@ -1,5 +1,6 @@
+ -- Small blocking progress screen used before Continue/New Game.
+ local V = ...
+ local Font = require("src.render.Font")
++local Strings = require("src.core.Strings")
+ local PaletteFX = require("src.render.PaletteFX")
+ local Prebuild = V.require("CachePrebuild")
+@@ -57,13 +58,13 @@
+   Font.drawBox(1, 3, 18, 10)
+   love.graphics.setColor(0, 0, 0, 1)
+-  Font.draw("MAP CACHE", 16, 40)
++  Font.draw(Strings("MAP CACHE"), 16, 40)
+   if running then
+-    Font.draw(("BUILD %d/%d"):format(done, total), 16, 64)
+-    Font.draw("A/B: CANCEL", 16, 88)
++    Font.draw(Strings("BUILD %d/%d", done, total), 16, 64)
++    Font.draw(Strings("A/B: CANCEL"), 16, 88)
+   elseif status == "READY" then
+-    Font.draw("CACHE READY", 16, 64)
+-    Font.draw("A: CONTINUE", 16, 88)
++    Font.draw(Strings("CACHE READY"), 16, 64)
++    Font.draw(Strings("A: CONTINUE"), 16, 88)
+   else
+-    Font.draw(status, 16, 64)
+-    Font.draw("A/B: BACK", 16, 88)
++    Font.draw(Strings(status), 16, 64)
++    Font.draw(Strings("A/B: BACK"), 16, 88)
+   end
+diff --git a/lib/VoxelLoading.lua b/lib/VoxelLoading.lua
+--- a/lib/VoxelLoading.lua
++++ b/lib/VoxelLoading.lua
+@@ -3,4 +3,11 @@
+ 
+ local V = ...
+ local Voxel = V.require("VoxelState")
++local hasStrings, Strings = pcall(require, "src.core.Strings")
++if not hasStrings or type(Strings) ~= "function" then
++  Strings = function(text, ...)
++    if select("#", ...) > 0 then return text:format(...) end
++    return text
++  end
++end
+ local Loading = {}
+@@ -91,7 +98,7 @@
+   if ok then
+     Font.drawBox(0, 18, 20, 3)
+     g.setColor(0, 0, 0, 1)
+-    local text = "BUILDING VOXELS"
++    local text = Strings("BUILDING VOXELS")
+     if pending and pending > 1 and math.floor(elapsed / 2) % 2 == 1 then
+-      text = tostring(pending) .. " AREAS LEFT"
++      text = Strings("%d AREAS LEFT", pending)
+     end
+@@ -129,5 +136,5 @@
+ 
+   g.setColor(1, 1, 1, 1)
+   local font = g.getFont()
+-  local text = "BUILDING VOXELS"
++  local text = Strings("BUILDING VOXELS")
+   g.print(text, math.floor((w - font:getWidth(text)) * 0.5),

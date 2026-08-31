@@ -23,94 +23,6 @@ def row(source, french):
 
 
 class EngineTests(unittest.TestCase):
-    def test_simplified_chinese_gold_opening_and_mail_use_human_source_layouts(self):
-        anchors = load_semantic_anchors(Path("config/gs/semantic_anchors.json"))
-        opening = "Zzz... Hm? Wha...?\nYou woke me up!\fWill you check the\nclock for me?"
-        mail = "Please remove the\nMAIL."
-        rows = [
-            CorpusRecord(
-                "gs.common_1.OakTimeWokeUpText", "en",
-                "{text_start}<……><……><……><……><……><……><LINE><……><……><……><……><……><……>"
-                "<PARA>Zzz… Hm? Wha…?<LINE>You woke me up!<PARA>Will you check the"
-                "<LINE>clock for me?<PROMPT>", "gold",
-            ),
-            CorpusRecord(
-                "gs.common_1.OakTimeWokeUpText", "zh-Hans",
-                "{text_start}<……><……><……><……><……><……><LINE><……><……><……><……><……><……>"
-                "<PARA>嗯，唔唔……<LINE>已经到这个时间了吗……<CONT>抱歉，你能看下表吗？<PROMPT>",
-                "gold",
-            ),
-            CorpusRecord(
-                "gs.common_2.PCMonHoldingMailText", "en",
-                "{text_start}There is a #MON<LINE>holding MAIL.<PARA>Please remove the"
-                "<LINE>MAIL.<PROMPT>", "gold",
-            ),
-            CorpusRecord(
-                "gs.common_2.PCMonHoldingMailText", "zh-Hans",
-                "{text_start}有携带了信件<LINE>的宝可梦。<CONT>请取下信件。<PROMPT>", "gold",
-            ),
-        ]
-        output, report = match_engine_catalog(
-            {opening: "", mail: ""}, rows, semantic_anchors=anchors, target_lang="zh-Hans",
-        )
-        self.assertEqual(output[opening], "嗯，唔唔……\n已经到这个时间了吗……\v抱歉，你能看下表吗？")
-        self.assertEqual(output[mail], "请取下信件。")
-        self.assertEqual(report["auto_semantic"], 2)
-
-    def test_simplified_chinese_gold_overrides_are_traceable_and_printf_safe(self):
-        overrides = load_engine_overrides(Path("overrides/zh-Hans/gs/engine.json"))
-        self.assertGreaterEqual(len(overrides), 90)
-        for source, row in overrides.items():
-            if "AI-assisted contextual adaptation" in row["provenance"]:
-                self.assertIn("Requires in-game layout review", row["provenance"])
-            else:
-                self.assertTrue(
-                    "Human source" in row["provenance"] or "Invariant" in row["provenance"],
-                    source,
-                )
-        self.assertNotIn("AI-generated", " ".join(row["provenance"] for row in overrides.values()))
-        for source, row in overrides.items():
-            self.assertEqual(check_printf_directives(source, row["override"]), [], source)
-
-    def test_simplified_chinese_gold_contextual_engine_backlog_is_complete(self):
-        overrides = load_engine_overrides(Path("overrides/zh-Hans/gs/engine.json"))
-        expected = {
-            "%s is missing.\nRe-import the Gold ROM.": "%s缺失。\n请重新导入金版ROM。",
-            "Could not save.": "保存失败。",
-            "Failed to boot %s:\n%s": "启动%s失败：\n%s",
-            "Font load failed:\n%s": "字体加载失败：\n%s",
-            "Gold cache incomplete:\n%s": "金版缓存不完整：\n%s",
-            "Printed %s's\ndata!\fSaved as\n%s\vin the save\nfolder.":
-                "已打印%s的\n资料！\f已保存为\n%s，\v文件位于\n存档文件夹中。",
-            "Printer error!\n%s": "打印机错误！\n%s",
-            "BATTLE BG": "对战背景",
-            "COLOR": "色彩模式",
-            "CONTROLS": "按键设置",
-            "GAME SPEED": "游戏速度",
-            "MAX FPS": "帧率上限",
-            "MUSIC FILTER": "音乐滤波",
-            "MUSIC VOL": "音乐音量",
-            "NO SAVE FILE": "没有存档",
-            "PERFORMANCE": "性能模式",
-            "SCREEN POS": "画面位置",
-            "SFX VOL": "音效音量",
-            "SHADER FX": "着色器效果",
-            "SHADER FX 2": "着色器效果2",
-            "TILT": "画面倾斜",
-            "TOUCH LAYOUT": "触控布局",
-            "TOUCH PAD": "触屏按键",
-            "VIBRATION": "震动",
-            "VIDEO MODE": "显示模式",
-            "VOID FILL": "边界填充",
-            "ZOOM": "画面缩放",
-            "Fly to %s?": "要飞往%s吗？",
-            "TEXT SPEED": "文字速度",
-        }
-        self.assertEqual(
-            {source: overrides[source]["override"] for source in expected},
-            expected,
-        )
-
     def test_multi_qid_parts_anchor_composes_bicycle_off_with_one_printf(self):
         rows = [
             Alignment("off1", "both", CorpusRecord("off1", "en", "{text_start}<PLAYER> got off@@"), CorpusRecord("off1", "fr", "{text_start}<PLAYER> descend@@"), "qid"),
@@ -138,7 +50,7 @@ class EngineTests(unittest.TestCase):
         # (pipeline/gs_engine.py:_corpus_records); this drives
         # match_engine_catalog the same way, with the real corpus source
         # (poke-corpus/corpus/GoldSilver/{en,fr}_msg.txt line 4727) and the
-        # real anchor (config/gs/semantic_anchors.json).
+        # real anchor (config/gsc/semantic_anchors.json).
         source = "{PLAYER} found\n{STRBUF}!"
         qid = "gs.common_2.FoundItemText"
         rows = [
@@ -154,7 +66,7 @@ class EngineTests(unittest.TestCase):
 
     def test_real_gold_semantic_anchor_config_matches_the_bare_form(self):
         # Real regression caught by an independent review of the fix above:
-        # config/gs/semantic_anchors.json's ONE composite (multi-placeholder)
+        # config/gsc/semantic_anchors.json's ONE composite (multi-placeholder)
         # Gold anchor, gs.battle.BattleText_EnemyIsAboutToUseWillPlayerChangeMon,
         # declared its RAM placeholder as the OLD named engine form
         # ("{RAM:wEnemyMonNickname}") -- what corpus_to_engine used to produce
@@ -176,7 +88,7 @@ class EngineTests(unittest.TestCase):
                 "{text_start}<ENEMY><LINE>va utiliser<CONT>@{text_ram wEnemyMonNickname}"
                 "{text_start}.<PARA><PLAYER> va-t-il<LINE>changer de PKMN?<DONE>", "gold"),
         ]
-        anchors_path = Path(__file__).resolve().parents[1] / "config" / "gs" / "semantic_anchors.json"
+        anchors_path = Path(__file__).resolve().parents[1] / "config" / "gsc" / "semantic_anchors.json"
         output, report = match_engine_catalog(
             {source: ""}, rows, semantic_anchors=anchors_path, target_lang="fr",
         )
@@ -205,7 +117,7 @@ class EngineTests(unittest.TestCase):
                 "qui a capturé un<CONT>@{text_ram wStringBuffer1}{text_start}!@@", "gold"),
         ]
         source = "This Bug-Catching\nContest winner is\x0c%s,\nwho caught a\n%s!"
-        anchors_path = Path(__file__).resolve().parents[1] / "config" / "gs" / "semantic_anchors.json"
+        anchors_path = Path(__file__).resolve().parents[1] / "config" / "gsc" / "semantic_anchors.json"
         output, report = match_engine_catalog(
             {source: ""}, rows, semantic_anchors=anchors_path, target_lang="fr",
         )
@@ -222,7 +134,7 @@ class EngineTests(unittest.TestCase):
         # "source_aliases" list): Gold's own extracted source text is always
         # bare (RomExtractorGen2.lua:decodeGen2Text never names the buffer --
         # see corpus_to_engine's bare_dynamic_tokens docstring), so ANY
-        # string anywhere in config/gs/*.json naming one
+        # string anywhere in config/gsc/*.json naming one
         # ("{RAM:...}"/"{NUM:...}") can never match again and silently drops
         # that entry -- regardless of which JSON key or file holds it. Walks
         # every file's whole structure rather than special-casing today's
@@ -231,7 +143,7 @@ class EngineTests(unittest.TestCase):
         import json
         import re
 
-        gold_config_dir = Path(__file__).resolve().parents[1] / "config" / "gs"
+        gold_config_dir = Path(__file__).resolve().parents[1] / "config" / "gsc"
         named_token = re.compile(r"\{(?:RAM|NUM):")
 
         def walk(value, where):

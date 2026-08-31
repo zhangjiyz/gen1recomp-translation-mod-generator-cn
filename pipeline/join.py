@@ -740,26 +740,9 @@ def _machine_terminology(items: list[Alignment], anchors: dict) -> dict:
     technical = anchor_map.get("technical_prefix", {})
     hidden = anchor_map.get("hidden_prefix", {})
     quantity = anchor_map.get("quantity_style", {})
-
-    def collection_qid(spec: object) -> str | None:
-        qid = spec.get("qid") if isinstance(spec, dict) else None
-        if not isinstance(qid, str):
-            return None
-        # Red/Blue and Yellow expose the same terminology anchors under their
-        # collection prefix.  Keep one audited role definition in config, but
-        # resolve it against the collection actually being joined.
-        alternate = "y." + qid[3:] if qid.startswith("rb.") else qid
-        if qid != alternate and not any(item.qid == qid for item in items):
-            if any(item.qid == alternate for item in items):
-                return alternate
-        return qid
-
-    technical_qid = collection_qid(technical)
-    hidden_qid = collection_qid(hidden)
-    quantity_qid = collection_qid(quantity)
-    technical_row, technical_status = _anchor_row(items, technical_qid)
-    hidden_row, hidden_status = _anchor_row(items, hidden_qid)
-    quantity_row, quantity_status = _anchor_row(items, quantity_qid, "quantity")
+    technical_row, technical_status = _anchor_row(items, technical.get("qid") if isinstance(technical, dict) else None)
+    hidden_row, hidden_status = _anchor_row(items, hidden.get("qid") if isinstance(hidden, dict) else None)
+    quantity_row, quantity_status = _anchor_row(items, quantity.get("qid") if isinstance(quantity, dict) else None, "quantity")
     style, style_status = _quantity_style(quantity_row, quantity.get("extraction") if isinstance(quantity, dict) else None)
     # The qid itself is not enough proof: the English corpus value must match
     # the terminology role described by the anchor.
@@ -783,9 +766,9 @@ def _machine_terminology(items: list[Alignment], anchors: dict) -> dict:
         "technical_prefix": technical_value,
         "hidden_prefix": hidden_value,
         "anchors": {
-            "technical_prefix": {"qid": technical_qid, "status": details_anchor_status["technical_prefix"]},
-            "hidden_prefix": {"qid": hidden_qid, "status": details_anchor_status["hidden_prefix"]},
-            "quantity_style": {"qid": quantity_qid, "status": details_anchor_status["quantity_style"]},
+            "technical_prefix": {"qid": technical.get("qid") if isinstance(technical, dict) else None, "status": details_anchor_status["technical_prefix"]},
+            "hidden_prefix": {"qid": hidden.get("qid") if isinstance(hidden, dict) else None, "status": details_anchor_status["hidden_prefix"]},
+            "quantity_style": {"qid": quantity.get("qid") if isinstance(quantity, dict) else None, "status": details_anchor_status["quantity_style"]},
         },
         "number_style": style,
         "number_style_status": style_status,
@@ -896,16 +879,11 @@ def join_catalogs(items: list[Alignment], worksheets: dict[str, list[WorksheetEn
                     candidates = collapsed
                     strategy = f"{strategy}_equivalent"
                     report["reasons"][catalog][entry.key] = "multiple canonical qids have identical translated value"
-            covered_empty = (
-                len(candidates) == 1
-                and not candidates[0].translation
-                and canonical_strategy == "engine_alias"
-            )
-            if len(candidates) == 1 and (candidates[0].translation or covered_empty):
+            if len(candidates) == 1 and candidates[0].translation is not None:
                 output[catalog][entry.key] = corpus_to_engine(candidates[0].translation)
                 report["matched"].setdefault(catalog, 0); report["matched"][catalog] += 1
                 report["strategies"][catalog][entry.key] = strategy
-            elif len(candidates) == 0 or (len(candidates) == 1 and not candidates[0].translation):
+            elif len(candidates) == 0 or (len(candidates) == 1 and candidates[0].translation is None):
                 output[catalog][entry.key] = ""
                 report["unmatched"].setdefault(catalog, []).append(entry.key)
                 report["strategies"][catalog][entry.key] = "manual_review"

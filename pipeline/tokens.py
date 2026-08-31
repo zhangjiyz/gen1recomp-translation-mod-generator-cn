@@ -35,10 +35,6 @@ _CORPUS_EXPANSIONS = {
     "<……>": "……",
     "<LV>": "{LV}",
     "<PLAYER>": "{PLAYER}",
-    # TomJinW's Gold/Silver translation tables use <PLAY_G> for the same
-    # player-name control byte. Their own importer converts both spellings to
-    # PLAYERN before writing the disassembly, so preserve that identity here.
-    "<PLAY_G>": "{PLAYER}",
     "<RIVAL>": "{RIVAL}",
     "<TARGET>": "{TARGET}",
     "<USER>": "{USER}",

@@ -1,0 +1,14 @@
+{
+  "schema": "gen1recomp-translation-mods/crystal-symbol-decisions",
+  "version": 1,
+  "entries": {
+    "maps/Colosseum.asm:.FriendReadyText:msg_hero_t00r0103": {
+      "symbol": "CableClubFriendScript.FriendReadyText",
+      "reason": "Local label is scoped under CableClubFriendScript in the canonical linker symbol table."
+    },
+    "maps/TimeCapsule.asm:.FriendReadyText:msg_hero_t00r0104": {
+      "symbol": "TimeCapsuleFriendScript.FriendReadyText",
+      "reason": "Local label is scoped under TimeCapsuleFriendScript in the canonical linker symbol table."
+    }
+  }
+}

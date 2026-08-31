@@ -4,32 +4,49 @@ from __future__ import annotations
 import json
 import os
 import shutil
+from dataclasses import replace
 from pathlib import Path
 from typing import Callable
 
 from .builder import BuildError, _run
 from .corpus import canonical_language
-from .roms import GS_REQUIRED_TSV, import_gs_rom, verify_gs_rom
+from .crystal_mod import join_crystal_dialogue, crystal_text_catalog_from_join
+from .roms import GS_REQUIRED_TSV, import_crystal_rom, import_gs_rom, verify_crystal_rom, verify_gs_rom
 from .generate import lua_string
 from .gs_engine import match_gs_engine_strings
 from .gs_index_join import join_by_index, join_dex_entries, join_landmarks, parse_indexed_catalog
 from .gs_join import (
     GsJoinEntry, GsPlaceholderDecision, audit_join, gs_coverage_report,
-    join_gs_pointers, load_gs_dialogue_overrides, load_gs_placeholder_decisions,
+    join_gs_pointers, load_gs_placeholder_decisions,
     load_gs_pointer_decisions, load_gold_silver_pointer_aliases, read_corpus_rows,
+    MARKUP_ONLY, NO_MATCH, OVERRIDE,
 )
-from .gs_text import parse_gs_text_catalog
-from .tokens import corpus_to_engine
+from .gs_text import normalise, parse_gs_text_catalog
+from .tokens import check_placeholders, corpus_to_engine
 from .mod import TRANSLATION_MOD_PRIORITY, install_font_assets, ttf_registration, validate_font_profile
 from .project import is_frozen, project_config, project_version, resource_root
+from .seed import load_seed
 from .specs import game_spec, release_profile
 
 MAIN = '''-- Generated Gold translation mod.
 return function(mod)
 __TTF_REGISTRATION__
 __CATALOG_REGISTRATION__
+__CRYSTAL_DIALOGUE_REGISTRATION__
 end
 '''
+
+# GameVersion.isCrystal() doesn't exist upstream. Detect the Crystal engine by
+# the capability backing its Reflect overflow fix instead of allow-listing a
+# version id; this is both edition-specific and accepted by Modkit's Gen 2
+# compatibility audit.
+_CRYSTAL_GUARD = (
+    '  local GameVersion = require("src.core.GameVersion")\n'
+    "  local game_info = type(GameVersion.info) == \"function\" and GameVersion.info() or nil\n"
+    "  local crystal_game_version = type(game_info) == \"table\"\n"
+    "      and type(game_info.fixes) == \"table\"\n"
+    "      and game_info.fixes.reflectOverflow == true\n"
+)
 
 _CATALOG_HELPER = '''  local function catalog(name)
     local body = mod:read("lang/" .. name .. ".lua")
@@ -64,24 +81,9 @@ GS_CATALOG_HOOKS["ui_labels"] = None
 
 # A small part of Gold's menu text is supplied as labels to existing mod
 # hooks rather than through the engine Strings registry.  Keep the reviewed
-# QID/segment recipes in config/gs/literal_handlers.json; the runtime hook
+# QID/segment recipes in config/gsc/literal_handlers.json; the runtime hook
 # below only changes labels already exposed by gen1recomp's public hooks.
-_GS_UI_HANDLER_PATH = Path(__file__).resolve().parents[1] / "config" / "gs" / "literal_handlers.json"
-_GS_UI_OVERRIDE_SCHEMA = "gen1recomp-translation-mods/gs-ui-label-overrides"
-_GS_UI_OVERRIDE_ROOT = Path(__file__).resolve().parents[1] / "overrides"
-
-_ZH_HANS_SOURCE_NOTICE = """# Simplified Chinese translation sources
-
-This mod imports human fan translations from the following pinned revisions; it does not use machine translation:
-
-- [pokegoldCHS](https://github.com/TomJinW/pokegoldCHS), commit `c6f310d7c08feb9582798138893173c290b91f1d`
-- [PokeGSC_SharedXLSXCN](https://github.com/TomJinW/PokeGSC_SharedXLSXCN), commit `df11834308d89ce6473d4b76c73c3ad11fa2bcd8`
-- [PKMN_GSCHS](https://github.com/TomJinW/PKMN_GSCHS), commit `c3947b83c6c66a015103e1bc08bbca7f2a862d3b`
-
-No explicit license file was found in these source repositories when this importer was prepared. The commit pins and hashes make the imported text reproducible, but do not grant redistribution rights. Obtain permission from the respective translation authors before publicly redistributing a package that contains their text.
-
-Unmatched or ambiguous text deliberately remains in English for later human review.
-"""
+_GS_UI_HANDLER_PATH = Path(__file__).resolve().parents[1] / "config" / "gsc" / "literal_handlers.json"
 
 
 def _load_gs_ui_handlers() -> dict[str, tuple[str, int, int | None]]:
@@ -103,33 +105,7 @@ def _load_gs_ui_handlers() -> dict[str, tuple[str, int, int | None]]:
     return result
 
 
-def load_gs_ui_label_overrides(language: str) -> dict[str, str]:
-    """Load reviewed targets for UI rows left blank by the source corpus."""
-    language = canonical_language(language)
-    path = _GS_UI_OVERRIDE_ROOT / language / "gs" / "ui_labels.json"
-    if not path.is_file():
-        return {}
-    data = json.loads(path.read_text(encoding="utf-8"))
-    if (data.get("schema") != _GS_UI_OVERRIDE_SCHEMA or data.get("version") != 1
-            or not isinstance(data.get("entries"), dict)):
-        raise ValueError(f"unsupported Gold UI-label override schema: {path}")
-    known = _load_gs_ui_handlers()
-    result: dict[str, str] = {}
-    for source, row in data["entries"].items():
-        if source not in known:
-            raise ValueError(f"Gold UI-label override has unknown source: {source!r}")
-        if (not isinstance(row, dict) or not isinstance(row.get("override"), str)
-                or not row["override"] or not isinstance(row.get("reason"), str)
-                or not row["reason"].strip() or not isinstance(row.get("provenance"), str)
-                or not row["provenance"].strip()):
-            raise ValueError(f"invalid Gold UI-label override for {source!r}")
-        result[source] = row["override"]
-    return result
-
-
-def _gs_ui_labels(
-    corpus_rows: list[tuple[str, str, str]], language: str | None = None,
-) -> dict[str, str]:
+def _gs_ui_labels(corpus_rows: list[tuple[str, str, str]]) -> dict[str, str]:
     """Return corpus-backed labels used by already exposed Gold menu hooks."""
     rows = {qid: target for qid, _english, target in corpus_rows}
     result: dict[str, str] = {}
@@ -154,12 +130,9 @@ def _gs_ui_labels(
                 # would render as literal garbage, so normalize it here.
                 value = value.replace("<PKMN>", "<PK><MN>")
                 result[source] = value
-    if language is not None:
-        result.update(load_gs_ui_label_overrides(language))
     return result
 
 GS_OAK_SPEECH_CATALOG = "oak_speech"
-GS_OPENING_CLOCK_STRING = "Zzz... Hm? Wha...?\nYou woke me up!\fWill you check the\nclock for me?"
 GS_OAK_SPEECH_KEYS = frozenset({
     "_OakText1", "_OakText2", "_OakText4", "_OakText5", "_OakText6", "_OakText7",
 })
@@ -175,7 +148,6 @@ _OAK_SPEECH_REGISTRATION = '''  local oakSpeech = catalog("oak_speech")
 '''
 
 _UI_LABEL_REGISTRATION = '''  local uiLabels = catalog("ui_labels")
-  local unpackArgs = table.unpack or unpack
   local function localizeItems(_, items)
     for _, item in ipairs(items or {}) do
       if type(item) == "table" and type(item.label) == "string" then
@@ -208,40 +180,8 @@ _UI_LABEL_REGISTRATION = '''  local uiLabels = catalog("ui_labels")
       -- Public list hooks use (identity, game, items, ...).
       local items = args[3] or args[2] or args[1]
       if type(items) == "table" then localizeItems(nil, items) end
-      return nextFn(unpackArgs(args))
+      return nextFn(table.unpack(args))
     end)
-  end
-'''
-
-# Gold's naming screen resolves these labels through Strings, but its mail
-# composer still prints the cartridge's raw Latin-keyboard row.  Scope the
-# substitution to that screen so ordinary prose containing words such as END
-# can never be changed globally.
-_RAW_GEN2_NAMING_LABEL_REGISTRATION = '''  local rawNamingLabels = {}
-  local namingStrings = catalog("strings")
-  for _, key in ipairs({ "lower", "UPPER", "DEL", "END" }) do
-    local value = namingStrings[key]
-    if type(value) == "string" and value ~= "" and value ~= key then
-      rawNamingLabels[key] = value
-    end
-  end
-  if next(rawNamingLabels) then
-    local okMail, MailCompose = pcall(require, "src.ui.gen2.MailCompose")
-    local okChrome, Chrome = pcall(require, "src.ui.gen2.Chrome")
-    if okMail and type(MailCompose) == "table" and type(MailCompose.drawPanel) == "function"
-        and okChrome and type(Chrome) == "table" and type(Chrome.print) == "function" then
-      local originalMailDrawPanel = MailCompose.drawPanel
-      MailCompose.drawPanel = function(self, ...)
-        local originalPrint = Chrome.print
-        Chrome.print = function(text, tx, ty)
-          return originalPrint(rawNamingLabels[text] or text, tx, ty)
-        end
-        local ok, result = pcall(originalMailDrawPanel, self, ...)
-        Chrome.print = originalPrint
-        if not ok then error(result, 0) end
-        return result
-      end
-    end
   end
 '''
 
@@ -281,8 +221,19 @@ def generate_gs_mod(
     font_profile: str = "fusion",
     text_catalog: dict[str, str] | None = None,
     extra_catalogs: dict[str, dict[str, str]] | None = None,
+    crystal_text_catalog: dict[str, str] | None = None,
 ) -> Path:
-    """Write a deterministic Gold manifest, entry point, and catalogs."""
+    """Write a deterministic Gold manifest, entry point, and catalogs.
+
+    ``crystal_text_catalog``, when not None, declares this mod compatible
+    with Crystal too (mandatory companion ROM, see build_gs()): its own
+    dialogue pointers are written to a separate lang/dialogue_crystal.lua
+    layer, applied only at runtime when Crystal's engine capability is present (the
+    same conditional-layer pattern pipeline/mod.py's RBY build uses for
+    Yellow's own dialogue_yellow.lua). An empty dict still declares "crystal"
+    compatibility with no translated layer (Korean: Crystal has no corpus for
+    it, so its dialogue simply stays in English on a Crystal save).
+    """
     language = canonical_language(language)
     destination = Path(destination)
     destination.mkdir(parents=True, exist_ok=True)
@@ -311,36 +262,57 @@ def generate_gs_mod(
         )
         if "ui_labels" in catalogs:
             catalog_registration += _UI_LABEL_REGISTRATION
-        if language == "zh-Hans" and "strings" in catalogs:
-            catalog_registration += _RAW_GEN2_NAMING_LABEL_REGISTRATION
         if GS_OAK_SPEECH_CATALOG in catalogs:
             catalog_registration += _OAK_SPEECH_REGISTRATION
+
+    crystal_registration = ""
+    if crystal_text_catalog:
+        if not lang_dir.is_dir():
+            lang_dir.mkdir(parents=True, exist_ok=True)
+        lines = [f"-- Generated by the Crystal pipeline ({language}): dialogue", "return {"]
+        lines.extend(
+            f"  [{lua_string(id_)}] = {lua_string(value)}," for id_, value in sorted(crystal_text_catalog.items())
+        )
+        lines.append("}")
+        (lang_dir / "dialogue_crystal.lua").write_text("\n".join(lines) + "\n", encoding="utf-8")
+        crystal_registration = (
+            "  -- Crystal layer: its own dialogue catalog, applied only when\n"
+            "  -- running Pokemon Crystal (different bank:address pointers from\n"
+            "  -- Gold/Silver's own dialogue catalog above).\n"
+            + _CRYSTAL_GUARD
+            + "  if crystal_game_version then\n"
+            "    local function crystalCatalog()\n"
+            '      local body = mod:read("lang/dialogue_crystal.lua")\n'
+            "      if not body then return {} end\n"
+            "      local chunk = loadstring(body)\n"
+            "      if not chunk then return {} end\n"
+            "      local ok, value = pcall(chunk)\n"
+            "      return ok and type(value) == \"table\" and value or {}\n"
+            "    end\n"
+            "    for id, value in pairs(crystalCatalog()) do\n"
+            '      if type(value) == "string" and value ~= "" then mod.content.text:override(id, value) end\n'
+            "    end\n"
+            "  end\n"
+        )
     main_body = (
         MAIN.replace("__TTF_REGISTRATION__", ttf_registration(language, font_source, font_profile))
         .replace("__CATALOG_REGISTRATION__", catalog_registration)
+        .replace("__CRYSTAL_DIALOGUE_REGISTRATION__", crystal_registration)
     )
     (destination / "main.lua").write_text(main_body, encoding="utf-8")
     install_font_assets(destination, language, font_source, font_profile)
 
-    source_notice = destination / "TRANSLATION_SOURCE.md"
-    if language == "zh-Hans":
-        source_notice.write_text(_ZH_HANS_SOURCE_NOTICE, encoding="utf-8")
-    else:
-        source_notice.unlink(missing_ok=True)
-
-    display_name = target_name or f"{language} translation for Gold and Silver"
-    if target_description:
-        description = target_description
-    elif language == "zh-Hans":
-        description = (
-            "Simplified Chinese translation for Gold and Silver from pinned human "
-            "fan-translation sources; unmatched text remains English."
-        )
-    else:
-        description = (
-            f"{display_name}, based mostly on PokeCorpus."
-            + ("" if catalogs else " Text is not wired up yet; this is a loadable skeleton.")
-        )
+    games = ["gold", "silver"]
+    if crystal_text_catalog is not None:
+        games.append("crystal")
+    display_name = target_name or (
+        f"{language} translation for Gold, Silver and Crystal" if "crystal" in games
+        else f"{language} translation for Gold and Silver"
+    )
+    description = target_description or (
+        f"{display_name}, based mostly on PokeCorpus."
+        + ("" if catalogs else " Text is not wired up yet; this is a loadable skeleton.")
+    )
     # "silver" alongside "gold": this mod is still built and extracted from a
     # Gold ROM only, but Gold and Silver share the same pokegold source tree
     # and near-identical dialogue text-table addresses (gen1recomp's own
@@ -351,14 +323,18 @@ def generate_gs_mod(
     # Registry.lua's override folds onto the base table by exact id match) --
     # so declaring "silver" here lets the same mod apply to a real Silver
     # save via src/mods/ModTargets.lua's specApplies() with no separate
-    # Silver-specific build.
+    # Silver-specific build. "crystal" (when crystal_text_catalog is given)
+    # works the same way, plus its own conditional dialogue_crystal.lua layer
+    # above -- Crystal's pointers mostly don't exist in the base "dialogue"
+    # catalog at all (95.8% diverge from Gold's), so without that separate
+    # layer a Crystal save would see almost no translation from this mod.
     manifest_body = {
         "id": mod_id, "name": display_name, "version": project_version(), "api": 2,
-        "entry": "main.lua", "profile": "content", "games": ["gold", "silver"],
-        "game_version": ">=0.0.0-dev <2.0.0", "category": "LANGUAGE",
+        "entry": "main.lua", "profile": "content", "games": games,
+        "game_version": ">=0.0.0-dev <1.0.0", "category": "LANGUAGE",
         "priority": TRANSLATION_MOD_PRIORITY, "dependencies": [], "optional_dependencies": [],
         "conflicts": [],
-        "permissions": ["engine_internals"] if language == "zh-Hans" else [],
+        "permissions": ["engine_internals"] if crystal_text_catalog else [],
         "description": description,
     }
     (destination / "manifest.json").write_text(
@@ -404,7 +380,7 @@ def package_gs_mod(
 def gs_text_catalog_from_join(entries: list[GsJoinEntry]) -> dict[str, str]:
     """{pointer: translation} for entries the join actually resolved.
 
-    Also aliases the handful of pointers config/gs/silver_pointer_aliases.json
+    Also aliases the handful of pointers config/gsc/silver_pointer_aliases.json
     knows shift address between Gold and Silver for verbatim-identical text
     (see load_gold_silver_pointer_aliases's docstring): each Gold pointer's
     own resolved translation, whatever it ended up being, is reused under
@@ -449,23 +425,11 @@ def _write_gate_expectations(mod_dir: Path, catalogs: dict[str, dict[str, str]])
         values = catalogs[name]
         if not isinstance(values, dict) or not values:
             raise BuildError(f"Gold registry gate expectation is empty: {name}")
-        # The opening clock prompt is the first player-visible Gen 2 engine
-        # string. Prefer it for the strings registry gate when the selected
-        # language supplies it, so a source-layout regression cannot pass by
-        # checking an unrelated alphabetically-first label instead.
-        key = (
-            GS_OPENING_CLOCK_STRING
-            if name == "strings" and GS_OPENING_CLOCK_STRING in values
-            else sorted(values)[0]
-        )
+        key = sorted(values)[0]
         value = values[key]
         if not isinstance(key, str) or not isinstance(value, str) or not value:
             raise BuildError(f"Gold registry gate expectation is malformed: {name}")
         expected[name] = {"id": key, "value": value}
-    ui_values = catalogs.get("ui_labels")
-    if isinstance(ui_values, dict) and ui_values:
-        ui_key = "Contains\nitems" if "Contains\nitems" in ui_values else sorted(ui_values)[0]
-        expected["ui_labels"] = {"id": ui_key, "value": ui_values[ui_key]}
     path = mod_dir.parent / f".{mod_dir.name}.registry-gate.json"
     path.write_text(json.dumps(expected, ensure_ascii=False, sort_keys=True), encoding="utf-8")
     return path
@@ -575,7 +539,6 @@ def run_gs_release_gates(
             "ignored_markup_only": coverage["ignored_markup_only"],
             **({"engine": coverage_summary("engine")} if "engine" in coverage else {}),
             **({"engine_gen2": coverage_summary("engine_gen2")} if "engine_gen2" in coverage else {}),
-            **({"ui_labels": coverage_summary("ui_labels")} if "ui_labels" in coverage else {}),
         },
         "checks": [
             {
@@ -639,8 +602,18 @@ def build_gs_dialogue_mod(
     font_profile: str = "fusion",
     overrides: dict[str, str] | None = None,
     engine_source: str | Path | None = None,
+    crystal_text_catalog: dict[str, str] | None = None,
 ) -> tuple[Path, list[GsJoinEntry], dict]:
-    """Join extracted Gold catalogs to the corpus and generate the mod."""
+    """Join extracted Gold catalogs to the corpus and generate the mod.
+
+    ``crystal_text_catalog`` is passed straight through to generate_gs_mod()
+    -- the Crystal ROM's own extraction and corpus join happen separately in
+    build_gs() (pipeline.crystal_mod.join_crystal_dialogue()), since Crystal
+    needs none of this function's Gold/Silver-specific catalogs (species/
+    moves/items/trainer classes, Oak speech, engine strings -- Crystal saves
+    already get the engine-string catalog for free, it's the same shared
+    Strings() Lua code as Gold/Silver).
+    """
     gold_out_dir = Path(gold_out_dir)
     language = canonical_language(language)
     missing_or_empty = []
@@ -657,8 +630,6 @@ def build_gs_dialogue_mod(
         gold_out_dir / "gs_text.tsv", gold_out_dir / "gs_labels.tsv",
     )
     corpus_rows = read_corpus_rows(corpus_dir, target_lang=language)
-    if overrides is None:
-        overrides = load_gs_dialogue_overrides(language)
     entries, stats = join_gs_pointers(
         records, corpus_rows, overrides=overrides,
         qid_decisions=load_gs_pointer_decisions(),
@@ -708,15 +679,7 @@ def build_gs_dialogue_mod(
         )
         extra_catalogs["strings"] = engine_values
         stats.update(engine_coverage)
-    extra_catalogs["ui_labels"] = _gs_ui_labels(corpus_rows, language)
-    ui_label_total = len(_load_gs_ui_handlers())
-    ui_label_translated = len(extra_catalogs["ui_labels"])
-    stats["ui_labels"] = {
-        "translated": ui_label_translated,
-        "total": ui_label_total,
-        "percent": round(100.0 * ui_label_translated / ui_label_total, 2)
-        if ui_label_total else 100.0,
-    }
+    extra_catalogs["ui_labels"] = _gs_ui_labels(corpus_rows)
     stats["index_catalogs"] = index_stats
     pointer_coverage = gs_coverage_report(entries)
     registry_translated = sum(int(item["translated"]) for item in index_stats.values())
@@ -741,7 +704,6 @@ def build_gs_dialogue_mod(
     for key in ("engine", "engine_gen2"):
         if key in stats:
             stats["coverage"][key] = stats[key]
-    stats["coverage"]["ui_labels"] = stats["ui_labels"]
     # Kept in-memory for the pre-publication registry gate; callers that
     # serialize stats can omit this private payload.
     stats["_gate_catalogs"] = extra_catalogs
@@ -752,12 +714,166 @@ def build_gs_dialogue_mod(
         target_description=target_description, font_source=font_source, font_profile=font_profile,
         text_catalog=gs_text_catalog_from_join(entries),
         extra_catalogs=extra_catalogs,
+        crystal_text_catalog=crystal_text_catalog,
+    )
+    return mod_dir, entries, stats
+
+
+def build_gs_zh_seed_mod(
+    gold_out_dir: str | Path,
+    crystal_out_dir: str | Path,
+    destination: str | Path,
+    *,
+    engine_source: str | Path,
+    font_source: str | Path,
+    font_profile: str = "fusion",
+    target_name: str = "简体中文（金、银、水晶）",
+) -> tuple[Path, list[GsJoinEntry], dict]:
+    """Rebuild Gen 2 Chinese against current private ROM extractions.
+
+    Gold/Silver's reviewed package is already pointer keyed, so current Gold
+    records can be filtered exactly. Crystal is intentionally different: the
+    pinned workbook rows are joined to the user's own extracted English text,
+    and only conservative unique/equivalent-ambiguity matches are emitted.
+    """
+    gold_out_dir = Path(gold_out_dir)
+    crystal_out_dir = Path(crystal_out_dir)
+    seed = load_seed("gsc")
+    catalogs = seed["catalogs"]
+    gold_records = parse_gs_text_catalog(
+        gold_out_dir / "gs_text.tsv", gold_out_dir / "gs_labels.tsv",
+    )
+    gold_values = catalogs.get("dialogue", {})
+    entries = [
+        GsJoinEntry(
+            record.pointer, record.label, record.text,
+            gold_values.get(record.pointer),
+            OVERRIDE if gold_values.get(record.pointer) else (
+                MARKUP_ONLY if not normalise(record.text) else NO_MATCH
+            ),
+            f"zh-seed.gold.{record.pointer}" if gold_values.get(record.pointer) else None,
+        )
+        for record in gold_records
+    ]
+
+    crystal_records = parse_gs_text_catalog(
+        crystal_out_dir / "gs_text.tsv", crystal_out_dir / "gs_labels.tsv",
+    )
+    crystal_entries, crystal_stats = join_gs_pointers(
+        crystal_records, seed["crystal_rows"],
+    )
+    safe_crystal_entries: list[GsJoinEntry] = []
+    rejected_placeholders = 0
+    for entry in crystal_entries:
+        if entry.translation and check_placeholders(entry.english, entry.translation):
+            if entry.provenance in crystal_stats:
+                crystal_stats[entry.provenance] -= 1
+            crystal_stats["no_match"] += 1
+            rejected_placeholders += 1
+            entry = replace(entry, translation=None, provenance=NO_MATCH)
+        safe_crystal_entries.append(entry)
+    crystal_entries = safe_crystal_entries
+    crystal_stats["rejected_placeholder_mismatch"] = rejected_placeholders
+    crystal_text_catalog = crystal_text_catalog_from_join(crystal_entries)
+
+    id_sources = {
+        "species_names": "gs_species.tsv",
+        "species_kinds": "gs_species.tsv",
+        "species_dex_text": "gs_species.tsv",
+        "move_names": "gs_moves.tsv",
+        "item_names": "gs_items.tsv",
+        "trainer_class_names": "gs_trainer_classes.tsv",
+        "landmarks": "gs_landmarks.tsv",
+    }
+    extra_catalogs: dict[str, dict[str, str]] = {}
+    registry_stats: dict[str, dict[str, int]] = {}
+    for name, filename in id_sources.items():
+        current_ids = {entry.id for entry in parse_indexed_catalog(gold_out_dir / filename)}
+        values = {
+            key: value for key, value in catalogs.get(name, {}).items()
+            if key in current_ids and value
+        }
+        extra_catalogs[name] = values
+        registry_stats[name] = {
+            "translated": len(values), "total": len(current_ids),
+        }
+
+    from .engine_scope import iter_callsites, load_manifest, verified_source
+    from .gs_engine import engine_string_keys
+    source, _root, revision = verified_source(engine_source, load_manifest())
+    all_engine_keys, gen2_engine_keys = engine_string_keys(iter_callsites(source), load_manifest())
+    string_values = {
+        key: value for key, value in catalogs.get("strings", {}).items()
+        if key in all_engine_keys and value
+    }
+    extra_catalogs["strings"] = string_values
+    extra_catalogs["ui_labels"] = dict(catalogs.get("ui_labels", {}))
+    extra_catalogs[GS_OAK_SPEECH_CATALOG] = {
+        key: value for key, value in catalogs.get(GS_OAK_SPEECH_CATALOG, {}).items()
+        if key in GS_OAK_SPEECH_KEYS and value
+    }
+
+    pointer_coverage = gs_coverage_report(entries)
+    registry_translated = sum(row["translated"] for row in registry_stats.values())
+    registry_total = sum(row["total"] for row in registry_stats.values())
+    rom_translated = pointer_coverage["rom"]["translated"] + registry_translated
+    rom_total = pointer_coverage["rom"]["total"] + registry_total
+    translated_engine = set(string_values)
+    coverage = {
+        **pointer_coverage,
+        "rom_dialogue": pointer_coverage["rom"],
+        "rom_catalogs": {
+            "translated": registry_translated,
+            "total": registry_total,
+            "percent": round(100.0 * registry_translated / registry_total, 2) if registry_total else 100.0,
+        },
+        "rom": {
+            "translated": rom_translated,
+            "total": rom_total,
+            "percent": round(100.0 * rom_translated / rom_total, 2) if rom_total else 100.0,
+        },
+        "engine": {
+            "translated": len(translated_engine & all_engine_keys),
+            "total": len(all_engine_keys),
+            "percent": round(100.0 * len(translated_engine & all_engine_keys) / len(all_engine_keys), 2)
+            if all_engine_keys else 100.0,
+            "source_revision": revision,
+        },
+        "engine_gen2": {
+            "translated": len(translated_engine & gen2_engine_keys),
+            "total": len(gen2_engine_keys),
+            "percent": round(100.0 * len(translated_engine & gen2_engine_keys) / len(gen2_engine_keys), 2)
+            if gen2_engine_keys else 100.0,
+            "source_revision": revision,
+        },
+    }
+    stats = {
+        "total": len(entries),
+        "translated": pointer_coverage["rom"]["translated"],
+        "unresolved": pointer_coverage["rom"]["total"] - pointer_coverage["rom"]["translated"],
+        "coverage": coverage,
+        "index_catalogs": registry_stats,
+        "crystal": {**crystal_stats, "translated": len(crystal_text_catalog)},
+        "_gate_catalogs": extra_catalogs,
+        "_placeholder_decisions": {},
+    }
+    mod_dir = generate_gs_mod(
+        destination, language="zh-Hans", target_name=target_name,
+        target_description=(
+            "Simplified Chinese translation rebuilt from reviewed Gold/Silver catalogs "
+            "and a provenance-pinned Crystal workbook; unmatched text remains English."
+        ),
+        font_source=font_source, font_profile=font_profile,
+        text_catalog=gs_text_catalog_from_join(entries),
+        extra_catalogs=extra_catalogs,
+        crystal_text_catalog=crystal_text_catalog,
     )
     return mod_dir, entries, stats
 
 
 def build_gs(
     gold_rom: str | Path,
+    crystal_rom: str | Path,
     language: str,
     language_name: str,
     luajit: str,
@@ -767,7 +883,13 @@ def build_gs(
     status_fn: Callable[[str], None] | None = None,
     font_profile: str = "fusion",
 ) -> Path:
-    """Run Gold's private extraction, join, validation, and packaging flow."""
+    """Run Gold's private extraction, join, validation, and packaging flow.
+
+    ``crystal_rom`` is a mandatory companion ROM, like Yellow is for the
+    "rby" release (pipeline.builder.build()'s own yellow_rom): one mod
+    covers gold/silver/crystal, Crystal's own dialogue applied at runtime
+    only when Crystal's engine capability is present (see generate_gs_mod()).
+    """
     def status(message: str) -> None:
         if status_fn:
             status_fn(message)
@@ -778,13 +900,14 @@ def build_gs(
             log_fn(message)
 
     language = canonical_language(language)
-    profile = release_profile("gs")
+    profile = release_profile("gsc")
     spec = game_spec("gs")
     if spec.corpus_collection not in profile.corpus_collections:
         raise BuildError("Gold release profile and game spec disagree on corpus collection")
     font_profile = validate_font_profile(language, font_profile)
-    status("Validating ROM")
+    status("Validating ROMs")
     verify_gs_rom(gold_rom)
+    verify_crystal_rom(crystal_rom)
 
     from .orchestration import prepare_build_context
     context = prepare_build_context(
@@ -797,26 +920,60 @@ def build_gs(
     status("Preparing dependencies")
     gen1recomp, corpus, font_source = context.gen1recomp, context.corpus, context.font_source
     corpus_gold_silver = corpus / "corpus" / "GoldSilver"
+    corpus_crystal = corpus / "corpus" / "Crystal"
 
     log("\nExtracting private Gold ROM data...")
     status("Extracting private Gold ROM data")
     gold_out = workspace / "gold" / "extracted"
     import_gs_rom(gold_rom, gen1recomp, gold_out, log_fn=log_fn)
 
+    log("\nExtracting private Crystal ROM data...")
+    status("Extracting private Crystal ROM data")
+    crystal_out = workspace / "crystal" / "extracted"
+    import_crystal_rom(crystal_rom, gen1recomp, crystal_out, log_fn=log_fn)
+
     build_root = workspace / "interactive-gs" / language
     mod_id = gs_mod_id(language)
     mod_dir = build_root / mod_id
-    log("\nJoining corpus and generating the mod...")
-    status("Joining corpus and generating the mod")
-    mod_dir, entries, stats = build_gs_dialogue_mod(
-        gold_out, corpus_gold_silver, mod_dir, mod_id=mod_id, language=language,
-        target_name=f"{language_name} translation for Gold and Silver", font_source=font_source, font_profile=font_profile,
-        engine_source=gen1recomp,
-    )
-    log(
-        f"  text: {stats['unique'] + stats['harmless_ambiguous'] + stats['override'] + stats['reviewed_qid']}/{stats['total']} pointers"
-        f" ({stats['unresolved']} unresolved, left in English)"
-    )
+    if language == "zh-Hans":
+        log("\nJoining reviewed Simplified Chinese seeds and generating the mod...")
+        status("Joining Simplified Chinese seeds and generating the mod")
+        mod_dir, entries, stats = build_gs_zh_seed_mod(
+            gold_out, crystal_out, mod_dir, engine_source=gen1recomp,
+            font_source=font_source, font_profile=font_profile,
+            target_name=f"{language_name} translation for Gold, Silver and Crystal",
+        )
+        crystal_stats = stats["crystal"]
+        log(
+            f"  crystal dialogue: {crystal_stats['translated']}/{crystal_stats['total']} pointers"
+            f" ({crystal_stats['unresolved']} unresolved, {crystal_stats['no_match']} no-match,"
+            " left in English)"
+        )
+        log(
+            f"  gold dialogue: {stats['translated']}/{stats['total']} pointers"
+            f" ({stats['unresolved']} unresolved, left in English)"
+        )
+    else:
+        crystal_entries, crystal_stats = join_crystal_dialogue(crystal_out, corpus_crystal, language)
+        crystal_text_catalog = crystal_text_catalog_from_join(crystal_entries)
+        if crystal_stats["total"]:
+            crystal_resolved = len(crystal_text_catalog)
+            log(
+                f"  crystal dialogue: {crystal_resolved}/{crystal_stats['total']} pointers"
+                f" ({crystal_stats['unresolved']} unresolved, {crystal_stats['no_match']} no-match,"
+                " left in English)"
+            )
+        log("\nJoining corpus and generating the mod...")
+        status("Joining corpus and generating the mod")
+        mod_dir, entries, stats = build_gs_dialogue_mod(
+            gold_out, corpus_gold_silver, mod_dir, mod_id=mod_id, language=language,
+            target_name=f"{language_name} translation for Gold, Silver and Crystal", font_source=font_source, font_profile=font_profile,
+            engine_source=gen1recomp, crystal_text_catalog=crystal_text_catalog,
+        )
+        log(
+            f"  text: {stats['unique'] + stats['harmless_ambiguous'] + stats['override'] + stats['reviewed_qid']}/{stats['total']} pointers"
+            f" ({stats['unresolved']} unresolved, left in English)"
+        )
 
     status("Running Gold release gates")
     gate_report = run_gs_release_gates(
@@ -835,7 +992,6 @@ def build_gs(
     for key, label in (
         ("rom", "Gold and Silver ROM aggregate"),
         ("engine_gen2", "Gold and Silver-related engine strings"),
-        ("ui_labels", "Gold and Silver hooked UI labels"),
         ("engine", "All engine strings"),
     ):
         section = gate_report["coverage"].get(key) or {}

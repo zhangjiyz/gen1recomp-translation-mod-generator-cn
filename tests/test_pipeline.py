@@ -596,6 +596,29 @@ class PipelineTests(unittest.TestCase):
             self.assertEqual(engine["total"], len(engine["details"]))
             self.assertTrue(ENGINE_CATALOG_EXTRA_KEYS <= set(engine["details"]))
 
+    def test_reviewed_seed_merges_only_current_engine_keys_and_updates_coverage(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            worksheets = root / "worksheets"
+            worksheets.mkdir()
+            for name in ("dialogue", "species_names", "move_names", "item_names", "trainer_names", "status_labels"):
+                (worksheets / f"{name}.txt").write_text("# header\n", encoding="utf-8")
+            catalog = worksheets / "strings.lua"
+            catalog.write_text('return { ["Current"] = "" }\n', encoding="utf-8")
+            report_path = root / "coverage.json"
+            mod = generate_mod(
+                [], root / "mod", language="zh-Hans", modkit_worksheet=worksheets,
+                engine_catalog=catalog, report_path=report_path,
+                seed_engine_values={"Current": "当前", "Removed": "旧键"},
+            )
+            strings = (mod / "lang" / "strings.lua").read_text(encoding="utf-8")
+            report = json.loads(report_path.read_text(encoding="utf-8"))["engine"]
+            self.assertIn('["Current"] = "当前"', strings)
+            self.assertNotIn("旧键", strings)
+            self.assertEqual(report["seed"]["recognized"], 1)
+            self.assertEqual(report["seed"]["stale"], ["Removed"])
+            self.assertEqual(report["details"]["Current"], "reviewed-seed")
+
     def test_generate_mod_rejects_unknown_engine_override_keys(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

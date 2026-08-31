@@ -15,6 +15,7 @@ import zipfile
 from .align import align, apply_corpus_overrides
 from .corpus import canonical_language, parse_redblue, parse_yellow
 from .mod import (
+    CATALOGS,
     FONT_PROFILES,
     YELLOW_CATALOG_HOOKS,
     font_profile_warning,
@@ -34,7 +35,7 @@ from .project import (
     luajit_install_hint as _luajit_install_hint,
 )
 from .dependencies import DependencyError, fetch_archive, fetch_files
-from .roms import import_rom, verify_gs_rom, verify_rb_rom, verify_rom
+from .roms import import_rom, verify_crystal_rom, verify_gs_rom, verify_rb_rom, verify_rom
 from .subprocess_run import run_streamed
 from .rom_paths import configured_path, load_rom_paths
 from .specs import game_spec, languages_for_collection, release_profile, release_profile_for_generation
@@ -221,16 +222,18 @@ def _font_source(workspace: Path, config: dict, font_profile: str = "fusion", la
                 japanese_source / "fusion-pixel-8px-proportional-ja.ttf",
                 source / "fusion-pixel-8px-proportional-ja.ttf",
             )
-        elif canonical_language(language) == "ko":
-            # Korean is part of the pinned Fusion archive, unlike Japanese
-            # which is fetched from its companion archive.
-            korean_font = source / "fusion-pixel-10px-proportional-ko.ttf"
-            if not korean_font.is_file():
-                raise BuildError("Pinned Fusion Pixel dependency has no Korean font variant.")
-        elif canonical_language(language) == "zh-Hans":
-            chinese_font = source / "fusion-pixel-10px-proportional-zh_hans.ttf"
-            if not chinese_font.is_file():
-                raise BuildError("Pinned Fusion Pixel dependency has no Simplified Chinese font variant.")
+        elif canonical_language(language) in {"ko", "zh-Hans"}:
+            # Korean and Simplified Chinese are part of the pinned 10px
+            # Fusion archive, unlike Japanese's companion 8px archive.
+            filename = (
+                "fusion-pixel-10px-proportional-ko.ttf"
+                if canonical_language(language) == "ko"
+                else "fusion-pixel-10px-proportional-zh_hans.ttf"
+            )
+            if not (source / filename).is_file():
+                raise BuildError(
+                    f"Pinned Fusion Pixel dependency has no {canonical_language(language)} font variant."
+                )
         return source
     except (DependencyError, KeyError, TypeError, ValueError, OSError) as error:
         raise BuildError(f"Unable to download pinned font dependency: {error}") from error
@@ -254,22 +257,6 @@ def prepare_dependencies(
     collections = (corpus_collection,) if isinstance(corpus_collection, str) else corpus_collection
     prefixes = [f"corpus/{collection}" for collection in collections]
     _ensure_dependency(config["corpus"], corpus, selective_prefix=prefixes)
-    if canonical_language(language) == "zh-Hans":
-        try:
-            from .zh_hans import ChineseSourceError
-            if tuple(collections) == ("GoldSilver",):
-                from .zh_hans import prepare_zh_hans_corpus
-                prepare_zh_hans_corpus(workspace, config, corpus)
-            elif tuple(collections) == ("RedBlue", "Yellow"):
-                from .zh_hans_rby import prepare_zh_hans_rby_corpus
-                prepare_zh_hans_rby_corpus(workspace, config, corpus)
-            else:
-                raise ChineseSourceError(
-                    "unsupported Simplified Chinese corpus collections: "
-                    f"{tuple(collections)!r}"
-                )
-        except (ChineseSourceError, DependencyError, KeyError, OSError, TypeError, ValueError) as error:
-            raise BuildError(f"Unable to prepare pinned Simplified Chinese sources: {error}") from error
     font_source = _font_source(workspace, config, font_profile, language)
     return gen1recomp, corpus, font_source
 
@@ -356,8 +343,8 @@ def _prompt_generation(input_fn: Callable[[str], str]) -> int:
     "generation" is engine vocabulary the user does not need.
     """
     print("\nWhich games do you want to translate?")
-    print("  1 - Red, Blue and Yellow   (generation 1)")
-    print("  2 - Gold and Silver        (generation 2)")
+    print("  1 - Red, Blue and Yellow      (generation 1)")
+    print("  2 - Gold, Silver and Crystal  (generation 2)")
     raw = input_fn("Games number [1]: ").strip()
     if raw in {"", "1"}:
         return 1
@@ -386,11 +373,9 @@ def _prompt_font_profile(language: str, input_fn: Callable[[str], str]) -> str:
     if language == "ja-Hrkt":
         print("\nJapanese uses Fusion Pixel by TakWolf, proportional 8px.")
         return "fusion"
-    if language == "ko":
-        print("\nKorean uses Fusion Pixel's Hangul variant; Pokemon Font is unavailable.")
-        return "fusion"
-    if language == "zh-Hans":
-        print("\nSimplified Chinese uses Fusion Pixel's zh_hans variant; Pokemon Font is unavailable.")
+    if language in {"ko", "zh-Hans"}:
+        label = "Korean" if language == "ko" else "Simplified Chinese"
+        print(f"\n{label} uses Fusion Pixel's 10px glyph variant; Pokemon Font is unavailable.")
         return "fusion"
     print("\nPlease select a font profile:")
     print("  1 - Fusion Pixel by TakWolf, proportional 10px (recommended)")
@@ -769,6 +754,166 @@ def remove_legacy_font_artifacts(mod: Path) -> None:
         (mod / relative).unlink(missing_ok=True)
 
 
+def _seed_catalogs_for_worksheet(
+    catalogs: dict[str, dict[str, str]], worksheet: Path,
+) -> tuple[dict[str, dict[str, str]], dict]:
+    """Filter a reviewed seed through the current Modkit worksheet keys."""
+    from .join import read_worksheets
+
+    worksheets = read_worksheets(worksheet)
+    joined: dict[str, dict[str, str]] = {name: {} for name in CATALOGS}
+    matched: dict[str, int] = {}
+    missing: dict[str, list[str]] = {}
+    stale: dict[str, list[str]] = {}
+    for name in CATALOGS:
+        seed_values = catalogs.get(name, {})
+        if name in worksheets:
+            current = {entry.key for entry in worksheets[name]}
+            joined[name] = {
+                key: value for key, value in seed_values.items()
+                if key in current and isinstance(value, str) and value
+            }
+            missing[name] = sorted(current - set(joined[name]))
+            stale[name] = sorted(set(seed_values) - current)
+            matched[name] = len(joined[name])
+        elif name != "strings":
+            joined[name] = {
+                key: value for key, value in seed_values.items()
+                if isinstance(value, str) and value
+            }
+            matched[name] = len(joined[name])
+    report = {
+        "matched": matched,
+        "unmatched": missing,
+        "ambiguous": {},
+        "strategies": {"reviewed-seed": sum(matched.values())},
+        "reasons": {},
+        "seed": {
+            "profile": "rby",
+            "missing": {key: value for key, value in missing.items() if value},
+            "stale": {key: value for key, value in stale.items() if value},
+        },
+    }
+    return joined, report
+
+
+def _build_rby_zh_seed(
+    *, gen1recomp: Path, scaffold: Path, worksheet: Path,
+    yellow_worksheet: Path | None, font_source: Path, font_profile: str,
+    build_root: Path, destination: Path, env: dict[str, str],
+    log_fn: Callable[[str], None] | None,
+    status_fn: Callable[[str], None] | None,
+) -> Path:
+    """Rebuild RBY Chinese from reviewed catalogs against current keys."""
+    from .join import read_worksheets
+    from .orchestration import package_release
+    from .seed import load_seed
+    from .yellow import parse_text_catalog
+
+    def status(message: str) -> None:
+        if status_fn:
+            status_fn(message)
+
+    seed = load_seed("rby")
+    catalogs = seed["catalogs"]
+    joined, join_report = _seed_catalogs_for_worksheet(catalogs, worksheet)
+    join_report["seed"]["source_archive_name"] = seed["metadata"]["source_archive_name"]
+    join_report["seed"]["source_archive_sha256"] = seed["metadata"]["source_archive_sha256"]
+
+    yellow_dialogue: dict[str, str] = {}
+    yellow_catalogs: dict[str, dict[str, str]] = {}
+    yellow_stats = None
+    if yellow_worksheet is not None:
+        yellow_ws = read_worksheets(yellow_worksheet)
+        dialogue_keys = {entry.key for entry in yellow_ws.get("dialogue", ())}
+        yellow_dialogue = {
+            key: value for key, value in catalogs.get("dialogue_yellow", {}).items()
+            if key in dialogue_keys and value
+        }
+        for base_name in (
+            "species_names", "move_names", "item_names",
+            "trainer_names", "status_labels",
+        ):
+            layer_name = f"{base_name}_yellow"
+            if layer_name not in catalogs or base_name not in yellow_ws:
+                continue
+            keys = {entry.key for entry in yellow_ws[base_name]}
+            values = {
+                key: value for key, value in catalogs[layer_name].items()
+                if key in keys and value
+            }
+            if values:
+                yellow_catalogs[base_name] = values
+
+        red_text = parse_text_catalog(gen1recomp / "data" / "generated" / "text.lua")
+        yellow_text = parse_text_catalog(gen1recomp / "yellow" / "data" / "generated" / "text.lua")
+        common_dialogue = joined.get("dialogue", {})
+        visible_dialogue = {key for key, value in yellow_text.items() if value}
+        effective_dialogue = sum(
+            bool(yellow_dialogue.get(key))
+            or (bool(common_dialogue.get(key)) and red_text.get(key) == yellow_text.get(key))
+            for key in visible_dialogue
+        )
+        effective_named = 0
+        catalog_stats: dict[str, dict[str, int]] = {}
+        red_ws = read_worksheets(worksheet)
+        for name, entries in yellow_ws.items():
+            if name == "dialogue":
+                continue
+            red_english = {entry.key: entry.english for entry in red_ws.get(name, ())}
+            red_values = joined.get(name, {})
+            layer = yellow_catalogs.get(name, {})
+            translated = sum(
+                bool(layer.get(entry.key))
+                or (bool(red_values.get(entry.key)) and red_english.get(entry.key) == entry.english)
+                for entry in entries
+            )
+            effective_named += translated
+            catalog_stats[name] = {"total": len(entries), "matched": translated}
+        yellow_stats = {
+            "yellow_labels": len(visible_dialogue),
+            "effective_dialogue_total": len(visible_dialogue),
+            "effective_dialogue_translated": effective_dialogue,
+            "effective_named_catalog_translated": effective_named,
+            "layer_entries": len(yellow_dialogue),
+            "matched": len(yellow_dialogue),
+            "unmatched": max(0, len(visible_dialogue) - effective_dialogue),
+            "catalogs": catalog_stats,
+        }
+
+    mod = build_root / "mod"
+    coverage = build_root / "coverage.json"
+    remove_legacy_font_artifacts(mod)
+    status("Generating Simplified Chinese catalogs")
+    generate_mod(
+        [], mod, mod_id="translation-zh-hans", language="zh-Hans",
+        target_name="Simplified Chinese translation for Red, Blue and Yellow",
+        target_description=(
+            "Simplified Chinese translation rebuilt from reviewed, provenance-pinned "
+            "catalog seeds; unmatched current-engine text remains English."
+        ),
+        modkit_worksheet=worksheet, report_path=coverage, strict_engine=True,
+        engine_source=gen1recomp / "src",
+        engine_scope=resource_root() / "config" / "rby" / "engine_scope.json",
+        font_source=font_source, font_profile=font_profile,
+        yellow_dialogue=yellow_dialogue, yellow_stats=yellow_stats,
+        yellow_catalogs=yellow_catalogs,
+        seed_engine_values=catalogs.get("strings", {}),
+        precomputed_join=(joined, join_report),
+    )
+    preserve_scaffold_support(scaffold, mod, "zh-Hans", font_source, font_profile)
+    version = project_version()
+    output = destination / f"translation-zh-hans-{version}.zip"
+    status("Packaging Simplified Chinese translation mod")
+    published = package_release(
+        mod, gen1recomp, gen1recomp / "tools" / "modkit.py", build_root,
+        destination, output.name, base="imported", env=env, log_fn=log_fn,
+    )
+    status("Build complete")
+    print_coverage(coverage, log_fn=log_fn)
+    return published
+
+
 def inspect_archive(path: Path) -> None:
     """Refuse a distribution containing ROMs, extracts, or worksheets."""
     try:
@@ -794,7 +939,7 @@ def inspect_archive(path: Path) -> None:
         if any(part in normalized for part in FORBIDDEN_ARCHIVE_PARTS):
             raise BuildError(f"Private build data found in archive: {name}")
         allowed = (
-            normalized in {"manifest.json", "main.lua", "translation_source.md"}
+            normalized in {"manifest.json", "main.lua"}
             or normalized.startswith("lang/")
             or normalized.startswith("fonts/")
             or normalized.startswith("assets/font/")
@@ -959,6 +1104,15 @@ def build(
             yellow_scaffold, yellow_root / "complete-modkit-worksheet"
         )
 
+    if language == "zh-Hans":
+        return _build_rby_zh_seed(
+            gen1recomp=gen1recomp, scaffold=scaffold, worksheet=worksheet,
+            yellow_worksheet=yellow_worksheet, font_source=font_source,
+            font_profile=font_profile, build_root=build_root,
+            destination=destination, env=env, log_fn=log_fn,
+            status_fn=status_fn,
+        )
+
     log("\nMatching poke-corpus translations...")
     status("Matching poke-corpus translations")
     records = parse_redblue(corpus, language)
@@ -983,8 +1137,6 @@ def build(
         red_text = parse_text_catalog(gen1recomp / "data" / "generated" / "text.lua")
         yellow_text = parse_text_catalog(gen1recomp / "yellow" / "data" / "generated" / "text.lua")
         yellow_rows = align(parse_yellow(corpus, language), target_lang=language)
-        if corpus_overrides:
-            yellow_rows = apply_corpus_overrides(yellow_rows, corpus_overrides)
         red_worksheets = read_worksheets(worksheet)
         red_joined, red_join_report = join_catalogs(rows, red_worksheets, language)
         yellow_worksheets = read_worksheets(yellow_worksheet)
@@ -1193,6 +1345,13 @@ def main(
             gs_rom = _prompt_configured_path(
                 gs_prompt, configured_path(rom_paths, "rom", "gold"), input_fn
             )
+            crystal_prompt = (
+                "Please specify the location of your Pokemon Crystal ROM "
+                "(full path, e.g. C:\\Games\\PokemonCrystal.gbc): "
+            )
+            crystal_rom = _prompt_configured_path(
+                crystal_prompt, configured_path(rom_paths, "rom", "crystal"), input_fn
+            )
             language, language_name = _prompt_language(input_fn, generation=generation)
             selected_profile = font_profile or _prompt_font_profile(language, input_fn)
             selected_profile = validate_font_profile(language, selected_profile)
@@ -1201,6 +1360,7 @@ def main(
                 if warning:
                     print(f"Warning: {warning}")
             verify_gs_rom(gs_rom)
+            verify_crystal_rom(crystal_rom)
             if not _confirm(input_fn):
                 if is_frozen():
                     print("\nBuild cancelled. No dependency downloads were performed.")
@@ -1209,7 +1369,7 @@ def main(
                 return 0
             from .orchestration import build_request
             output = build_request(
-                BuildRequest({"gs": gs_rom}, release_profile("gs"), language, None, selected_profile),
+                BuildRequest({"gs": gs_rom, "crystal": crystal_rom}, release_profile("gsc"), language, None, selected_profile),
                 language_name=language_name, luajit=luajit,
             )
     except (RuntimeError, ValueError, OSError) as error:

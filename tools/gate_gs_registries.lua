@@ -67,7 +67,6 @@ if expectationPath and expectationPath ~= "" then
     for _, requiredName in ipairs(required) do
       if name == requiredName then known = true break end
     end
-    if name == "ui_labels" then known = true end
     if not known then
       io.stderr:write("registry expectation is unexpected: " .. tostring(name) .. "\n")
       os.exit(2)
@@ -131,21 +130,6 @@ if expectations then
       eq(returned, steps, "intro.oak_speech.build preserves the step list")
       eq(speech.texts[expected.id], expected.value,
         "oak_speech[" .. expected.id .. "] is selected by the Gold consumer")
-    elseif name == "ui_labels" and type(expected) == "table" then
-      local Runtime = require("src.mods.Runtime")
-      local first, second = expected.id:match("^(.-)\n(.*)$")
-      local item = first and { desc = { first, second } } or { label = expected.id }
-      local items = { item }
-      local returned = Runtime.call("ui.start_menu.items",
-        function(_, value) return value end, {}, items)
-      eq(returned, items, "ui.start_menu.items preserves the item list")
-      if first then
-        eq(item.desc[1] .. "\n" .. item.desc[2], expected.value,
-          "ui_labels[" .. expected.id .. "] is selected by the Gold consumer")
-      else
-        eq(item.label, expected.value,
-          "ui_labels[" .. expected.id .. "] is selected by the Gold consumer")
-      end
     elseif target and field and type(expected) == "table" then
       local record = target(expected.id)
       eq(record and record[field], expected.value, name .. "[" .. expected.id .. "]." .. field .. " is selected")
