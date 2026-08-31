@@ -79,6 +79,22 @@ class GenerateGsModTests(unittest.TestCase):
             self.assertEqual(manifest["id"], "custom-id")
             self.assertEqual(manifest["description"], "Custom description.")
 
+    def test_description_and_status_catalogs_register_runtime_fields(self):
+        catalogs = {
+            "move_descriptions": {"POUND": "拍打对手。"},
+            "item_descriptions": {"POTION": "回复体力。"},
+            "species_dex_text2": {"BULBASAUR": "种子会长大。"},
+            "status_labels": {"poison": "中毒"},
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            mod_dir = generate_gs_mod(
+                Path(tmp) / "mod", language="zh-Hans", extra_catalogs=catalogs,
+            )
+            main = (mod_dir / "main.lua").read_text(encoding="utf-8")
+        self.assertIn('{ description = value }', main)
+        self.assertIn('{ dexEntry = { text2 = value } }', main)
+        self.assertIn('{ label = value, hudLabel = value }', main)
+
     def test_crystal_catalog_declares_crystal_and_writes_a_conditional_layer(self):
         with tempfile.TemporaryDirectory() as tmp:
             mod_dir = generate_gs_mod(

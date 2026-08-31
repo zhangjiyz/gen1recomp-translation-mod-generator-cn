@@ -105,7 +105,10 @@ GS_CATALOG_HOOKS = {
     "species_dex_text": "mod.content.pokemon:patch(id, { dexEntry = { text = value } })",
     "species_dex_text2": "mod.content.pokemon:patch(id, { dexEntry = { text2 = value } })",
     "move_names": "mod.content.moves:patch(id, { name = value })",
+    "move_descriptions": "mod.content.moves:patch(id, { description = value })",
     "item_names": "mod.content.items:patch(id, { name = value })",
+    "item_descriptions": "mod.content.items:patch(id, { description = value })",
+    "status_labels": "mod.content.statuses:patch(id, { label = value, hudLabel = value })",
     "trainer_class_names": "mod.content.trainers:patch(id, { name = value })",
     "landmarks": "mod.content.landmarks:patch(id, { name = value })",
 }
@@ -241,7 +244,12 @@ GS_REQUIRED_REGISTRIES = (
 # has only the row's own terminator), so species_dex_text2 is {} for those
 # languages rather than a BuildError. Verified by the release gate like any
 # required registry when it does have content (en/fr/de/es/it today).
-GS_OPTIONAL_VERIFIED_REGISTRIES = ("species_dex_text2",)
+GS_OPTIONAL_VERIFIED_REGISTRIES = (
+    "species_dex_text2", "move_descriptions", "item_descriptions",
+    "status_labels",
+)
+
+GS_STATUS_IDS = {"sleep", "poison", "toxic", "paralyze", "burn", "freeze"}
 
 def gs_mod_id(language: str) -> str:
     """Return the generation-scoped Gold mod identifier."""
@@ -1038,8 +1046,11 @@ def build_gs_zh_seed_mod(
         "species_names": "gs_species.tsv",
         "species_kinds": "gs_species.tsv",
         "species_dex_text": "gs_species.tsv",
+        "species_dex_text2": "gs_species.tsv",
         "move_names": "gs_moves.tsv",
+        "move_descriptions": "gs_moves.tsv",
         "item_names": "gs_items.tsv",
+        "item_descriptions": "gs_items.tsv",
         "trainer_class_names": "gs_trainer_classes.tsv",
         "landmarks": "gs_landmarks.tsv",
     }
@@ -1055,6 +1066,15 @@ def build_gs_zh_seed_mod(
         registry_stats[name] = {
             "translated": len(values), "total": len(current_ids),
         }
+
+    status_values = {
+        key: value for key, value in catalogs.get("status_labels", {}).items()
+        if key in GS_STATUS_IDS and value
+    }
+    extra_catalogs["status_labels"] = status_values
+    registry_stats["status_labels"] = {
+        "translated": len(status_values), "total": len(GS_STATUS_IDS),
+    }
 
     from .engine_scope import iter_callsites, load_manifest, verified_source
     from .gs_engine import engine_string_keys

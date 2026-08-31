@@ -212,7 +212,14 @@ The Simplified Chinese target starts from the reviewed catalogs under
 [`seeds/zh-Hans`](seeds/zh-Hans). The seed importer excludes the old package's
 entry point, manifest, font and validation claims, then verifies every imported
 catalog by SHA-256 so current packaging and gates can be rebuilt against the
-pinned engine. The `gsc-gs` seed contains 5,157 source-labelled Crystal rows
+pinned engine. The Gen 2 seed also contains all 251 move descriptions, all 250
+item slots, both Pokédex text pages for all 251 species, and the six persistent
+status labels. Move and item prose uses official Simplified Chinese wording
+from the pinned PokéCorpus Ultra Sun/Ultra Moon catalog; the second Pokédex
+page is a layout split of the seed's existing reviewed full entry, not a second
+machine translation. `tools/import_zh_hans_gsc_descriptions.py` records that
+one-time reproducible import and validates the three-row description limit.
+The `gsc-gs` seed contains 5,157 source-labelled Crystal rows
 converted from a pinned `text.xlsx`. The private build emits only unique
 matches or ambiguities whose Chinese result is identical; placeholder
 mismatches and unresolved text stay English. The source repositories named by
@@ -270,7 +277,8 @@ on an actual Crystal save:
   Crystal-exclusive feature (Move Tutor, gender selection, the "PokeSeer"/
   Buena's Password radio special, Battle Tower) are excluded from this scope
   -- none of it exists on a real Gold or Silver cart, so it has no PokeCorpus
-  row and is not part of what this mod could ever cover; see
+  row and is not part of the shared multilingual denominator. The Simplified
+  Chinese seed carries a separate reviewed translation for all 48 keys; see
   [`config/gsc/engine_scope_exclusions.json`](config/gsc/engine_scope_exclusions.json).
 - `Crystal dialogue coverage` is Crystal's own dialogue pointers. Corpus-based
   targets join separately against poke-corpus's own `Crystal/` collection; the
@@ -279,9 +287,10 @@ on an actual Crystal save:
   `bank:address` values from Gold/Silver almost throughout, so this is not
   the same catalog as the aggregate above). Its denominator excludes 16
   markup-only records, same convention as the ROM aggregate. This is
-  dialogue only for now -- Crystal's own named catalogs (species/moves/
-  items/trainer classes) and its 48 Crystal-exclusive engine strings are
-  not covered yet; the `Gold and Silver-related engine strings` catalog
+  dialogue only for the corpus-backed targets -- Crystal's own named catalogs
+  (species/moves/items/trainer classes) are shared with Gold/Silver. The
+  Simplified Chinese seed additionally covers all 48 Crystal-exclusive engine
+  strings; other target languages do not yet. The `Gold and Silver-related engine strings` catalog
   already applies unchanged on a Crystal save (same shared `Strings()`
   code, no separate work needed there). `ko` has no Crystal corpus at all
   in poke-corpus, so its dialogue stays in English.

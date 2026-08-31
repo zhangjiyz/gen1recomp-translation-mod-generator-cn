@@ -16,7 +16,7 @@ import shutil
 from .builder import BuildError, _run, inspect_archive
 from .generate import lua_string
 from .gs_join import GsJoinEntry, NO_MATCH, OVERRIDE
-from .gs_mod import generate_gs_mod, gs_archive_name
+from .gs_mod import _write_gate_expectations, generate_gs_mod, gs_archive_name
 from .mod import generate_mod
 from .orchestration import package_release
 from .project import project_version, resource_root
@@ -297,6 +297,16 @@ def build_gsc_zh_seed_without_rom(
         ])
     finally:
         expectation.unlink(missing_ok=True)
+    registry_catalogs = dict(catalogs)
+    registry_catalogs.pop("dialogue", None)
+    registry_expectation = _write_gate_expectations(mod_dir, registry_catalogs)
+    try:
+        _run([
+            str(luajit), str(resource_root() / "tools" / "gate_gs_registries.lua"),
+            str(engine), str(mod_dir), str(registry_expectation),
+        ])
+    finally:
+        registry_expectation.unlink(missing_ok=True)
     archive_name = gs_archive_name("zh-Hans", project_version())
     archive = package_release(
         mod_dir, engine, engine / "tools" / "modkit.py", build_root,

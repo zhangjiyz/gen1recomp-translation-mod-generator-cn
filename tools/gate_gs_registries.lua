@@ -79,7 +79,12 @@ if expectationPath and expectationPath ~= "" then
   -- species_dex_text2 is (a missing/empty per-edition catalog -- e.g. no
   -- Crystal corpus supplied -- degrades to omitting the key, not a
   -- BuildError; see pipeline.gs_mod._write_gate_expectations).
-  local optional = { species_dex_text2 = true }
+  local optional = {
+    species_dex_text2 = true,
+    move_descriptions = true,
+    item_descriptions = true,
+    status_labels = true,
+  }
   for name, _ in pairs(EDITION_DEX_TEXT_KEYS) do optional[name] = true end
   for _, name in ipairs(required) do
     local value = expectations[name]
@@ -135,7 +140,10 @@ if expectations then
     species_dex_text = function(id) return data.pokemon and data.pokemon[id] and data.pokemon[id].dexEntry end,
     species_dex_text2 = function(id) return data.pokemon and data.pokemon[id] and data.pokemon[id].dexEntry end,
     move_names = function(id) return data.moves and data.moves[id] end,
+    move_descriptions = function(id) return data.moves and data.moves[id] end,
     item_names = function(id) return data.items and data.items[id] end,
+    item_descriptions = function(id) return data.items and data.items[id] end,
+    status_labels = function(id) return data.gen2Statuses and data.gen2Statuses[id] end,
     trainer_class_names = function(id) return data.gen2Trainers and data.gen2Trainers.classes and data.gen2Trainers.classes[id] end,
     landmarks = function(id) return data.gen2Landmarks and data.gen2Landmarks.landmarks and data.gen2Landmarks.landmarks[id] end,
   }
@@ -143,7 +151,10 @@ if expectations then
     strings = "value",
     species_names = "name", species_kinds = "kind", species_dex_text = "text",
     species_dex_text2 = "text2",
-    move_names = "name", item_names = "name", trainer_class_names = "name", landmarks = "name",
+    move_names = "name", move_descriptions = "description",
+    item_names = "name", item_descriptions = "description",
+    status_labels = "hudLabel",
+    trainer_class_names = "name", landmarks = "name",
   }
   -- Verified separately below, each under its own edition's GameVersion --
   -- these only ever patch data.pokemon on a Silver/Crystal save, so

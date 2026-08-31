@@ -8,8 +8,8 @@
   "files": [
     {
       "path": "TRANSLATION_SOURCE.md",
-      "bytes": 1595,
-      "sha256": "74c227957e1ccc50753c05e2d9dd4c0de53bdfd2c01a54e8707468515000552f"
+      "bytes": 2346,
+      "sha256": "b311bb03fa57f9f8682ef207eeb8611c7862bbc88349c4d8c03826740783d582"
     },
     {
       "path": "crystal_catalog.json",
@@ -22,6 +22,11 @@
       "sha256": "3191da2aa16e7114a09165d84b6355502eb27fc828f6749b415cc10354008a8b"
     },
     {
+      "path": "lang/item_descriptions.lua",
+      "bytes": 21707,
+      "sha256": "349b51435d205b394529a9605fc399dd2891738f2a10afaf27c24e7565c7df4a"
+    },
+    {
       "path": "lang/item_names.lua",
       "bytes": 8693,
       "sha256": "f787966db7b09418a297b3cb17f94cbbc01157dae07dba2fcb2927f51c3e7475"
@@ -30,6 +35,11 @@
       "path": "lang/landmarks.lua",
       "bytes": 4094,
       "sha256": "0ecf31f0f399f5313c035c9fb517d0ee98aa941fd75b3728ef4c1fc9c20a2d6d"
+    },
+    {
+      "path": "lang/move_descriptions.lua",
+      "bytes": 24410,
+      "sha256": "84db54dd170ddcd88920c2186f4af7acec183e5baa44024441b865c04a74853b"
     },
     {
       "path": "lang/move_names.lua",
@@ -43,8 +53,13 @@
     },
     {
       "path": "lang/species_dex_text.lua",
-      "bytes": 28796,
-      "sha256": "2895885f805e7620b89c433e11df38828b87095931c52b4fb78e767becb09a4c"
+      "bytes": 16202,
+      "sha256": "926b9d31cf6435822b2fe718b32c38e9b02ae98f0c0b5c7d0b904ba8aeb05e9b"
+    },
+    {
+      "path": "lang/species_dex_text2.lua",
+      "bytes": 16977,
+      "sha256": "f555e53e297a9d53b8bf539e05826db72d929fe103b96124001f99df0cf769cb"
     },
     {
       "path": "lang/species_kinds.lua",
@@ -57,9 +72,14 @@
       "sha256": "60fa9ddd4ea8358b5cf22cedf6f84f369e89df41b2fa8b0c75e4a5767a777f23"
     },
     {
+      "path": "lang/status_labels.lua",
+      "bytes": 222,
+      "sha256": "a0b5fe6b33abe5cba1735e09534792296b75529d566c148459c44a314b4fbda5"
+    },
+    {
       "path": "lang/strings.lua",
-      "bytes": 28547,
-      "sha256": "40fa847ebbbefd37daf6ea67ff0c348da14dbf89499d8cdbdce64f2e45210b36"
+      "bytes": 33356,
+      "sha256": "2f7aaa5b6ed14222316665a1e35d0a1c8d1ca1087c0b66f79b733f7300d41e0a"
     },
     {
       "path": "lang/trainer_class_names.lua",
@@ -75,6 +95,12 @@
   "notice": "Imported from a user-reviewed generated mod. Rebuild release packaging and validation against the current pinned engine; do not redistribute fan-translation text without permission from its authors.",
   "derived_changes": [
     "Added 17 reviewed v0.2.32 engine and UI translations shared with the main zh_CN catalog.",
-    "Added 5,157 Crystal text rows converted from SnDream's pinned text.xlsx using runtime-safe control markers."
+    "Added 5,157 Crystal text rows converted from SnDream's pinned text.xlsx using runtime-safe control markers.",
+    "Added Gen 2 status labels and runtime-only Chinese text coverage.",
+    "Added complete Gen 2 move/item descriptions and split compact Pokedex prose across both pages.",
+    "Recorded official description import provenance and complete two-page Gen 2 coverage.",
+    "Refined original Gen 2 key-item descriptions and kept the description importer idempotent.",
+    "Localized all 40 previously missing Crystal-only engine strings.",
+    "Corrected PokéCorpus provenance URL and clarified text redistribution rights."
   ]
 }
