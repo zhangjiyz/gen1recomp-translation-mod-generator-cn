@@ -23,8 +23,8 @@
     },
     {
       "path": "lang/item_descriptions.lua",
-      "bytes": 21707,
-      "sha256": "349b51435d205b394529a9605fc399dd2891738f2a10afaf27c24e7565c7df4a"
+      "bytes": 21371,
+      "sha256": "6d1f78ff1b2de2c584e96e98c3cc4c417af7d78f33fa24cae7c5c8e462b428b8"
     },
     {
       "path": "lang/item_names.lua",
@@ -38,8 +38,8 @@
     },
     {
       "path": "lang/move_descriptions.lua",
-      "bytes": 24410,
-      "sha256": "84db54dd170ddcd88920c2186f4af7acec183e5baa44024441b865c04a74853b"
+      "bytes": 23958,
+      "sha256": "35fc7860b3c965a256228ac4d6bd423b22fa9da80ca13bb80ee1107796e171ea"
     },
     {
       "path": "lang/move_names.lua",
@@ -78,8 +78,8 @@
     },
     {
       "path": "lang/strings.lua",
-      "bytes": 53796,
-      "sha256": "1dd6eaf03b6b7d701d4da39424a69e3cfc1e833f7e015739d1afe575f402ffd3"
+      "bytes": 53788,
+      "sha256": "e090a357e5a961b84b0221f69629f86054c5ababfa14a536de33443ac238cb4b"
     },
     {
       "path": "lang/trainer_class_names.lua",
@@ -103,6 +103,11 @@
     "Localized all 40 previously missing Crystal-only engine strings.",
     "Corrected PokéCorpus provenance URL and clarified text redistribution rights.",
     "Repaired 10 Crystal placeholder translations and resolved 9 renamed or label-less runtime symbols.",
-    "Added v0.2.56 Simplified Chinese engine string coverage."
+    "Added v0.2.56 Simplified Chinese engine string coverage.",
+    "avoid unit and punctuation splits in zh-Hans Gen2 descriptions",
+    "strip hard line breaks from zh-Hans Gen2 descriptions and rely on runtime wrapping",
+    "fix zh-Hans Gen2 summary EXP POINTS label",
+    "Remove hard line breaks and fix Gen2 summary exp label",
+    "merge v0.2.56 zh-Hans engine strings with local description fixes"
   ]
 }

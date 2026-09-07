@@ -95,7 +95,7 @@ return {
   ["END"] = "完成",
   ["EXIT"] = "结束",
   ["EXIT GAME"] = "关闭",
-  ["EXP POINTS"] = "{NUM}经验值！",
+  ["EXP POINTS"] = "经验值",
   ["Excellent! You\nseem to like col-\nlecting things!"] = "很精彩！\n难道收集就是\011你的兴趣爱好吗？",
   ["FAILED"] = "失败",
   ["FAST"] = "快〇",

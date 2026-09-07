@@ -137,10 +137,9 @@ def normalise(value: str) -> str:
 
 def compact_lines(value: str, width: int = 18) -> str:
     text = value.replace("\n", "")
-    lines = [text[index:index + width] for index in range(0, len(text), width)] or [""]
-    if len(lines) > 3:
+    if len(text) > width * 3:
         raise ValueError(f"description exceeds three 18-cell rows: {value!r}")
-    return "\n".join(lines)
+    return text
 
 
 def move_ids(pokegold: Path) -> list[str]:

@@ -11,6 +11,7 @@ from pipeline.gs_text import GsTextRecord
 from pipeline.tokens import check_placeholders
 from pipeline.zh_seed_build import _copy_seed_catalogs
 from tools.import_crystal_zh_catalog import _runtime_text
+from tools.import_zh_hans_gsc_descriptions import compact_lines
 
 
 class SeedTests(unittest.TestCase):
@@ -74,6 +75,26 @@ class SeedTests(unittest.TestCase):
         self.assertEqual(rby["catalogs"]["strings"]["To"], "前往")
         self.assertEqual(gs["catalogs"]["strings"]["%d AREAS LEFT"], "剩余 %d 个区域")
         self.assertEqual(len(rby["mod_overlays"]), 1)
+
+    def test_gs_descriptions_do_not_embed_hard_line_breaks(self):
+        catalogs = load_seed("gsc")["catalogs"]
+        checked = 0
+        for catalog_name in ("item_descriptions", "move_descriptions"):
+            for key, value in catalogs[catalog_name].items():
+                checked += 1
+                self.assertNotIn("\n", value, f"{catalog_name}.{key} embeds a hard line break")
+        self.assertEqual(checked, 501)
+
+    def test_description_import_compactor_strips_source_line_breaks(self):
+        self.assertEqual(
+            compact_lines("喷雾式伤药。能让１只宝可梦回复２０Ｈ\nＰ。"),
+            "喷雾式伤药。能让１只宝可梦回复２０ＨＰ。",
+        )
+
+    def test_gs_summary_exp_points_label_is_static(self):
+        strings = load_seed("gsc")["catalogs"]["strings"]
+        self.assertEqual(strings["EXP POINTS"], "经验值")
+        self.assertNotIn("{NUM}", strings["EXP POINTS"])
 
     def test_rom_free_copy_materializes_mod_overlay_entries(self):
         seed = load_seed("rby")
