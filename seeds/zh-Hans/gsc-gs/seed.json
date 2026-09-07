@@ -78,8 +78,8 @@
     },
     {
       "path": "lang/strings.lua",
-      "bytes": 33356,
-      "sha256": "2f7aaa5b6ed14222316665a1e35d0a1c8d1ca1087c0b66f79b733f7300d41e0a"
+      "bytes": 53796,
+      "sha256": "1dd6eaf03b6b7d701d4da39424a69e3cfc1e833f7e015739d1afe575f402ffd3"
     },
     {
       "path": "lang/trainer_class_names.lua",
@@ -102,6 +102,7 @@
     "Refined original Gen 2 key-item descriptions and kept the description importer idempotent.",
     "Localized all 40 previously missing Crystal-only engine strings.",
     "Corrected PokéCorpus provenance URL and clarified text redistribution rights.",
-    "Repaired 10 Crystal placeholder translations and resolved 9 renamed or label-less runtime symbols."
+    "Repaired 10 Crystal placeholder translations and resolved 9 renamed or label-less runtime symbols.",
+    "Added v0.2.56 Simplified Chinese engine string coverage."
   ]
 }

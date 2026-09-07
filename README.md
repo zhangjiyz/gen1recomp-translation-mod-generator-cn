@@ -51,8 +51,8 @@ python3 tools/build_zh_seed_mods.py \
 
 | 发布包 | 支持游戏 | Catalog 条目 |
 | --- | --- | ---: |
-| `translation-zh-hans-0.8.1.zip` | Red / Blue / Yellow | 5039 |
-| `translation-zh-hans-gen2-0.8.1.zip` | Gold / Silver / Crystal | 10932 |
+| `translation-zh-hans-0.8.1.zip` | Red / Blue / Yellow | 5059 |
+| `translation-zh-hans-gen2-0.8.1.zip` | Gold / Silver / Crystal | 11298 |
 
 ### Gen1: Red / Blue / Yellow
 
@@ -64,7 +64,7 @@ Gen2 是一个独立 Mod。Gold/Silver 使用共享 catalog；Crystal 的独立�
 
 | 层 | 条目数 |
 | --- | ---: |
-| Gold/Silver 共享层 | 5785 |
+| Gold/Silver 共享层 | 6151 |
 | Crystal 独立对话层 | 5147 |
 
 Gold/Silver 共享层包含对话、Pokédex、宝可梦/招式/道具/训练家名称、道具描述、招式描述、地图名和引擎字符串。简中 seed 额外覆盖 48 条 Crystal 独有引擎字符串；普通 Gold/Silver 引擎字符串 catalog 也会在 Crystal 存档中复用。

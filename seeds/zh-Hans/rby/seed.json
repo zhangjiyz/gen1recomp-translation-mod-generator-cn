@@ -63,8 +63,8 @@
     },
     {
       "path": "lang/strings.lua",
-      "bytes": 55477,
-      "sha256": "45893f9d402364607ad6cf4694893327e1ea9485beb338283c055dfa80a406ca"
+      "bytes": 56332,
+      "sha256": "85671e9d28336103bda056f03b92907bd9c85350d143689fed232e8d1d24b2bb"
     },
     {
       "path": "lang/trainer_names.lua",
@@ -85,6 +85,7 @@
   "notice": "Imported from a user-reviewed generated mod. Rebuild release packaging and validation against the current pinned engine; do not redistribute fan-translation text without permission from its authors.",
   "derived_changes": [
     "Added 17 reviewed v0.2.32 engine and UI translations shared with the main zh_CN catalog.",
-    "Added reviewed Town Map labels for the v0.2.43 engine audit."
+    "Added reviewed Town Map labels for the v0.2.43 engine audit.",
+    "Added v0.2.56 Simplified Chinese engine string coverage."
   ]
 }
