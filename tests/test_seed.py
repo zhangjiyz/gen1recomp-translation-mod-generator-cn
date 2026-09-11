@@ -51,9 +51,9 @@ class SeedTests(unittest.TestCase):
         rby = load_seed("rby")
         gs = load_seed("gsc")
         self.assertEqual(len(rby["catalogs"]["dialogue"]), 2592)
-        self.assertEqual(len(rby["catalogs"]["strings"]), 1343)
+        self.assertEqual(len(rby["catalogs"]["strings"]), 1501)
         self.assertEqual(len(gs["catalogs"]["dialogue"]), 3045)
-        self.assertEqual(len(gs["catalogs"]["strings"]), 887)
+        self.assertEqual(len(gs["catalogs"]["strings"]), 1168)
         self.assertEqual(len(gs["catalogs"]["status_labels"]), 6)
         self.assertEqual(gs["catalogs"]["status_labels"]["poison"], "中毒")
         self.assertEqual(len(gs["catalogs"]["move_descriptions"]), 251)
@@ -74,7 +74,7 @@ class SeedTests(unittest.TestCase):
         self.assertEqual(rby["catalogs"]["strings"][" AREA UNKNOWN"], " 地区不明")
         self.assertEqual(rby["catalogs"]["strings"]["To"], "前往")
         self.assertEqual(gs["catalogs"]["strings"]["%d AREAS LEFT"], "剩余 %d 个区域")
-        self.assertEqual(len(rby["mod_overlays"]), 1)
+        self.assertEqual(len(rby["mod_overlays"]), 2)
 
     def test_gs_descriptions_do_not_embed_hard_line_breaks(self):
         catalogs = load_seed("gsc")["catalogs"]
