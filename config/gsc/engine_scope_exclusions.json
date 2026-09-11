@@ -1,6 +1,7 @@
 {
   "schema": "gen1recomp-translation-mods/gs-engine-scope-exclusions",
-  "version": 1,
+  "version": 2,
+  "source_revision": "babac97526c4e95445f8710f397da9f0dfd10e16",
   "excluded_keys": {
     "#MON Music": {
       "reason": "crystal-only-feature",

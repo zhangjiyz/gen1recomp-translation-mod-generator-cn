@@ -1,0 +1,2875 @@
+{
+  "schema": "gen1recomp-translation-mods/engine-fallback-report",
+  "version": 1,
+  "policy": "fallbacks are tracked but never emitted as runtime overrides",
+  "languages": {
+    "de": {
+      "total": 89,
+      "entries": {
+        "    lined up!\nWon %d coins!": {
+          "override": "    lined up!\nWon %d coins!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        " 50 :  Â¥1000": {
+          "override": " 50 :  Â¥1000",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver gs.std_scripts.CoinVendor_IntroScript.MenuData's first segment is spelled identically to the English source in this language (same ¥-before-amount order); no divergence to translate."
+        },
+        "%dX": {
+          "override": "%dX",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: a technical multiplier notation, kept identical in every language (matching 1X/2X/3X)."
+        },
+        "%s BED": {
+          "override": "%s BED",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s CARPET": {
+          "override": "%s CARPET",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s DOLL": {
+          "override": "%s DOLL",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s POSTER": {
+          "override": "%s POSTER",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s flew up high!": {
+          "override": "%s flew up high!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s is glowing!": {
+          "override": "%s is glowing!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s lowered its head!": {
+          "override": "%s lowered its head!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s made a whirlwind!": {
+          "override": "%s made a whirlwind!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s took in sunlight!": {
+          "override": "%s took in sunlight!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s wants to\nlearn %s!": {
+          "override": "%s wants to\nlearn %s!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s was sent to BILL's PC.": {
+          "override": "%s was sent to BILL's PC.",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "%s%s": {
+          "override": "%s%s",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s.": {
+          "override": "%s.",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus's own name-then-period convention keeps a bare ASCII period after a name token in every language (including ja-Hrkt/ko, which otherwise favour the full-width \"。\"); no divergence to translate."
+        },
+        "1X": {
+          "override": "1X",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: a technical multiplier notation, kept identical in every language."
+        },
+        "2X": {
+          "override": "2X",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: a technical multiplier notation, kept identical in every language."
+        },
+        "3X": {
+          "override": "3X",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: a technical multiplier notation, kept identical in every language."
+        },
+        "500 : Â¥10000": {
+          "override": "500 : Â¥10000",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver gs.std_scripts.CoinVendor_IntroScript.MenuData's second segment is spelled identically to the English source in this language; no divergence to translate."
+        },
+        "<PO><KE>GEAR": {
+          "override": "<PO><KE>GEAR",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "A-Z": {
+          "override": "A-Z",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "ABRA": {
+          "override": "ABRA",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver gs.names.PokemonNames.63 spells this identically to the English source in this language; no divergence to translate."
+        },
+        "ATTACH MAIL": {
+          "override": "ATTACH MAIL",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "AUTO": {
+          "override": "AUTO",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: \"AUTO\" is already a common abbreviation identical to the English source in this language."
+        },
+        "BIG %s": {
+          "override": "BIG %s",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "BLUE": {
+          "override": "BLUE",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "Boy": {
+          "override": "Boy",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "CYAN": {
+          "override": "CYAN",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: this colour-palette theme name is already spelled identically to the English source in this language."
+        },
+        "DMG": {
+          "override": "DMG",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: the official Nintendo model name for the original Game Boy, a technical/brand term kept identical in every language."
+        },
+        "DRATINI": {
+          "override": "DRATINI",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver gs.names.PokemonNames.147 spells this identically to the English source in this language."
+        },
+        "Discarded\n%s(S).": {
+          "override": "Discarded\n%s(S).",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "GEN 2": {
+          "override": "GEN 2",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: a version/generation label for one of the built-in colour-palette themes, kept identical in every language (matching DMG)."
+        },
+        "GREEN": {
+          "override": "GREEN",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "Girl": {
+          "override": "Girl",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "HEALTH": {
+          "override": "HEALTH",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "Huh? %s\nstopped evolving!": {
+          "override": "Huh? %s\nstopped evolving!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "INDIGO": {
+          "override": "INDIGO",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: this colour-palette theme name is already spelled identically to the English source in this language."
+        },
+        "Installed\nadd-ons": {
+          "override": "Installed\nadd-ons",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "It started to rain!": {
+          "override": "It started to rain!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "MAGENTA": {
+          "override": "MAGENTA",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: this colour-palette theme name is already spelled identically to the English source in this language."
+        },
+        "MOVE <PK><MN> W/O MAIL": {
+          "override": "MOVE <PK><MN> W/O MAIL",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "NAME/": {
+          "override": "NAME/",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "NO BATTLE": {
+          "override": "NO BATTLE",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "ORANGE": {
+          "override": "ORANGE",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: this colour-palette theme name is already spelled identically to the English source in this language."
+        },
+        "PALETTE": {
+          "override": "PALETTE",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: \"palette\" is already a common word identical to the English source in this language."
+        },
+        "PARKBALLÃ%02d": {
+          "override": "PARKBALLÃ%02d",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "PORYGON": {
+          "override": "PORYGON",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver gs.names.PokemonNames.137 spells this identically to the English source in this language; no divergence to translate."
+        },
+        "PUT IN PACK": {
+          "override": "PUT IN PACK",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "Party <PK><MN>\nstatus": {
+          "override": "Party <PK><MN>\nstatus",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "Place\nyour bet": {
+          "override": "Place\nyour bet",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "Play with\n3 coins?": {
+          "override": "Play with\n3 coins?",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "RADIO": {
+          "override": "RADIO",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: \"radio\" is a shared loanword spelled identically to the English source in this language; no divergence to translate."
+        },
+        "READ": {
+          "override": "READ",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "READ MAIL": {
+          "override": "READ MAIL",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "RED": {
+          "override": "RED",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "Return to\nthe title": {
+          "override": "Return to\nthe title",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "Return to the\ntitle screen?": {
+          "override": "Return to the\ntitle screen?",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "SAND": {
+          "override": "SAND",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: this colour-palette theme name is already spelled identically to the English source in this language."
+        },
+        "SILVER": {
+          "override": "SILVER",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "SKIN": {
+          "override": "SKIN",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: \"skin\" is already a common gaming loanword identical to the English source in this language."
+        },
+        "TAKE": {
+          "override": "TAKE",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "TM14": {
+          "override": "TM14",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver gs.names.ItemNames.205 spells this identically to the English source in this language."
+        },
+        "TM15": {
+          "override": "TM15",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver gs.names.ItemNames.206 spells this identically to the English source in this language."
+        },
+        "TM25": {
+          "override": "TM25",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver gs.names.ItemNames.216 spells this identically to the English source in this language."
+        },
+        "TM29": {
+          "override": "TM29",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver gs.names.ItemNames.221 spells this identically to the English source in this language."
+        },
+        "TM32": {
+          "override": "TM32",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver gs.names.ItemNames.224 spells this identically to the English source in this language."
+        },
+        "TM38": {
+          "override": "TM38",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver gs.names.ItemNames.230 spells this identically to the English source in this language."
+        },
+        "That isn't going to help here.": {
+          "override": "That isn't going to help here.",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "The cards\nshuffled.": {
+          "override": "The cards\nshuffled.",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "Threw away\n%s(S).": {
+          "override": "Threw away\n%s(S).",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "Throw away %d\n%s(S)?": {
+          "override": "Throw away %d\n%s(S)?",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "Which BOX?": {
+          "override": "Which BOX?",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "<PK><MN>": {
+          "override": "<PK><MN>",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus automatic unique match from poke-corpus GoldSilver; printf and multiline contract validated.",
+          "original_reason": "engine-corpus",
+          "original_provenance": "Corpus automatic unique match from poke-corpus GoldSilver; printf and multiline contract validated."
+        },
+        "NORMAL": {
+          "override": "NORMAL",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus automatic unique match from poke-corpus GoldSilver; printf and multiline contract validated.",
+          "original_reason": "engine-corpus",
+          "original_provenance": "Corpus automatic unique match from poke-corpus GoldSilver; printf and multiline contract validated."
+        },
+        "PAR": {
+          "override": "PAR",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus automatic unique match from poke-corpus GoldSilver; printf and multiline contract validated.",
+          "original_reason": "engine-corpus",
+          "original_provenance": "Corpus automatic unique match from poke-corpus GoldSilver; printf and multiline contract validated."
+        },
+        "POKéRUS": {
+          "override": "POKéRUS",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus automatic unique match from poke-corpus GoldSilver; printf and multiline contract validated.",
+          "original_reason": "engine-corpus",
+          "original_provenance": "Corpus automatic unique match from poke-corpus GoldSilver; printf and multiline contract validated."
+        },
+        "Start!": {
+          "override": "Start!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus automatic unique match from poke-corpus GoldSilver; printf and multiline contract validated.",
+          "original_reason": "engine-corpus",
+          "original_provenance": "Corpus automatic unique match from poke-corpus GoldSilver; printf and multiline contract validated."
+        },
+        "……": {
+          "override": "……",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver gs.text.SixDotsCharText is the identical six-dot glyph string in all six languages."
+        },
+        "BOX%d": {
+          "override": "BOX%d",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver's German BOX-number labels already render this word identically to the English source (no divergence to translate)."
+        },
+        "POKéMON": {
+          "override": "POKéMON",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: this catalog's own established POKéMON spelling is kept identical to the English source in every existing translation for this language; no divergence to translate."
+        },
+        "POKéDEX": {
+          "override": "POKéDEX",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: the real cart's own POKéDEX label is spelled identically to the English source in this language (matching the ja-Hrkt POKéDEX entry's own established reasoning)."
+        },
+        "ZOOM": {
+          "override": "ZOOM",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: \"Zoom\" is already a common word identical to the English source in this language."
+        },
+        "???": {
+          "override": "???",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no PokeCorpus row for this language (Spanish alone has a real Crystal corpus match, \"¿¿??\"); a generic placeholder symbol identical to the English source, no divergence to translate."
+        },
+        "PP": {
+          "override": "PP",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: \"PP\" (Power Points) is a universal Pokémon abbreviation kept identical in every language; no compatible standalone PokeCorpus row found."
+        },
+        "ITEM": {
+          "override": "ITEM",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver gs.mon_menu.MonMenuOptionStrings.3 spells this identically to the English source in German."
+        },
+        "LEVEL UP": {
+          "override": "LEVEL UP",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver gs.stats_screen.LoadPinkPage.LevelUpStr spells this identically to the English source in German."
+        },
+        "OK": {
+          "override": "OK",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver gs.stats_screen.LoadPinkPage.OK_str spells this identically to the English source in German."
+        },
+        "STATUS/": {
+          "override": "STATUS/",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver gs.stats_screen.LoadPinkPage.Status_Type spells this identically to the English source in German."
+        }
+      },
+      "no_op_entries": {
+        "%d min.": {
+          "override": "%d min.",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus-confirmed from gs.timeset.String_min (identical to the English source, \"min.\"); no German-specific text to adapt.",
+          "original_reason": "engine-contract-gap",
+          "original_provenance": "Corpus-confirmed from gs.timeset.String_min (identical to the English source, \"min.\"); no German-specific text to adapt."
+        },
+        "/": {
+          "override": "/",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Invariant interface symbol.",
+          "original_reason": "engine-original",
+          "original_provenance": "Invariant interface symbol."
+        },
+        "<LV>": {
+          "override": "<LV>",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Invariant level token used by the engine renderer.",
+          "original_reason": "engine-original",
+          "original_provenance": "Invariant level token used by the engine renderer."
+        },
+        "{STRBUF}.": {
+          "override": "{STRBUF}.",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Runtime name fragment; punctuation is language-invariant.",
+          "original_reason": "engine-contract-gap",
+          "original_provenance": "Runtime name fragment; punctuation is language-invariant."
+        },
+        "⁂": {
+          "override": "⁂",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Invariant interface symbol.",
+          "original_reason": "engine-original",
+          "original_provenance": "Invariant interface symbol."
+        },
+        "OT/": {
+          "override": "OT/",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus-inspired from gs.stats_screen.OTString; slash retained for the compact engine label.",
+          "original_reason": "engine-contract-gap",
+          "original_provenance": "Corpus-inspired from gs.stats_screen.OTString; slash retained for the compact engine label."
+        },
+        "♀": {
+          "override": "♀",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Invariant gender symbol.",
+          "original_reason": "engine-original",
+          "original_provenance": "Invariant gender symbol."
+        },
+        "♂": {
+          "override": "♂",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Invariant gender symbol.",
+          "original_reason": "engine-original",
+          "original_provenance": "Invariant gender symbol."
+        },
+        "VIBRATION": {
+          "override": "VIBRATION",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: AI-generated engine-original translation; shared OptionsMenu.lua/LauncherSettings.lua row also used by RBY; no compatible PokeCorpus qid; requires in-game visual validation.",
+          "original_reason": "engine-original",
+          "original_provenance": "AI-generated engine-original translation; shared OptionsMenu.lua/LauncherSettings.lua row also used by RBY; no compatible PokeCorpus qid; requires in-game visual validation."
+        },
+        "SOUND": {
+          "override": "SOUND",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus-confirmed from gs.options_menu.StringOptions (real Gold ROM OPTION-screen text), identical to the English source -- the real German cart keeps \"SOUND\" unchanged.",
+          "original_reason": "engine-original",
+          "original_provenance": "Corpus-confirmed from gs.options_menu.StringOptions (real Gold ROM OPTION-screen text), identical to the English source -- the real German cart keeps \"SOUND\" unchanged."
+        },
+        "AUDIO": {
+          "override": "AUDIO",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: AI-generated German translation of the port-added grouped Gen 2 Options label; requires in-game visual validation.",
+          "original_reason": "engine-original",
+          "original_provenance": "AI-generated German translation of the port-added grouped Gen 2 Options label; requires in-game visual validation."
+        },
+        "EXTRAS": {
+          "override": "EXTRAS",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: AI-generated German translation of the port-added grouped Gen 2 Options label; requires in-game visual validation.",
+          "original_reason": "engine-original",
+          "original_provenance": "AI-generated German translation of the port-added grouped Gen 2 Options label; requires in-game visual validation."
+        },
+        "VIDEO": {
+          "override": "VIDEO",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: AI-generated German translation of the port-added grouped Gen 2 Options label; requires in-game visual validation.",
+          "original_reason": "engine-original",
+          "original_provenance": "AI-generated German translation of the port-added grouped Gen 2 Options label; requires in-game visual validation."
+        },
+        "BOX NAME?": {
+          "override": "BOX NAME?",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus-confirmed from gs.naming_screen.NamingScreenJumptable.BoxNameString (identical to the English source, 'BOX NAME?'); no German-specific text to adapt.",
+          "original_reason": "engine-contract-gap",
+          "original_provenance": "Corpus-confirmed from gs.naming_screen.NamingScreenJumptable.BoxNameString (identical to the English source, 'BOX NAME?'); no German-specific text to adapt."
+        },
+        "MONO  ": {
+          "override": "MONO  ",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus-confirmed from gs.options_menu.Options_Sound.Mono (identical to the English source, 'MONO'); no German-specific text to adapt.",
+          "original_reason": "engine-contract-gap",
+          "original_provenance": "Corpus-confirmed from gs.options_menu.Options_Sound.Mono (identical to the English source, 'MONO'); no German-specific text to adapt."
+        },
+        "STEREO": {
+          "override": "STEREO",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus-confirmed from gs.options_menu.Options_Sound.Stereo (identical to the English source, 'STEREO'); no German-specific text to adapt.",
+          "original_reason": "engine-contract-gap",
+          "original_provenance": "Corpus-confirmed from gs.options_menu.Options_Sound.Stereo (identical to the English source, 'STEREO'); no German-specific text to adapt."
+        },
+        "AM": {
+          "override": "AM",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus automatic unique match from poke-corpus GoldSilver gs.print_hours_mins.String_AM.",
+          "original_reason": "engine-corpus",
+          "original_provenance": "Corpus automatic unique match from poke-corpus GoldSilver gs.print_hours_mins.String_AM."
+        },
+        "PM": {
+          "override": "PM",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus automatic unique match from poke-corpus GoldSilver gs.print_hours_mins.String_PM.",
+          "original_reason": "engine-corpus",
+          "original_provenance": "Corpus automatic unique match from poke-corpus GoldSilver gs.print_hours_mins.String_PM."
+        },
+        "MODS": {
+          "override": "MODS",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Kept as-is (proper noun, no translation), matching this catalog's own user-validated RBY MODS entry.",
+          "original_reason": "engine-original",
+          "original_provenance": "Kept as-is (proper noun, no translation), matching this catalog's own user-validated RBY MODS entry."
+        }
+      },
+      "no_op_total": 16
+    },
+    "es": {
+      "total": 67,
+      "entries": {
+        "    lined up!\nWon %d coins!": {
+          "override": "    lined up!\nWon %d coins!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%dX": {
+          "override": "%dX",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: a technical multiplier notation, kept identical in every language (matching 1X/2X/3X)."
+        },
+        "%s BED": {
+          "override": "%s BED",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s CARPET": {
+          "override": "%s CARPET",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s DOLL": {
+          "override": "%s DOLL",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s POSTER": {
+          "override": "%s POSTER",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s flew up high!": {
+          "override": "%s flew up high!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s is glowing!": {
+          "override": "%s is glowing!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s lowered its head!": {
+          "override": "%s lowered its head!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s made a whirlwind!": {
+          "override": "%s made a whirlwind!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s took in sunlight!": {
+          "override": "%s took in sunlight!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s wants to\nlearn %s!": {
+          "override": "%s wants to\nlearn %s!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s was sent to BILL's PC.": {
+          "override": "%s was sent to BILL's PC.",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "%s%s": {
+          "override": "%s%s",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s.": {
+          "override": "%s.",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus's own name-then-period convention keeps a bare ASCII period after a name token in every language (including ja-Hrkt/ko, which otherwise favour the full-width \"。\"); no divergence to translate."
+        },
+        "1X": {
+          "override": "1X",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: a technical multiplier notation, kept identical in every language."
+        },
+        "2X": {
+          "override": "2X",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: a technical multiplier notation, kept identical in every language."
+        },
+        "3X": {
+          "override": "3X",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: a technical multiplier notation, kept identical in every language."
+        },
+        "<PO><KE>GEAR": {
+          "override": "<PO><KE>GEAR",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "ABRA": {
+          "override": "ABRA",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver gs.names.PokemonNames.63 spells this identically to the English source in this language; no divergence to translate."
+        },
+        "ATTACH MAIL": {
+          "override": "ATTACH MAIL",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "AUTO": {
+          "override": "AUTO",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: \"AUTO\" is already a common abbreviation identical to the English source in this language."
+        },
+        "BIG %s": {
+          "override": "BIG %s",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "Boy": {
+          "override": "Boy",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "DMG": {
+          "override": "DMG",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: the official Nintendo model name for the original Game Boy, a technical/brand term kept identical in every language."
+        },
+        "DRATINI": {
+          "override": "DRATINI",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver gs.names.PokemonNames.147 spells this identically to the English source in this language."
+        },
+        "Darn…": {
+          "override": "Darn…",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "EEVEE": {
+          "override": "EEVEE",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver gs.names.PokemonNames.133 spells this identically to the English source in this language."
+        },
+        "EKANS": {
+          "override": "EKANS",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver gs.names.PokemonNames.23 spells this identically to the English source in this language."
+        },
+        "GEN 2": {
+          "override": "GEN 2",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: a version/generation label for one of the built-in colour-palette themes, kept identical in every language (matching DMG)."
+        },
+        "Girl": {
+          "override": "Girl",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "HEALTH": {
+          "override": "HEALTH",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "Installed\nadd-ons": {
+          "override": "Installed\nadd-ons",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "It started to rain!": {
+          "override": "It started to rain!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "MAGENTA": {
+          "override": "MAGENTA",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: this colour-palette theme name is already spelled identically to the English source in this language."
+        },
+        "MINERAL": {
+          "override": "MINERAL",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: this Johto badge name is already spelled identically to the English source in this language, confirmed from poke-corpus GoldSilver's badge-award dialogue (\"...recibió la MEDALLA MINERAL.\")."
+        },
+        "MOVE <PK><MN> W/O MAIL": {
+          "override": "MOVE <PK><MN> W/O MAIL",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "MR.MIME": {
+          "override": "MR.MIME",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver gs.names.PokemonNames.122 spells this identically to the English source in this language."
+        },
+        "NO BATTLE": {
+          "override": "NO BATTLE",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "PARKBALLÃ%02d": {
+          "override": "PARKBALLÃ%02d",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "PORYGON": {
+          "override": "PORYGON",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver gs.names.PokemonNames.137 spells this identically to the English source in this language; no divergence to translate."
+        },
+        "PUT IN PACK": {
+          "override": "PUT IN PACK",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "Party <PK><MN>\nstatus": {
+          "override": "Party <PK><MN>\nstatus",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "Place\nyour bet": {
+          "override": "Place\nyour bet",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "Play with\n3 coins?": {
+          "override": "Play with\n3 coins?",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "RADIO": {
+          "override": "RADIO",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: \"radio\" is a shared loanword spelled identically to the English source in this language; no divergence to translate."
+        },
+        "READ": {
+          "override": "READ",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "READ MAIL": {
+          "override": "READ MAIL",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "RED": {
+          "override": "RED",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "Return to\nthe title": {
+          "override": "Return to\nthe title",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "Return to the\ntitle screen?": {
+          "override": "Return to the\ntitle screen?",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "SANDSHREW": {
+          "override": "SANDSHREW",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver gs.names.PokemonNames.27 spells this identically to the English source in this language."
+        },
+        "SKIN": {
+          "override": "SKIN",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: \"skin\" is already a common gaming loanword identical to the English source in this language."
+        },
+        "TAKE": {
+          "override": "TAKE",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "That isn't going to help here.": {
+          "override": "That isn't going to help here.",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "The cards\nshuffled.": {
+          "override": "The cards\nshuffled.",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "Which BOX?": {
+          "override": "Which BOX?",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "<PK><MN>": {
+          "override": "<PK><MN>",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus automatic unique match from poke-corpus GoldSilver; printf and multiline contract validated.",
+          "original_reason": "engine-corpus",
+          "original_provenance": "Corpus automatic unique match from poke-corpus GoldSilver; printf and multiline contract validated."
+        },
+        "NORMAL": {
+          "override": "NORMAL",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus automatic unique match from poke-corpus GoldSilver; printf and multiline contract validated.",
+          "original_reason": "engine-corpus",
+          "original_provenance": "Corpus automatic unique match from poke-corpus GoldSilver; printf and multiline contract validated."
+        },
+        "PAR": {
+          "override": "PAR",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus automatic unique match from poke-corpus GoldSilver; printf and multiline contract validated.",
+          "original_reason": "engine-corpus",
+          "original_provenance": "Corpus automatic unique match from poke-corpus GoldSilver; printf and multiline contract validated."
+        },
+        "POKéRUS": {
+          "override": "POKéRUS",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus automatic unique match from poke-corpus GoldSilver; printf and multiline contract validated.",
+          "original_reason": "engine-corpus",
+          "original_provenance": "Corpus automatic unique match from poke-corpus GoldSilver; printf and multiline contract validated."
+        },
+        "……": {
+          "override": "……",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver gs.text.SixDotsCharText is the identical six-dot glyph string in all six languages."
+        },
+        "POKéMON": {
+          "override": "POKéMON",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: this catalog's own established POKéMON spelling is kept identical to the English source in every existing translation for this language; no divergence to translate."
+        },
+        "POKéDEX": {
+          "override": "POKéDEX",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: the real cart's own POKéDEX label is spelled identically to the English source in this language (matching the ja-Hrkt POKéDEX entry's own established reasoning)."
+        },
+        "ZOOM": {
+          "override": "ZOOM",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: \"zoom\" is already a common word identical to the English source in this language."
+        },
+        "PP": {
+          "override": "PP",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: \"PP\" (Power Points) is a universal Pokémon abbreviation kept identical in every language; no compatible standalone PokeCorpus row found."
+        },
+        "OK": {
+          "override": "OK",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver gs.stats_screen.LoadPinkPage.OK_str spells this identically to the English source in Spanish."
+        }
+      },
+      "no_op_entries": {
+        "%d min.": {
+          "override": "%d min.",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus-confirmed from gs.timeset.String_min (identical to the English source, \"min.\"); no Spanish-specific text to adapt.",
+          "original_reason": "engine-contract-gap",
+          "original_provenance": "Corpus-confirmed from gs.timeset.String_min (identical to the English source, \"min.\"); no Spanish-specific text to adapt."
+        },
+        "/": {
+          "override": "/",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Invariant interface symbol.",
+          "original_reason": "engine-original",
+          "original_provenance": "Invariant interface symbol."
+        },
+        "<LV>": {
+          "override": "<LV>",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Invariant level token used by the engine renderer.",
+          "original_reason": "engine-original",
+          "original_provenance": "Invariant level token used by the engine renderer."
+        },
+        "{STRBUF}.": {
+          "override": "{STRBUF}.",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Runtime name fragment; punctuation is language-invariant.",
+          "original_reason": "engine-contract-gap",
+          "original_provenance": "Runtime name fragment; punctuation is language-invariant."
+        },
+        "⁂": {
+          "override": "⁂",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Invariant interface symbol.",
+          "original_reason": "engine-original",
+          "original_provenance": "Invariant interface symbol."
+        },
+        "♀": {
+          "override": "♀",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Invariant gender symbol.",
+          "original_reason": "engine-original",
+          "original_provenance": "Invariant gender symbol."
+        },
+        "♂": {
+          "override": "♂",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Invariant gender symbol.",
+          "original_reason": "engine-original",
+          "original_provenance": "Invariant gender symbol."
+        },
+        "COLOR": {
+          "override": "COLOR",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: AI-generated engine-original translation; shared OptionsMenu.lua/LauncherSettings.lua row also used by RBY; no compatible PokeCorpus qid; requires in-game visual validation.",
+          "original_reason": "engine-original",
+          "original_provenance": "AI-generated engine-original translation; shared OptionsMenu.lua/LauncherSettings.lua row also used by RBY; no compatible PokeCorpus qid; requires in-game visual validation."
+        },
+        "NO": {
+          "override": "NO",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus-confirmed from gs.menu.YesNoMenuHeader.MenuData (real Gold ROM YES/NO prompt text), identical to the English source -- the real Spanish cart keeps \"NO\" unchanged (unlike its own accented \"SÍ\").",
+          "original_reason": "engine-original",
+          "original_provenance": "Corpus-confirmed from gs.menu.YesNoMenuHeader.MenuData (real Gold ROM YES/NO prompt text), identical to the English source -- the real Spanish cart keeps \"NO\" unchanged (unlike its own accented \"SÍ\")."
+        },
+        "AUDIO": {
+          "override": "AUDIO",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: AI-generated Spanish translation of the port-added grouped Gen 2 Options label; requires in-game visual validation.",
+          "original_reason": "engine-original",
+          "original_provenance": "AI-generated Spanish translation of the port-added grouped Gen 2 Options label; requires in-game visual validation."
+        },
+        "EXTRAS": {
+          "override": "EXTRAS",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: AI-generated Spanish translation of the port-added grouped Gen 2 Options label; requires in-game visual validation.",
+          "original_reason": "engine-original",
+          "original_provenance": "AI-generated Spanish translation of the port-added grouped Gen 2 Options label; requires in-game visual validation."
+        },
+        "AM": {
+          "override": "AM",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus automatic unique match from poke-corpus GoldSilver gs.print_hours_mins.String_AM.",
+          "original_reason": "engine-corpus",
+          "original_provenance": "Corpus automatic unique match from poke-corpus GoldSilver gs.print_hours_mins.String_AM."
+        },
+        "PM": {
+          "override": "PM",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus automatic unique match from poke-corpus GoldSilver gs.print_hours_mins.String_PM.",
+          "original_reason": "engine-corpus",
+          "original_provenance": "Corpus automatic unique match from poke-corpus GoldSilver gs.print_hours_mins.String_PM."
+        },
+        "MODS": {
+          "override": "MODS",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Kept as-is (proper noun, no translation), matching this catalog's own user-validated RBY MODS entry.",
+          "original_reason": "engine-original",
+          "original_provenance": "Kept as-is (proper noun, no translation), matching this catalog's own user-validated RBY MODS entry."
+        }
+      },
+      "no_op_total": 11
+    },
+    "fr": {
+      "total": 85,
+      "entries": {
+        "    lined up!\nWon %d coins!": {
+          "override": "    lined up!\nWon %d coins!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%dX": {
+          "override": "%dX",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: a technical multiplier notation, kept identical in every language (matching 1X/2X/3X)."
+        },
+        "%s BED": {
+          "override": "%s BED",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s CARPET": {
+          "override": "%s CARPET",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s DOLL": {
+          "override": "%s DOLL",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s POSTER": {
+          "override": "%s POSTER",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s flew up high!": {
+          "override": "%s flew up high!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s is glowing!": {
+          "override": "%s is glowing!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s lowered its head!": {
+          "override": "%s lowered its head!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s made a whirlwind!": {
+          "override": "%s made a whirlwind!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s took in sunlight!": {
+          "override": "%s took in sunlight!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s wants to\nlearn %s!": {
+          "override": "%s wants to\nlearn %s!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s was sent to BILL's PC.": {
+          "override": "%s was sent to BILL's PC.",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "%s%s": {
+          "override": "%s%s",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s.": {
+          "override": "%s.",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus's own name-then-period convention keeps a bare ASCII period after a name token in every language (including ja-Hrkt/ko, which otherwise favour the full-width \"。\"); no divergence to translate."
+        },
+        "1X": {
+          "override": "1X",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: a technical multiplier notation, kept identical in every language."
+        },
+        "2X": {
+          "override": "2X",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: a technical multiplier notation, kept identical in every language."
+        },
+        "3X": {
+          "override": "3X",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: a technical multiplier notation, kept identical in every language."
+        },
+        "<PO><KE>GEAR": {
+          "override": "<PO><KE>GEAR",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "ABRA": {
+          "override": "ABRA",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver gs.names.PokemonNames.63 spells this identically to the English source in this language; no divergence to translate."
+        },
+        "ATTACH MAIL": {
+          "override": "ATTACH MAIL",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "AUTO": {
+          "override": "AUTO",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: \"AUTO\" is already a common abbreviation identical to the English source in this language."
+        },
+        "BIG %s": {
+          "override": "BIG %s",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "BLUE": {
+          "override": "BLUE",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "Boy": {
+          "override": "Boy",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "CASCADE": {
+          "override": "CASCADE",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: this Kanto badge name is already spelled identically to the English source in this language, confirmed from poke-corpus GoldSilver's badge-award dialogue (\"...V'là le BADGECASCADE.\")."
+        },
+        "CYAN": {
+          "override": "CYAN",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: this colour-palette theme name is already spelled identically to the English source in this language."
+        },
+        "DMG": {
+          "override": "DMG",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: the official Nintendo model name for the original Game Boy, a technical/brand term kept identical in every language."
+        },
+        "GEN 2": {
+          "override": "GEN 2",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: a version/generation label for one of the built-in colour-palette themes, kept identical in every language (matching DMG)."
+        },
+        "GLACIER": {
+          "override": "GLACIER",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: this Johto badge name is already spelled identically to the English source in this language, confirmed from poke-corpus GoldSilver's badge-award dialogue (\"...reçoit le BADGEGLACIER.\")."
+        },
+        "GREEN": {
+          "override": "GREEN",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "Girl": {
+          "override": "Girl",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "Give a nickname to %s?": {
+          "override": "Give a nickname to %s?",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "HEALTH": {
+          "override": "HEALTH",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "INDIGO": {
+          "override": "INDIGO",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: this colour-palette theme name is already spelled identically to the English source in this language."
+        },
+        "Installed\nadd-ons": {
+          "override": "Installed\nadd-ons",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "It started to rain!": {
+          "override": "It started to rain!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "MAGENTA": {
+          "override": "MAGENTA",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: this colour-palette theme name is already spelled identically to the English source in this language."
+        },
+        "MINERAL": {
+          "override": "MINERAL",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: this Johto badge name is already spelled identically to the English source in this language, confirmed from poke-corpus GoldSilver's badge-award dialogue (\"...reçoit le BADGEMINERAL.\")."
+        },
+        "MOVE <PK><MN> W/O MAIL": {
+          "override": "MOVE <PK><MN> W/O MAIL",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "NO BATTLE": {
+          "override": "NO BATTLE",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "OLIVE": {
+          "override": "OLIVE",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: this colour-palette theme name is already spelled identically to the English source in this language."
+        },
+        "ORANGE": {
+          "override": "ORANGE",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: this colour-palette theme name is already spelled identically to the English source in this language."
+        },
+        "PALETTE": {
+          "override": "PALETTE",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: \"palette\" is already a common word identical to the English source in this language."
+        },
+        "PARKBALLÃ%02d": {
+          "override": "PARKBALLÃ%02d",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "PORYGON": {
+          "override": "PORYGON",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver gs.names.PokemonNames.137 spells this identically to the English source in this language; no divergence to translate."
+        },
+        "PUT IN PACK": {
+          "override": "PUT IN PACK",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "Party <PK><MN>\nstatus": {
+          "override": "Party <PK><MN>\nstatus",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "Place\nyour bet": {
+          "override": "Place\nyour bet",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "Play with\n3 coins?": {
+          "override": "Play with\n3 coins?",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "RADIO": {
+          "override": "RADIO",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: \"radio\" is a shared loanword spelled identically to the English source in this language; no divergence to translate."
+        },
+        "READ": {
+          "override": "READ",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "READ MAIL": {
+          "override": "READ MAIL",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "RED": {
+          "override": "RED",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "ROSE": {
+          "override": "ROSE",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: this colour-palette theme name is already spelled identically to the English source in this language."
+        },
+        "Return to\nthe title": {
+          "override": "Return to\nthe title",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "Return to the\ntitle screen?": {
+          "override": "Return to the\ntitle screen?",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "SKIN": {
+          "override": "SKIN",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: \"skin\" is already a common gaming loanword identical to the English source in this language."
+        },
+        "TAKE": {
+          "override": "TAKE",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "TYPE1": {
+          "override": "TYPE1",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "TYPE2": {
+          "override": "TYPE2",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "That isn't going to help here.": {
+          "override": "That isn't going to help here.",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "The cards\nshuffled.": {
+          "override": "The cards\nshuffled.",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "Which BOX?": {
+          "override": "Which BOX?",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "ZEPHYR": {
+          "override": "ZEPHYR",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: this Johto badge name is already spelled identically to the English source in this language, confirmed from poke-corpus GoldSilver's badge-award dialogue (\"C'est le BADGE ZEPHYR officiel de la LIGUE #MON.\")."
+        },
+        "<PK><MN>": {
+          "override": "<PK><MN>",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus automatic unique match from poke-corpus GoldSilver; printf and multiline contract validated.",
+          "original_reason": "engine-corpus",
+          "original_provenance": "Corpus automatic unique match from poke-corpus GoldSilver; printf and multiline contract validated."
+        },
+        "DECORATION": {
+          "override": "DECORATION",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus automatic unique match from poke-corpus GoldSilver; printf and multiline contract validated.",
+          "original_reason": "engine-corpus",
+          "original_provenance": "Corpus automatic unique match from poke-corpus GoldSilver; printf and multiline contract validated."
+        },
+        "NORMAL": {
+          "override": "NORMAL",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus automatic unique match from poke-corpus GoldSilver; printf and multiline contract validated.",
+          "original_reason": "engine-corpus",
+          "original_provenance": "Corpus automatic unique match from poke-corpus GoldSilver; printf and multiline contract validated."
+        },
+        "PAR": {
+          "override": "PAR",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus automatic unique match from poke-corpus GoldSilver; printf and multiline contract validated.",
+          "original_reason": "engine-corpus",
+          "original_provenance": "Corpus automatic unique match from poke-corpus GoldSilver; printf and multiline contract validated."
+        },
+        "POKéRUS": {
+          "override": "POKéRUS",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus automatic unique match from poke-corpus GoldSilver; printf and multiline contract validated.",
+          "original_reason": "engine-corpus",
+          "original_provenance": "Corpus automatic unique match from poke-corpus GoldSilver; printf and multiline contract validated."
+        },
+        "PSN": {
+          "override": "PSN",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus automatic unique match from poke-corpus GoldSilver; printf and multiline contract validated.",
+          "original_reason": "engine-corpus",
+          "original_provenance": "Corpus automatic unique match from poke-corpus GoldSilver; printf and multiline contract validated."
+        },
+        "SILVER": {
+          "override": "SILVER",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus automatic unique match from poke-corpus GoldSilver; printf and multiline contract validated.",
+          "original_reason": "engine-corpus",
+          "original_provenance": "Corpus automatic unique match from poke-corpus GoldSilver; printf and multiline contract validated."
+        },
+        "……": {
+          "override": "……",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver gs.text.SixDotsCharText is the identical six-dot glyph string in all six languages."
+        },
+        "STATS": {
+          "override": "STATS",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver's French menu rows already render this word identically to the English source (no divergence to translate)."
+        },
+        "POKéMON": {
+          "override": "POKéMON",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: this catalog's own established POKéMON spelling is kept identical to the English source in every existing translation for this language; no divergence to translate."
+        },
+        "POKéDEX": {
+          "override": "POKéDEX",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: the real cart's own POKéDEX label is spelled identically to the English source in this language (matching the ja-Hrkt POKéDEX entry's own established reasoning)."
+        },
+        "ZOOM": {
+          "override": "ZOOM",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: \"zoom\" is already a common word identical to the English source in this language."
+        },
+        "???": {
+          "override": "???",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no PokeCorpus row for this language (Spanish alone has a real Crystal corpus match, \"¿¿??\"); a generic placeholder symbol identical to the English source, no divergence to translate."
+        },
+        "DEFENSE": {
+          "override": "DEFENSE",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver gs.item_effects.StatStrings spells this identically to the English source in French."
+        },
+        "SPECIAL": {
+          "override": "SPECIAL",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver gs.item_effects.StatStrings spells this identically to the English source in French."
+        },
+        "Whoa!\n%d min.?": {
+          "override": "Whoa!\n%d min.?",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver gs.common_1.OakTimeWhoaMinutesText spells the \"Whoa!\" fragment identically to the English source in French."
+        },
+        "Challenge": {
+          "override": "Challenge",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus Crystal c.mobile_5f.MenuData_ChallengeExplanationCancel spells this identically to the English source in French."
+        },
+        "PP": {
+          "override": "PP",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: \"PP\" (Power Points) is a universal Pokémon abbreviation kept identical in every language; no compatible standalone PokeCorpus row found."
+        },
+        "TYPE/": {
+          "override": "TYPE/",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver gs.core.MoveInfoBox.Type spells this identically to the English source in French."
+        },
+        "OK": {
+          "override": "OK",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver gs.stats_screen.LoadPinkPage.OK_str spells this identically to the English source in French."
+        }
+      },
+      "no_op_entries": {
+        "%d min.": {
+          "override": "%d min.",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus-confirmed from gs.timeset.String_min (identical to the English source, \"min.\"); no French-specific text to adapt.",
+          "original_reason": "engine-contract-gap",
+          "original_provenance": "Corpus-confirmed from gs.timeset.String_min (identical to the English source, \"min.\"); no French-specific text to adapt."
+        },
+        "/": {
+          "override": "/",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Invariant interface symbol.",
+          "original_reason": "engine-original",
+          "original_provenance": "Invariant interface symbol."
+        },
+        "<LV>": {
+          "override": "<LV>",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Invariant level token used by the engine renderer.",
+          "original_reason": "engine-original",
+          "original_provenance": "Invariant level token used by the engine renderer."
+        },
+        "{STRBUF}.": {
+          "override": "{STRBUF}.",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Runtime name fragment; punctuation is language-invariant.",
+          "original_reason": "engine-contract-gap",
+          "original_provenance": "Runtime name fragment; punctuation is language-invariant."
+        },
+        "⁂": {
+          "override": "⁂",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Invariant interface symbol.",
+          "original_reason": "engine-original",
+          "original_provenance": "Invariant interface symbol."
+        },
+        "♀": {
+          "override": "♀",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Invariant gender symbol.",
+          "original_reason": "engine-original",
+          "original_provenance": "Invariant gender symbol."
+        },
+        "♂": {
+          "override": "♂",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Invariant gender symbol.",
+          "original_reason": "engine-original",
+          "original_provenance": "Invariant gender symbol."
+        },
+        "VIBRATION": {
+          "override": "VIBRATION",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: AI-generated engine-original translation; shared OptionsMenu.lua/LauncherSettings.lua row also used by RBY; no compatible PokeCorpus qid; requires in-game visual validation.",
+          "original_reason": "engine-original",
+          "original_provenance": "AI-generated engine-original translation; shared OptionsMenu.lua/LauncherSettings.lua row also used by RBY; no compatible PokeCorpus qid; requires in-game visual validation."
+        },
+        ":TYPE": {
+          "override": ":TYPE",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus-confirmed from gs.options_menu.StringOptions (real Gold ROM OPTION-screen text), identical to the English source -- the real French cart keeps \":TYPE\" unchanged.",
+          "original_reason": "engine-original",
+          "original_provenance": "Corpus-confirmed from gs.options_menu.StringOptions (real Gold ROM OPTION-screen text), identical to the English source -- the real French cart keeps \":TYPE\" unchanged."
+        },
+        "BADGES": {
+          "override": "BADGES",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus-confirmed from gs.intro_menu.Continue_LoadMenuHeader.MenuData_Dex (real Gold ROM CONTINUE-panel text), identical to the English source -- the real French cart keeps \"BADGES\" unchanged, unlike German/Spanish/Italian's own real cart text (ORDEN/MEDALLAS/MEDAGLIE).",
+          "original_reason": "engine-original",
+          "original_provenance": "Corpus-confirmed from gs.intro_menu.Continue_LoadMenuHeader.MenuData_Dex (real Gold ROM CONTINUE-panel text), identical to the English source -- the real French cart keeps \"BADGES\" unchanged, unlike German/Spanish/Italian's own real cart text (ORDEN/MEDALLAS/MEDAGLIE)."
+        },
+        "AUDIO": {
+          "override": "AUDIO",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: AI-generated French translation of the port-added grouped Gen 2 Options label; requires in-game visual validation.",
+          "original_reason": "engine-original",
+          "original_provenance": "AI-generated French translation of the port-added grouped Gen 2 Options label; requires in-game visual validation."
+        },
+        "EXTRAS": {
+          "override": "EXTRAS",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: AI-generated French translation of the port-added grouped Gen 2 Options label; requires in-game visual validation.",
+          "original_reason": "engine-original",
+          "original_provenance": "AI-generated French translation of the port-added grouped Gen 2 Options label; requires in-game visual validation."
+        },
+        "VIDEO": {
+          "override": "VIDEO",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: AI-generated French translation of the port-added grouped Gen 2 Options label; requires in-game visual validation.",
+          "original_reason": "engine-original",
+          "original_provenance": "AI-generated French translation of the port-added grouped Gen 2 Options label; requires in-game visual validation."
+        },
+        "MONO  ": {
+          "override": "MONO  ",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus-confirmed from gs.options_menu.Options_Sound.Mono (identical to the English source, 'MONO'); no French-specific text to adapt.",
+          "original_reason": "engine-contract-gap",
+          "original_provenance": "Corpus-confirmed from gs.options_menu.Options_Sound.Mono (identical to the English source, 'MONO'); no French-specific text to adapt."
+        },
+        "STEREO": {
+          "override": "STEREO",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus-confirmed from gs.options_menu.Options_Sound.Stereo (identical to the English source, 'STEREO'); no French-specific text to adapt.",
+          "original_reason": "engine-contract-gap",
+          "original_provenance": "Corpus-confirmed from gs.options_menu.Options_Sound.Stereo (identical to the English source, 'STEREO'); no French-specific text to adapt."
+        },
+        "AM": {
+          "override": "AM",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus automatic unique match from poke-corpus GoldSilver gs.print_hours_mins.String_AM.",
+          "original_reason": "engine-corpus",
+          "original_provenance": "Corpus automatic unique match from poke-corpus GoldSilver gs.print_hours_mins.String_AM."
+        },
+        "PM": {
+          "override": "PM",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus automatic unique match from poke-corpus GoldSilver gs.print_hours_mins.String_PM.",
+          "original_reason": "engine-corpus",
+          "original_provenance": "Corpus automatic unique match from poke-corpus GoldSilver gs.print_hours_mins.String_PM."
+        },
+        "MODS": {
+          "override": "MODS",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Kept as-is (proper noun, no translation), matching this catalog's own user-validated RBY MODS entry.",
+          "original_reason": "engine-original",
+          "original_provenance": "Kept as-is (proper noun, no translation), matching this catalog's own user-validated RBY MODS entry."
+        },
+        "Points": {
+          "override": "Points",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus automatic unique match from poke-corpus Crystal; printf and multiline contract validated.",
+          "original_reason": "engine-corpus",
+          "original_provenance": "Corpus automatic unique match from poke-corpus Crystal; printf and multiline contract validated."
+        }
+      },
+      "no_op_total": 15
+    },
+    "it": {
+      "total": 76,
+      "entries": {
+        "    lined up!\nWon %d coins!": {
+          "override": "    lined up!\nWon %d coins!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        " 50 :  Â¥1000": {
+          "override": " 50 :  Â¥1000",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver gs.std_scripts.CoinVendor_IntroScript.MenuData's first segment is spelled identically to the English source in this language (same ¥-before-amount order); no divergence to translate."
+        },
+        "%dX": {
+          "override": "%dX",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: a technical multiplier notation, kept identical in every language (matching 1X/2X/3X)."
+        },
+        "%s BED": {
+          "override": "%s BED",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s CARPET": {
+          "override": "%s CARPET",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s DOLL": {
+          "override": "%s DOLL",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s POSTER": {
+          "override": "%s POSTER",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s flew up high!": {
+          "override": "%s flew up high!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s is glowing!": {
+          "override": "%s is glowing!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s lowered its head!": {
+          "override": "%s lowered its head!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s made a whirlwind!": {
+          "override": "%s made a whirlwind!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s took in sunlight!": {
+          "override": "%s took in sunlight!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s wants to\nlearn %s!": {
+          "override": "%s wants to\nlearn %s!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s%s": {
+          "override": "%s%s",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s.": {
+          "override": "%s.",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus's own name-then-period convention keeps a bare ASCII period after a name token in every language (including ja-Hrkt/ko, which otherwise favour the full-width \"。\"); no divergence to translate."
+        },
+        "1X": {
+          "override": "1X",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: a technical multiplier notation, kept identical in every language."
+        },
+        "2X": {
+          "override": "2X",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: a technical multiplier notation, kept identical in every language."
+        },
+        "3X": {
+          "override": "3X",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: a technical multiplier notation, kept identical in every language."
+        },
+        "500 : Â¥10000": {
+          "override": "500 : Â¥10000",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver gs.std_scripts.CoinVendor_IntroScript.MenuData's second segment is spelled identically to the English source in this language; no divergence to translate."
+        },
+        "<PO><KE>GEAR": {
+          "override": "<PO><KE>GEAR",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "A-Z": {
+          "override": "A-Z",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "ABRA": {
+          "override": "ABRA",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver gs.names.PokemonNames.63 spells this identically to the English source in this language; no divergence to translate."
+        },
+        "ATTACH MAIL": {
+          "override": "ATTACH MAIL",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "AUTO": {
+          "override": "AUTO",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: \"AUTO\" is already a common abbreviation identical to the English source in this language."
+        },
+        "BIG %s": {
+          "override": "BIG %s",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "Boy": {
+          "override": "Boy",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "DMG": {
+          "override": "DMG",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: the official Nintendo model name for the original Game Boy, a technical/brand term kept identical in every language."
+        },
+        "DRATINI": {
+          "override": "DRATINI",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver gs.names.PokemonNames.147 spells this identically to the English source in this language."
+        },
+        "Darn…": {
+          "override": "Darn…",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "Deposited %d\n%s(S).": {
+          "override": "Deposited %d\n%s(S).",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "Discarded\n%s(S).": {
+          "override": "Discarded\n%s(S).",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "EEVEE": {
+          "override": "EEVEE",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver gs.names.PokemonNames.133 spells this identically to the English source in this language."
+        },
+        "EKANS": {
+          "override": "EKANS",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver gs.names.PokemonNames.23 spells this identically to the English source in this language."
+        },
+        "GEN 2": {
+          "override": "GEN 2",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: a version/generation label for one of the built-in colour-palette themes, kept identical in every language (matching DMG)."
+        },
+        "Girl": {
+          "override": "Girl",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "Give a nickname to %s?": {
+          "override": "Give a nickname to %s?",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "Installed\nadd-ons": {
+          "override": "Installed\nadd-ons",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "It started to rain!": {
+          "override": "It started to rain!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "LIME": {
+          "override": "LIME",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: this colour-palette theme name is already spelled identically to the English source in this language."
+        },
+        "MAGENTA": {
+          "override": "MAGENTA",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: this colour-palette theme name is already spelled identically to the English source in this language."
+        },
+        "MOVE <PK><MN> W/O MAIL": {
+          "override": "MOVE <PK><MN> W/O MAIL",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "MR.MIME": {
+          "override": "MR.MIME",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver gs.names.PokemonNames.122 spells this identically to the English source in this language."
+        },
+        "NO BATTLE": {
+          "override": "NO BATTLE",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "PALETTE": {
+          "override": "PALETTE",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: \"palette\" is already a common word identical to the English source in this language."
+        },
+        "PARKBALLÃ%02d": {
+          "override": "PARKBALLÃ%02d",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "PORYGON": {
+          "override": "PORYGON",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver gs.names.PokemonNames.137 spells this identically to the English source in this language; no divergence to translate."
+        },
+        "PUT IN PACK": {
+          "override": "PUT IN PACK",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "Party <PK><MN>\nstatus": {
+          "override": "Party <PK><MN>\nstatus",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "Place\nyour bet": {
+          "override": "Place\nyour bet",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "Play with\n3 coins?": {
+          "override": "Play with\n3 coins?",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "RADIO": {
+          "override": "RADIO",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: \"radio\" is a shared loanword spelled identically to the English source in this language; no divergence to translate."
+        },
+        "READ": {
+          "override": "READ",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "READ MAIL": {
+          "override": "READ MAIL",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "Return to\nthe title": {
+          "override": "Return to\nthe title",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "Return to the\ntitle screen?": {
+          "override": "Return to the\ntitle screen?",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "SANDSHREW": {
+          "override": "SANDSHREW",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver gs.names.PokemonNames.27 spells this identically to the English source in this language."
+        },
+        "SKIN": {
+          "override": "SKIN",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: \"skin\" is already a common gaming loanword identical to the English source in this language."
+        },
+        "TAKE": {
+          "override": "TAKE",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "That isn't going to help here.": {
+          "override": "That isn't going to help here.",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "The cards\nshuffled.": {
+          "override": "The cards\nshuffled.",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "Throw away %d\n%s(S)?": {
+          "override": "Throw away %d\n%s(S)?",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "Toss out how many\n%s(S)?": {
+          "override": "Toss out how many\n%s(S)?",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "Which BOX?": {
+          "override": "Which BOX?",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "Withdrew %d\n%s(S).": {
+          "override": "Withdrew %d\n%s(S).",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "<PK><MN>": {
+          "override": "<PK><MN>",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus automatic unique match from poke-corpus GoldSilver; printf and multiline contract validated.",
+          "original_reason": "engine-corpus",
+          "original_provenance": "Corpus automatic unique match from poke-corpus GoldSilver; printf and multiline contract validated."
+        },
+        "PAR": {
+          "override": "PAR",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus automatic unique match from poke-corpus GoldSilver; printf and multiline contract validated.",
+          "original_reason": "engine-corpus",
+          "original_provenance": "Corpus automatic unique match from poke-corpus GoldSilver; printf and multiline contract validated."
+        },
+        "POKéRUS": {
+          "override": "POKéRUS",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus automatic unique match from poke-corpus GoldSilver; printf and multiline contract validated.",
+          "original_reason": "engine-corpus",
+          "original_provenance": "Corpus automatic unique match from poke-corpus GoldSilver; printf and multiline contract validated."
+        },
+        "……": {
+          "override": "……",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver gs.text.SixDotsCharText is the identical six-dot glyph string in all six languages."
+        },
+        "SEL": {
+          "override": "SEL",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver's Italian menu rows never diverge from \"SEL\" for this word (already identical to the English source), so no translation is invented."
+        },
+        "BOX%d": {
+          "override": "BOX%d",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver's Italian BOX-number labels already render this word identically to the English source (no divergence to translate)."
+        },
+        "POKéMON": {
+          "override": "POKéMON",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: this catalog's own established POKéMON spelling is kept identical to the English source in every existing translation for this language; no divergence to translate."
+        },
+        "POKéDEX": {
+          "override": "POKéDEX",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: the real cart's own POKéDEX label is spelled identically to the English source in this language (matching the ja-Hrkt POKéDEX entry's own established reasoning)."
+        },
+        "ZOOM": {
+          "override": "ZOOM",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: \"zoom\" is already a common word identical to the English source in this language."
+        },
+        "???": {
+          "override": "???",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no PokeCorpus row for this language (Spanish alone has a real Crystal corpus match, \"¿¿??\"); a generic placeholder symbol identical to the English source, no divergence to translate."
+        },
+        "PP": {
+          "override": "PP",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: \"PP\" (Power Points) is a universal Pokémon abbreviation kept identical in every language; no compatible standalone PokeCorpus row found."
+        },
+        "OK": {
+          "override": "OK",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver gs.stats_screen.LoadPinkPage.OK_str spells this identically to the English source in Italian."
+        }
+      },
+      "no_op_entries": {
+        "%d min.": {
+          "override": "%d min.",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus-confirmed from gs.timeset.String_min (identical to the English source, \"min.\"); no Italian-specific text to adapt.",
+          "original_reason": "engine-contract-gap",
+          "original_provenance": "Corpus-confirmed from gs.timeset.String_min (identical to the English source, \"min.\"); no Italian-specific text to adapt."
+        },
+        "/": {
+          "override": "/",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Invariant interface symbol.",
+          "original_reason": "engine-original",
+          "original_provenance": "Invariant interface symbol."
+        },
+        "<LV>": {
+          "override": "<LV>",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Invariant level token used by the engine renderer.",
+          "original_reason": "engine-original",
+          "original_provenance": "Invariant level token used by the engine renderer."
+        },
+        "{STRBUF}.": {
+          "override": "{STRBUF}.",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Runtime name fragment; punctuation is language-invariant.",
+          "original_reason": "engine-contract-gap",
+          "original_provenance": "Runtime name fragment; punctuation is language-invariant."
+        },
+        "⁂": {
+          "override": "⁂",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Invariant interface symbol.",
+          "original_reason": "engine-original",
+          "original_provenance": "Invariant interface symbol."
+        },
+        "♀": {
+          "override": "♀",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Invariant gender symbol.",
+          "original_reason": "engine-original",
+          "original_provenance": "Invariant gender symbol."
+        },
+        "♂": {
+          "override": "♂",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Invariant gender symbol.",
+          "original_reason": "engine-original",
+          "original_provenance": "Invariant gender symbol."
+        },
+        "NO": {
+          "override": "NO",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus-confirmed from gs.menu.YesNoMenuHeader.MenuData (real Gold ROM YES/NO prompt text), identical to the English source -- the real Italian cart keeps \"NO\" unchanged (unlike its own accented \"SÌ\").",
+          "original_reason": "engine-original",
+          "original_provenance": "Corpus-confirmed from gs.menu.YesNoMenuHeader.MenuData (real Gold ROM YES/NO prompt text), identical to the English source -- the real Italian cart keeps \"NO\" unchanged (unlike its own accented \"SÌ\")."
+        },
+        "AUDIO": {
+          "override": "AUDIO",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: AI-generated Italian translation of the port-added grouped Gen 2 Options label; requires in-game visual validation.",
+          "original_reason": "engine-original",
+          "original_provenance": "AI-generated Italian translation of the port-added grouped Gen 2 Options label; requires in-game visual validation."
+        },
+        "VIDEO": {
+          "override": "VIDEO",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: AI-generated Italian translation of the port-added grouped Gen 2 Options label; requires in-game visual validation.",
+          "original_reason": "engine-original",
+          "original_provenance": "AI-generated Italian translation of the port-added grouped Gen 2 Options label; requires in-game visual validation."
+        },
+        "MONO  ": {
+          "override": "MONO  ",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus-confirmed from gs.options_menu.Options_Sound.Mono (identical to the English source, 'MONO'); no Italian-specific text to adapt.",
+          "original_reason": "engine-contract-gap",
+          "original_provenance": "Corpus-confirmed from gs.options_menu.Options_Sound.Mono (identical to the English source, 'MONO'); no Italian-specific text to adapt."
+        },
+        "STEREO": {
+          "override": "STEREO",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus-confirmed from gs.options_menu.Options_Sound.Stereo (identical to the English source, 'STEREO'); no Italian-specific text to adapt.",
+          "original_reason": "engine-contract-gap",
+          "original_provenance": "Corpus-confirmed from gs.options_menu.Options_Sound.Stereo (identical to the English source, 'STEREO'); no Italian-specific text to adapt."
+        },
+        "AM": {
+          "override": "AM",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus automatic unique match from poke-corpus GoldSilver gs.print_hours_mins.String_AM.",
+          "original_reason": "engine-corpus",
+          "original_provenance": "Corpus automatic unique match from poke-corpus GoldSilver gs.print_hours_mins.String_AM."
+        },
+        "PM": {
+          "override": "PM",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus automatic unique match from poke-corpus GoldSilver gs.print_hours_mins.String_PM.",
+          "original_reason": "engine-corpus",
+          "original_provenance": "Corpus automatic unique match from poke-corpus GoldSilver gs.print_hours_mins.String_PM."
+        },
+        "MODS": {
+          "override": "MODS",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Kept as-is (proper noun, no translation), matching this catalog's own user-validated RBY MODS entry.",
+          "original_reason": "engine-original",
+          "original_provenance": "Kept as-is (proper noun, no translation), matching this catalog's own user-validated RBY MODS entry."
+        }
+      },
+      "no_op_total": 12
+    },
+    "ja-Hrkt": {
+      "total": 60,
+      "entries": {
+        "    lined up!\nWon %d coins!": {
+          "override": "    lined up!\nWon %d coins!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        " PAGE AREA CRY PRNT": {
+          "override": " PAGE AREA CRY PRNT",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%dX": {
+          "override": "%dX",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: a technical multiplier notation, kept identical in every language (matching 1X/2X/3X)."
+        },
+        "%s BED": {
+          "override": "%s BED",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s CARPET": {
+          "override": "%s CARPET",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s DOLL": {
+          "override": "%s DOLL",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s POSTER": {
+          "override": "%s POSTER",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s flew up high!": {
+          "override": "%s flew up high!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s is glowing!": {
+          "override": "%s is glowing!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s lowered its head!": {
+          "override": "%s lowered its head!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s made a whirlwind!": {
+          "override": "%s made a whirlwind!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s took in sunlight!": {
+          "override": "%s took in sunlight!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s wants to\nlearn %s!": {
+          "override": "%s wants to\nlearn %s!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s%s": {
+          "override": "%s%s",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s.": {
+          "override": "%s.",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus's own name-then-period convention keeps a bare ASCII period after a name token in every language (including ja-Hrkt/ko, which otherwise favour the full-width \"。\"); no divergence to translate."
+        },
+        "1X": {
+          "override": "1X",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: a technical multiplier notation, kept identical in every language."
+        },
+        "2X": {
+          "override": "2X",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: a technical multiplier notation, kept identical in every language."
+        },
+        "3X": {
+          "override": "3X",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: a technical multiplier notation, kept identical in every language."
+        },
+        "<PO><KE>GEAR": {
+          "override": "<PO><KE>GEAR",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "ATTACH MAIL": {
+          "override": "ATTACH MAIL",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "BIG %s": {
+          "override": "BIG %s",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "BLUE": {
+          "override": "BLUE",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "Boy": {
+          "override": "Boy",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "DMG": {
+          "override": "DMG",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: the official Nintendo model name for the original Game Boy, a technical/brand term kept identical in every language."
+        },
+        "Darn…": {
+          "override": "Darn…",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "Deposited %d\n%s(S).": {
+          "override": "Deposited %d\n%s(S).",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "EGG": {
+          "override": "EGG",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "GEN 2": {
+          "override": "GEN 2",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: a version/generation label for one of the built-in colour-palette themes, kept identical in every language (matching DMG)."
+        },
+        "GREEN": {
+          "override": "GREEN",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "Girl": {
+          "override": "Girl",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "Give a nickname to %s?": {
+          "override": "Give a nickname to %s?",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "HEALTH": {
+          "override": "HEALTH",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "Installed\nadd-ons": {
+          "override": "Installed\nadd-ons",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "It started to rain!": {
+          "override": "It started to rain!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "MOVE <PK><MN> W/O MAIL": {
+          "override": "MOVE <PK><MN> W/O MAIL",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "Move to where?": {
+          "override": "Move to where?",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "NO BATTLE": {
+          "override": "NO BATTLE",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "PARKBALLÃ%02d": {
+          "override": "PARKBALLÃ%02d",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "PUT IN PACK": {
+          "override": "PUT IN PACK",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "Party <PK><MN>\nstatus": {
+          "override": "Party <PK><MN>\nstatus",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "Place\nyour bet": {
+          "override": "Place\nyour bet",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "Play with\n3 coins?": {
+          "override": "Play with\n3 coins?",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "READ": {
+          "override": "READ",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "READ MAIL": {
+          "override": "READ MAIL",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "RED": {
+          "override": "RED",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "Return to\nthe title": {
+          "override": "Return to\nthe title",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "Return to the\ntitle screen?": {
+          "override": "Return to the\ntitle screen?",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "TAKE": {
+          "override": "TAKE",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "That isn't going to help here.": {
+          "override": "That isn't going to help here.",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "The cards\nshuffled.": {
+          "override": "The cards\nshuffled.",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "Throw away %d\n%s(S)?": {
+          "override": "Throw away %d\n%s(S)?",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "Toss out how many\n%s(S)?": {
+          "override": "Toss out how many\n%s(S)?",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "What's up?": {
+          "override": "What's up?",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "Where?": {
+          "override": "Where?",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "Which BOX?": {
+          "override": "Which BOX?",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "Withdrew %d\n%s(S).": {
+          "override": "Withdrew %d\n%s(S).",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "……": {
+          "override": "……",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver gs.text.SixDotsCharText is the identical six-dot glyph string in all six languages."
+        },
+        "POKéMON": {
+          "override": "POKéMON",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: this catalog's own established POKéMON spelling is kept identical to the English source in every existing translation for this language; no divergence to translate."
+        },
+        "???": {
+          "override": "???",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no PokeCorpus row for this language (Spanish alone has a real Crystal corpus match, \"¿¿??\"); a generic placeholder symbol identical to the English source, no divergence to translate."
+        },
+        "PP": {
+          "override": "PP",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: \"PP\" (Power Points) is a universal Pokémon abbreviation kept identical in every language; no compatible standalone PokeCorpus row found."
+        }
+      },
+      "no_op_entries": {
+        "/": {
+          "override": "/",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Invariant interface symbol.",
+          "original_reason": "engine-original",
+          "original_provenance": "Invariant interface symbol."
+        },
+        "<LV>": {
+          "override": "<LV>",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Invariant level token used by the engine renderer.",
+          "original_reason": "engine-original",
+          "original_provenance": "Invariant level token used by the engine renderer."
+        },
+        "HP": {
+          "override": "HP",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Canonical Japanese Pokémon abbreviation.",
+          "original_reason": "engine-contract-gap",
+          "original_provenance": "Canonical Japanese Pokémon abbreviation."
+        },
+        "⁂": {
+          "override": "⁂",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Invariant interface symbol.",
+          "original_reason": "engine-original",
+          "original_provenance": "Invariant interface symbol."
+        },
+        "№.": {
+          "override": "№.",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus-inspired Pokédex number symbol.",
+          "original_reason": "engine-contract-gap",
+          "original_provenance": "Corpus-inspired Pokédex number symbol."
+        },
+        "♀": {
+          "override": "♀",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Invariant gender symbol.",
+          "original_reason": "engine-original",
+          "original_provenance": "Invariant gender symbol."
+        },
+        "♂": {
+          "override": "♂",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Invariant gender symbol.",
+          "original_reason": "engine-original",
+          "original_provenance": "Invariant gender symbol."
+        },
+        "???": {
+          "override": "???",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Invariant unknown-value fallback; Crystal c.poke_seer.GetCaughtLevel.unknown_level has a NULL Japanese corpus target.",
+          "original_reason": "engine-contract-gap",
+          "original_provenance": "Invariant unknown-value fallback; Crystal c.poke_seer.GetCaughtLevel.unknown_level has a NULL Japanese corpus target."
+        },
+        "MODS": {
+          "override": "MODS",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Kept as-is (proper noun, no translation), matching this catalog's own user-validated RBY MODS entry.",
+          "original_reason": "engine-original",
+          "original_provenance": "Kept as-is (proper noun, no translation), matching this catalog's own user-validated RBY MODS entry."
+        }
+      },
+      "no_op_total": 8
+    },
+    "ko": {
+      "total": 60,
+      "entries": {
+        "    lined up!\nWon %d coins!": {
+          "override": "    lined up!\nWon %d coins!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        " PAGE AREA CRY PRNT": {
+          "override": " PAGE AREA CRY PRNT",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%dX": {
+          "override": "%dX",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: a technical multiplier notation, kept identical in every language (matching 1X/2X/3X)."
+        },
+        "%s BED": {
+          "override": "%s BED",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s CARPET": {
+          "override": "%s CARPET",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s DOLL": {
+          "override": "%s DOLL",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s POSTER": {
+          "override": "%s POSTER",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s flew up high!": {
+          "override": "%s flew up high!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s is glowing!": {
+          "override": "%s is glowing!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s lowered its head!": {
+          "override": "%s lowered its head!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s made a whirlwind!": {
+          "override": "%s made a whirlwind!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s took in sunlight!": {
+          "override": "%s took in sunlight!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s wants to\nlearn %s!": {
+          "override": "%s wants to\nlearn %s!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s was sent to BILL's PC.": {
+          "override": "%s was sent to BILL's PC.",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "%s%s": {
+          "override": "%s%s",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "%s.": {
+          "override": "%s.",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus's own name-then-period convention keeps a bare ASCII period after a name token in every language (including ja-Hrkt/ko, which otherwise favour the full-width \"。\"); no divergence to translate."
+        },
+        "1X": {
+          "override": "1X",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: a technical multiplier notation, kept identical in every language."
+        },
+        "2X": {
+          "override": "2X",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: a technical multiplier notation, kept identical in every language."
+        },
+        "3X": {
+          "override": "3X",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: a technical multiplier notation, kept identical in every language."
+        },
+        "<PO><KE>GEAR": {
+          "override": "<PO><KE>GEAR",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "ATTACH MAIL": {
+          "override": "ATTACH MAIL",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "BIG %s": {
+          "override": "BIG %s",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "BLUE": {
+          "override": "BLUE",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "Boy": {
+          "override": "Boy",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "DMG": {
+          "override": "DMG",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: the official Nintendo model name for the original Game Boy, a technical/brand term kept identical in every language."
+        },
+        "Darn…": {
+          "override": "Darn…",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "Deposited %d\n%s(S).": {
+          "override": "Deposited %d\n%s(S).",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "GEN 2": {
+          "override": "GEN 2",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: a version/generation label for one of the built-in colour-palette themes, kept identical in every language (matching DMG)."
+        },
+        "GREEN": {
+          "override": "GREEN",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "Girl": {
+          "override": "Girl",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "Give a nickname to %s?": {
+          "override": "Give a nickname to %s?",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "ID No": {
+          "override": "ID No",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "Installed\nadd-ons": {
+          "override": "Installed\nadd-ons",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "It started to rain!": {
+          "override": "It started to rain!",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "MOVE <PK><MN> W/O MAIL": {
+          "override": "MOVE <PK><MN> W/O MAIL",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "Move to where?": {
+          "override": "Move to where?",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "NO BATTLE": {
+          "override": "NO BATTLE",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "PARKBALLÃ%02d": {
+          "override": "PARKBALLÃ%02d",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "PUT IN PACK": {
+          "override": "PUT IN PACK",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "Party <PK><MN>\nstatus": {
+          "override": "Party <PK><MN>\nstatus",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "Place\nyour bet": {
+          "override": "Place\nyour bet",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "Play with\n3 coins?": {
+          "override": "Play with\n3 coins?",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "READ": {
+          "override": "READ",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "READ MAIL": {
+          "override": "READ MAIL",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "RED": {
+          "override": "RED",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "Return to\nthe title": {
+          "override": "Return to\nthe title",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "Return to the\ntitle screen?": {
+          "override": "Return to the\ntitle screen?",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "TAKE": {
+          "override": "TAKE",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "That isn't going to help here.": {
+          "override": "That isn't going to help here.",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "The cards\nshuffled.": {
+          "override": "The cards\nshuffled.",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "Throw away %d\n%s(S)?": {
+          "override": "Throw away %d\n%s(S)?",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "What's up?": {
+          "override": "What's up?",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "Where?": {
+          "override": "Where?",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "Which BOX?": {
+          "override": "Which BOX?",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no unique corpus match; no translation invented."
+        },
+        "Withdrew %d\n%s(S).": {
+          "override": "Withdrew %d\n%s(S).",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "{PLAYER} turned on\nthe PC.": {
+          "override": "{PLAYER} turned on\nthe PC.",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: ambiguous corpus candidates; no translation invented."
+        },
+        "<PK><MN>": {
+          "override": "<PK><MN>",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus automatic unique match from poke-corpus GoldSilver; printf and multiline contract validated.",
+          "original_reason": "engine-corpus",
+          "original_provenance": "Corpus automatic unique match from poke-corpus GoldSilver; printf and multiline contract validated."
+        },
+        "……": {
+          "override": "……",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: poke-corpus GoldSilver gs.text.SixDotsCharText is the identical six-dot glyph string in all six languages."
+        },
+        "???": {
+          "override": "???",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: no PokeCorpus row for this language (Spanish alone has a real Crystal corpus match, \"¿¿??\"); a generic placeholder symbol identical to the English source, no divergence to translate."
+        },
+        "PP": {
+          "override": "PP",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: \"PP\" (Power Points) is a universal Pokémon abbreviation kept identical in every language; no compatible standalone PokeCorpus row found."
+        }
+      },
+      "no_op_entries": {
+        "/": {
+          "override": "/",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Invariant interface symbol.",
+          "original_reason": "engine-original",
+          "original_provenance": "Invariant interface symbol."
+        },
+        "<LV>": {
+          "override": "<LV>",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Invariant level token used by the engine renderer.",
+          "original_reason": "engine-original",
+          "original_provenance": "Invariant level token used by the engine renderer."
+        },
+        "HP": {
+          "override": "HP",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Canonical Korean Pokémon abbreviation.",
+          "original_reason": "engine-contract-gap",
+          "original_provenance": "Canonical Korean Pokémon abbreviation."
+        },
+        "{STRBUF}.": {
+          "override": "{STRBUF}.",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Runtime name fragment; punctuation retained from the Korean corpus convention.",
+          "original_reason": "engine-contract-gap",
+          "original_provenance": "Runtime name fragment; punctuation retained from the Korean corpus convention."
+        },
+        "⁂": {
+          "override": "⁂",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Invariant interface symbol.",
+          "original_reason": "engine-original",
+          "original_provenance": "Invariant interface symbol."
+        },
+        "№.": {
+          "override": "№.",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Corpus-inspired Pokédex number symbol.",
+          "original_reason": "engine-contract-gap",
+          "original_provenance": "Corpus-inspired Pokédex number symbol."
+        },
+        "♀": {
+          "override": "♀",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Invariant gender symbol.",
+          "original_reason": "engine-original",
+          "original_provenance": "Invariant gender symbol."
+        },
+        "♂": {
+          "override": "♂",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Invariant gender symbol.",
+          "original_reason": "engine-original",
+          "original_provenance": "Invariant gender symbol."
+        },
+        "MODS": {
+          "override": "MODS",
+          "reason": "engine-fallback",
+          "provenance": "Explicit English fallback: runtime identity no-op; original provenance: Kept as-is (proper noun, no translation), matching this catalog's own user-validated RBY MODS entry.",
+          "original_reason": "engine-original",
+          "original_provenance": "Kept as-is (proper noun, no translation), matching this catalog's own user-validated RBY MODS entry."
+        }
+      },
+      "no_op_total": 8
+    }
+  }
+}

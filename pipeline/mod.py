@@ -14,6 +14,7 @@ from .engine import read_engine_catalog, match_engine_catalog, load_engine_overr
 from .corpus import canonical_language
 from .project import project_version
 from .literals import load_recipes, generate_handlers
+from .engine_profile import PINNED_PROFILE, UPSTREAM_PROFILE, normalize_engine_profile, validate_upstream_checkout
 
 CATALOGS = ("dialogue", "strings", "species_names", "move_names", "item_names", "trainer_names", "status_labels", "type_names", "demo_names", "species_kinds")
 
@@ -521,7 +522,7 @@ end
 '''
 
 
-def generate_mod(items: Iterable[Alignment], destination: str | Path, mod_id: str = "translation-fr", language: str = "fr", modkit_worksheet: str | Path | None = None, report_path: str | Path | None = None, engine_catalog: str | Path | None = None, engine_overrides: str | Path | None = None, strict_engine: bool = False, semantic_anchors: str | Path | None = None, semantic_anchor_decisions: str | Path | None = None, target_name: str | None = None, literal_handlers: str | Path | None = None, target_description: str | None = None, engine_source: str | Path | None = None, engine_scope: str | Path | None = None, engine_manifest: str | Path | None = None, font_source: str | Path | None = None, font_profile: str = "fusion", yellow_dialogue: dict[str, str] | None = None, yellow_stats: dict | None = None, yellow_catalogs: dict[str, dict[str, str]] | None = None, yellow_engine_overrides: dict[str, str] | None = None, seed_engine_values: Mapping[str, str] | None = None, precomputed_join: tuple[dict, dict] | None = None) -> Path:
+def generate_mod(items: Iterable[Alignment], destination: str | Path, mod_id: str = "translation-fr", language: str = "fr", modkit_worksheet: str | Path | None = None, report_path: str | Path | None = None, engine_catalog: str | Path | None = None, engine_overrides: str | Path | None = None, strict_engine: bool = False, semantic_anchors: str | Path | None = None, semantic_anchor_decisions: str | Path | None = None, target_name: str | None = None, literal_handlers: str | Path | None = None, target_description: str | None = None, engine_source: str | Path | None = None, engine_scope: str | Path | None = None, engine_manifest: str | Path | None = None, font_source: str | Path | None = None, font_profile: str = "fusion", yellow_dialogue: dict[str, str] | None = None, yellow_stats: dict | None = None, yellow_catalogs: dict[str, dict[str, str]] | None = None, yellow_engine_overrides: dict[str, str] | None = None, seed_engine_values: Mapping[str, str] | None = None, precomputed_join: tuple[dict, dict] | None = None, engine_profile: str = PINNED_PROFILE) -> Path:
     """Generate a mod; ``strict_engine`` requires scaffold/catalog presence only.
 
     It does not require complete engine translations: unresolved entries remain
@@ -534,6 +535,7 @@ def generate_mod(items: Iterable[Alignment], destination: str | Path, mod_id: st
     catalogs. Ignored when ``modkit_worksheet`` is not given.
     """
     language = canonical_language(language)
+    engine_profile = normalize_engine_profile(engine_profile)
     font_profile = validate_font_profile(language, font_profile)
     destination = Path(destination); destination.mkdir(parents=True, exist_ok=True)
     existing_registration = None
@@ -581,7 +583,11 @@ def generate_mod(items: Iterable[Alignment], destination: str | Path, mod_id: st
         engine_callsites = None
         source_path = None
         if engine_source:
-            source_path, _, _ = verified_source(engine_source, scope)
+            if engine_profile == UPSTREAM_PROFILE:
+                source_root = validate_upstream_checkout(engine_source)
+                source_path = source_root / "src"
+            else:
+                source_path, _, _ = verified_source(engine_source, scope)
             engine_callsites = iter_callsites(source_path)
             for key in sorted(complete_engine_keys(engine_callsites, scope)):
                 catalog.setdefault(key, "")
@@ -654,8 +660,12 @@ def generate_mod(items: Iterable[Alignment], destination: str | Path, mod_id: st
                 if not previous:
                     engine_report["translated"] += 1
                     if key in engine_report.get("unmatched", []):
-                        engine_report["unmatched"] = [item for item in engine_report["unmatched"] if item != key]
-                        engine_report["fallback_english"] = max(0, engine_report.get("fallback_english", 0) - 1)
+                        engine_report["unmatched"] = [
+                            item for item in engine_report["unmatched"] if item != key
+                        ]
+                        engine_report["fallback_english"] = max(
+                            0, engine_report.get("fallback_english", 0) - 1
+                        )
                     engine_report.get("ambiguous", {}).pop(key, None)
                 engine_report["details"][key] = "reviewed-seed"
                 engine_report["provenance"][key] = {
@@ -670,9 +680,10 @@ def generate_mod(items: Iterable[Alignment], destination: str | Path, mod_id: st
         }
         if engine_report is not None:
             engine_report["seed"] = seed_stats
-            engine_report["percent"] = round(
-                engine_report["translated"] * 100 / engine_report["total"], 2
-            ) if engine_report["total"] else 100.0
+            engine_report["percent"] = (
+                round(engine_report["translated"] * 100 / engine_report["total"], 2)
+                if engine_report["total"] else 100.0
+            )
     # The qid-driven catalogs above inject translated values AFTER the matcher
     # ran, so the engine report still lists those keys as unmatched (or omits
     # them).  Sync the report so "All engine strings" reflects what ships.
@@ -896,6 +907,8 @@ def generate_mod(items: Iterable[Alignment], destination: str | Path, mod_id: st
         report["rom"] = {"translated": rom_translated, "total": rom_total, "percent": round(rom_translated * 100 / rom_total, 2) if rom_total else 100.0, "details": rom_details}
         if engine_report is not None:
             report["engine"] = engine_report
+            if seed_stats is not None:
+                report["seed"] = seed_stats
             if engine_source:
                 from .engine_scope import classify_catalog, coverage_metadata, validate_catalog_universe
                 assert source_path is not None and engine_callsites is not None

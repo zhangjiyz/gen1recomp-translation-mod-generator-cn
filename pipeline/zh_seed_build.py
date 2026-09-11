@@ -16,6 +16,7 @@ import shutil
 from .builder import BuildError, _run, inspect_archive
 from .generate import lua_string
 from .gs_join import GsJoinEntry, NO_MATCH, OVERRIDE
+from .engine_profile import PINNED_PROFILE
 from .gs_mod import _write_gate_expectations, generate_gs_mod, gs_archive_name
 from .mod import generate_mod
 from .orchestration import package_release
@@ -318,11 +319,13 @@ def build_gsc_zh_seed_without_rom(
         expectation.unlink(missing_ok=True)
     registry_catalogs = dict(catalogs)
     registry_catalogs.pop("dialogue", None)
-    registry_expectation = _write_gate_expectations(mod_dir, registry_catalogs)
+    registry_expectation = _write_gate_expectations(
+        mod_dir, registry_catalogs, engine_profile=PINNED_PROFILE,
+    )
     try:
         _run([
             str(luajit), str(resource_root() / "tools" / "gate_gs_registries.lua"),
-            str(engine), str(mod_dir), str(registry_expectation),
+            str(engine), str(mod_dir), str(registry_expectation), PINNED_PROFILE,
         ])
     finally:
         registry_expectation.unlink(missing_ok=True)
